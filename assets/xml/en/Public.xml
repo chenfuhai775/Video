@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<Public>
+	<Page>
+		<LogoText>Smart Security System</LogoText>
+		<laMessage>Message</laMessage>
+		<laSetting>Setting</laSetting>
+		<laExit>Sign out</laExit>
+		<laHome>Home</laHome>
+		<laPlayback>Playback</laPlayback>
+		<laLog>Log</laLog>
+		<laSmart>Device</laSmart>
+		<Config>
+			<laConfig>Configuration</laConfig>
+			<laDevice>Device Parameters</laDevice>
+			<laNetwork>Network Settings</laNetwork>
+			<laVideo>Video Config.</laVideo>
+			<laAlarm>Alarm Config.</laAlarm>
+			<laUser>User Config.</laUser>
+			<laSystem>System Maintenance</laSystem>
+		</Config>
+	</Page>
+	<Js>
+		<dialogTitle>Message！</dialogTitle>
+		<dialogContent1>Are you sure you want to exit the system?</dialogContent1>
+		<btnConfirm>Ok</btnConfirm>
+		<btnCancel>Cancel</btnCancel>
+	</Js>
+</Public>
+

@@ -1,0 +1,402 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="assets/css/main.min.css">
+    <link rel="stylesheet" href="assets/css/app.css">
+</head>
+
+<body data-type="index">
+
+    <header class="am-topbar am-topbar-inverse admin-header">
+		<!-- logo -->
+		<div class="am-fl tpl-header-logo">
+			<span id="LogoText" name="LogoText"></span>
+		</div>
+		<!-- 顶部右侧内容 -->
+		<div class="tpl-header-fluid">
+			<div class="am-fl tpl-header-switch-button am-icon-navicon">
+            </div>
+			<button class="am-topbar-btn am-topbar-toggle am-btn am-btn-sm am-btn-success am-show-sm-only" data-am-collapse="{target: '#topbar-collapse'}"><span class="am-sr-only">导航切换</span> <span class="am-icon-bars"></span></button>
+			<div class="am-fr am-collapse am-topbar-collapse" id="topbar-collapse">
+				<ul class="am-nav am-nav-pills am-topbar-nav tpl-header-list">
+					<!-- 欢迎语 -->
+					<li class="am-text-sm">
+						<a href="UsersManage.html"><span class="am-icon-user"></span> <span id="UserName"></span> </a>
+					</li>
+					<li class="am-dropdown" data-am-dropdown="" data-am-dropdown-toggle="" id="lastMsgLog">
+						<a class="am-dropdown-toggle tpl-header-list-link" onClick="g_oVideoSetting.displayLastMsg()" href="javascript:;">
+							<span class="am-icon-bell"></span> <span id="laMessage" name="laMessage"></span> <span class="am-badge tpl-badge-danger am-round" id="alarmInfoNum"></span>
+						</a>
+						<ul class="am-dropdown-content tpl-dropdown-content">
+							<li class="tpl-dropdown-content-external">
+								<h3><label name="laNewMessage"></label></h3><a href="log.html" name="laAll"></a>
+							</li>
+							<li id="logList">
+							</li>
+
+						</ul>
+					</li>
+					<li>
+						<a href="javascript:loginOut();" class="tpl-header-list-link">
+							<span class="am-icon-sign-out tpl-header-list-ico-out-size"></span> <span name="laExit"></span>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</header>
+
+    <div class="tpl-page-container tpl-page-header-fixed">
+        <!-- 侧边导航栏 -->
+		<div class="left-sidebar">
+            <div class="tpl-left-nav-title">
+				<a class="more" href="ParaSetting.html&time"><i class="am-icon-clock-o"></i></a>
+                <span id="data"></span>&nbsp;&nbsp;<span id="time"></span>
+            </div>
+            <div class="tpl-left-nav-list">
+                <ul class="tpl-left-nav-menu">
+                    <li class="tpl-left-nav-item">
+                        <a href="index.html" class="nav-link tpl-left-nav-link-list">
+                            <i class="am-icon-play-circle-o am-icon-fw"></i>
+                            <span name="laHome"></span>
+                        </a>
+                    </li>
+                    <li class="tpl-left-nav-item">
+                        <a href="playback.html" class="nav-link tpl-left-nav-link-list">
+                            <i class="am-icon-file-video-o am-icon-fw"></i>
+                            <span name="laPlayback"></span>
+                        </a>
+                    </li>
+					<li class="tpl-left-nav-item">
+                        <a href="log.html" class="nav-link tpl-left-nav-link-list">
+                            <i class="am-icon-calendar am-icon-fw"></i>
+                            <span name="laLog"></span>
+                        </a>
+                    </li>
+					<li class="tpl-left-nav-item">
+                        <a href="javascript:;" class="nav-link tpl-left-nav-link-list">
+                            <i class="am-icon-toggle-on am-icon-fw"></i>
+                            <span name="laSmart"></span>
+							<i class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right"></i>
+                        </a>
+						<ul class="tpl-left-nav-sub-menu" style="display: none;">
+                            <li>
+                                <a href="device.html">
+                                    <i class="am-icon-angle-right"></i>
+                                    <span name="laDevList"></span>
+                                </a>
+								<a href="area.html">
+                                    <i class="am-icon-angle-right"></i>
+                                    <span name="laAreaList"></span>
+                                </a>
+							</li>
+						</ul>
+                    </li>
+                    <li class="tpl-left-nav-item">
+                        <a href="javascript:;" class="nav-link tpl-left-nav-link-list active">
+                            <i class="am-icon-cogs am-icon-fw"></i>
+                            <span name="laConfig"></span>
+                            <i class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right tpl-left-nav-more-ico-rotate"></i>
+                        </a>
+                        <ul class="tpl-left-nav-sub-menu" style="display: block;">
+                            <li>
+                                <a href="ParaSetting.html">
+                                    <i class="am-icon-angle-right"></i>
+                                    <span name="laDevice"></span>
+                                    <i class="am-icon-star tpl-left-nav-content-ico am-fr am-margin-right"></i>
+                                </a>
+                                <a href="NetworkSetting.html">
+                                    <i class="am-icon-angle-right"></i>
+                                    <span name="laNetwork"></span>
+									<i class="am-icon-star tpl-left-nav-content-ico am-fr am-margin-right"></i>
+                                </a>
+								<a href="VideoSetting.html" class="active">
+									<i class="am-icon-angle-right"></i>
+									<span name="laVideo"></span>
+								</a>
+								<a href="AlarmSetting.html">
+									<i class="am-icon-angle-right"></i>
+									<span name="laAlarm"></span>
+								</a>
+								<a href="UsersManage.html">
+									<i class="am-icon-angle-right"></i>
+									<span name="laUser"></span>
+								</a>
+								<a href="System.html">
+									<i class="am-icon-angle-right"></i>
+									<span name="laSystem"></span>
+								</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="tpl-content-wrapper">
+            <div class="tpl-portlet-components">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span class="am-icon-list-alt"></span> <span name="laVideo"></span>
+                    </div>
+                </div>
+                <div class="tpl-block">
+					
+					<div class="am-u-sm-12">
+						<div class="am-tabs" data-am-tabs="{noSwipe: 1}">
+							<ul class="am-tabs-nav am-nav am-nav-tabs">
+								<li class="am-active"><a href="#tab1" id="tabChnAdd" name="tabChnAdd"></a></li>
+								<li><a href="#tab2" id="tabChnSet" name="tabChnSet"></a></li>
+								<li><a href="#tab3" id="tabVideoLoss" name="tabVideoLoss"></a></li>
+							</ul>
+							<div class="am-tabs-bd">
+								<div class="am-tab-panel am-fade am-in am-active" id="tab1">
+									<div class="tpl-block">
+										<div class="am-u-sm-12">
+										<legend><span name="laIpcSearch"></span></legend>
+											<div class="am-btn-toolbar">
+												<div class="am-btn-group am-btn-group-sm">
+													<button type="button" class="am-btn am-radius am-btn-success" onclick="g_oVideoSetting.onvifSearchClick()" id="onvifSearch"><span class="am-icon-search" id="laONVIF" name="laONVIF"></span></button>
+												</div>
+												<div class="am-btn-group am-btn-group-sm">
+													<button type="button" class="am-btn am-radius am-btn-primary" onclick="g_oVideoSetting.privateSearchClick()" id="privateSearch"><span class="am-icon-search" id="laPrivate" name="laPrivate"></span></button>
+												</div>
+												<div class="am-btn-group am-btn-group-sm">
+													<button type="button" class="am-btn am-radius am-btn-warning" onclick="g_oVideoSetting.oneKeyClick()" id="oneKey"><span class="am-icon-check-square" id="laOneKey" name="laOneKey"></span></button>
+												</div>
+											</div><br/>
+										</div>
+										<div class="am-u-sm-12">
+											<table class="am-table am-table-bordered am-table-striped am-table-hover table-main"> 
+												<thead>
+													<tr>
+													<th><span id="laIndex" name="laIndex"></span></th>
+													<th><span id="laIpAddr" name="laIpAddr"></span></th>
+													<th><span id="laStaIpAddr" name="laStaIpAddr"></span></th>
+													<th><span id="laChanel" name="laChanel"></span></th>
+													<th><span id="laDevPort" name="laDevPort"></span></th>
+													<th><span id="laProtocol" name="laProtocol"></span></th>
+													<th><span id="laState" name="laState"></span></th>
+													<th><span id="laDevOpt" name="laDevOpt"></span></th>
+													</tr> 
+												</thead>
+												<tbody id="newDevice">
+												
+												</tbody>
+											</table>
+										</div>
+										
+									</div>		
+								</div>
+								<div class="am-tab-panel am-fade" id="tab2">
+									<form class="am-form am-form-horizontal tpl-amazeui-form am-u-sm-12 am-u-md-6">
+										<legend><span name="tabChnSet"></span></legend>
+										<div class="am-form-group">
+											<label class="am-u-md-4 am-u-sm-4 am-form-label" name="laChnSel"></label>
+											<div class="am-u-md-8 am-u-sm-8">
+												<select id="chnSel1" name="chnSel1" onchange="g_oVideoSetting.channelSel(this.value)">
+													
+												</select>
+											</div>
+										</div>
+										<div class="am-form-group">
+											<div class="am-u-sm-8 am-u-sm-push-4 ">
+												<label class="am-checkbox-inline">
+													<input type="checkbox" name="IsChnEnable1" id="IsChnEnable1"><span name="laEnable"></span>
+												</label>
+												<label class="am-checkbox-inline">
+													<input type="checkbox" name="IsTimeSync1" id="IsTimeSync1"><span name="laTimeSync"></span>
+												</label>
+											</div>
+										</div>
+										<div class="am-form-group">
+											<label class="am-u-sm-4 am-form-label" name="laProtocolType"></label>
+											<div class="am-u-md-8 am-u-sm-8">
+												<select id="protocolType1" name="protocolType1">
+													<option value="0">Onvif</option>
+													<option value="1">Private</option>
+													<option value="2">Cms</option>
+												</select>
+											</div>
+										</div>
+										<div class="am-form-group">
+											<label class="am-u-sm-4 am-form-label" name="laDomain"></label>
+											<div class="am-u-sm-8">
+												<input type="text" id="domain1" name="domain1">
+											</div>
+										</div>
+										<div class="am-form-group">
+											<label class="am-u-sm-4 am-form-label" name="laPort"></label>
+											<div class="am-u-sm-8">
+												<input type="text" id="port1" name="port1" oninput="value=value.replace(/[^\d]/g,'')">
+											</div>
+										</div>
+										<div class="am-form-group">
+											<label class="am-u-sm-4 am-form-label" name="laUserName"></label>
+											<div class="am-u-sm-8">
+												<input type="text" id="userName1" name="userName1">
+											</div>
+										</div>
+										<div class="am-form-group">
+											<label class="am-u-sm-4 am-form-label" name="laUserPwd"></label>
+											<div class="am-u-sm-8">
+												<input type="text" id="userPwd1" name="userPwd1">
+											</div>
+										</div>
+										<div class="am-form-group">
+											<div class="am-u-sm-8 am-u-sm-push-4 am-btn-group-sm">
+												<button type="button" class="am-btn am-radius am-btn-primary" onclick="g_oVideoSetting.saveChannelPara()"><span name="btnSave"></span></button>
+											</div>
+										</div>
+									</form>
+								</div>
+								<div class="am-tab-panel am-fade" id="tab3">
+									<form class="am-form am-form-horizontal tpl-amazeui-form am-u-sm-12 am-u-md-6">
+										<legend><span name="tabVideoLoss"></span></legend>
+										<div class="am-form-group">
+											<label class="am-u-md-4 am-u-sm-4 am-form-label" name="laChnSel"></label>
+											<div class="am-u-md-8 am-u-sm-8">
+												<select id="chnSel2" name="chnSel2" onchange="g_oVideoSetting.videoLossSel(this.value)">
+													
+												</select>
+											</div>
+										</div>
+										<div class="am-form-group">
+											<label class="am-u-sm-4 am-form-label" name="laTriggerDelay"></label>
+											<div class="am-u-sm-8">
+												<input type="text" id="triggerDelay" name="triggerDelay" maxlength="16" oninput="value=value.replace(/[^\d]/g,'')">
+											</div>
+										</div>
+										<div class="am-form-group">
+											<div class="am-u-sm-8 am-u-sm-push-4 ">
+												<label class="am-checkbox-inline">
+													<input type="checkbox" name="timerLink" id="timerLink"><span name="laTimerLink"></span>
+												</label>
+												<label class="am-checkbox-inline">
+													<input type="checkbox" name="armLink" id="armLink"><span name="laArmLink"></span>
+												</label>
+											</div>
+										</div>
+										<div class="am-form-group">
+											<div class="am-u-sm-8 am-u-sm-push-4 ">
+												<label class="am-checkbox-inline">
+													<input type="checkbox" name="bell" id="bell"><span name="laBell"></span>
+												</label>
+												<label class="am-checkbox-inline">
+													<input type="checkbox" name="email" id="email"><span name="laEmail"></span>
+												</label>
+											</div>
+										</div>
+										<div class="am-form-group">
+											<div class="am-u-sm-8 am-u-sm-push-4 ">
+												<label class="am-checkbox-inline">
+													<input type="checkbox" name="beep" id="beep"><span name="laBeep"></span>
+												</label>
+												<label class="am-checkbox-inline">
+													<input type="checkbox" name="uploadCms" id="uploadCms"><span name="laUploadCms"></span>
+												</label>
+											</div>
+										</div>
+										<div class="am-form-group">
+											<div class="am-u-sm-8 am-u-sm-push-4 am-btn-group-sm">
+												<button type="button" class="am-btn am-radius am-btn-primary" onclick="g_oVideoSetting.saveVideoLostInfo()"><span name="btnSave"></span></button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="am-modal am-modal-prompt" tabindex="-1" id="my-prompt">
+					  <div class="am-modal-dialog">
+						<div class="am-modal-hd"><span name="laAddIpc"></span><a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close id="searchClose">&times;</a></div>
+						<div class="am-modal-bd">
+							<form class="am-form am-form-horizontal">
+								<div class="am-form-group">
+									<label class="am-u-md-4 am-u-sm-4 am-form-label" name="laChnSel"></label>
+									<div class="am-u-md-8 am-u-sm-8">
+										<select id="chnSel" name="chnSel">
+											
+										</select>
+									</div>
+								</div>
+								<div class="am-form-group">
+									<div class="am-u-sm-12">
+										<label class="am-checkbox-inline">
+											<input type="checkbox" name="IsChnEnable" id="IsChnEnable"><span name="laEnable"></span>
+										</label>
+										<label class="am-checkbox-inline">
+											<input type="checkbox" name="IsTimeSync" id="IsTimeSync"><span name="laTimeSync"></span>
+										</label>
+									</div>
+								</div>
+								<div class="am-form-group">
+									<label class="am-u-sm-4 am-form-label" name="laProtocolType"></label>
+									<div class="am-u-md-8 am-u-sm-8">
+										<select id="protocolType" name="protocolType">
+											<option value="0">Onvif</option>
+											<option value="1">Private</option>
+											<option value="2">Cms</option>
+										</select>
+									</div>
+								</div>
+								<div class="am-form-group">
+									<label class="am-u-sm-4 am-form-label" name="laDomain"></label>
+									<div class="am-u-sm-8">
+										<input type="text" id="domain" name="domain">
+									</div>
+								</div>
+								<div class="am-form-group">
+									<label class="am-u-sm-4 am-form-label" name="laPort"></label>
+									<div class="am-u-sm-8">
+										<input type="text" id="port" name="port">
+									</div>
+								</div>
+								<div class="am-form-group">
+									<label class="am-u-sm-4 am-form-label" name="laUserName"></label>
+									<div class="am-u-sm-8">
+										<input type="text" id="UserName" name="UserName">
+									</div>
+								</div>
+								<div class="am-form-group">
+									<label class="am-u-sm-4 am-form-label" name="laUserPwd"></label>
+									<div class="am-u-sm-8">
+										<input type="text" id="userPwd" name="userPwd">
+									</div>
+								</div>
+							</form>
+						</div>
+						<div class="am-modal-footer">
+							<span class="am-modal-btn" data-am-modal-cancel="" name="btnCancel"></span>
+							<span class="am-modal-btn" data-am-modal-confirm="" name="btnConfirm"></span>
+						</div>
+					  </div>
+					</div>
+                </div>
+            </div>
+        </div>
+    </div>
+	<!-- Javascript -->
+	<script type="text/javascript" src="assets/js/LAB.min.js"></script>
+	<script>
+		$LAB
+		.script("assets/js/global_config.js").wait(function () {
+			$LAB
+			.script("assets/js/jquery.min.js").wait()
+			.script("assets/js/amazeui.min.js").wait()
+			.script("assets/js/amazeui.dialog.js").wait()
+			.script("assets/js/amazeui.page.js").wait()
+			.script("assets/js/jquery.cookie.js").wait()
+			.script("assets/js/public.js").wait()
+			.script("assets/js/Translator.js").wait()
+			.script("assets/js/common.js").wait()
+			.script("assets/js/VideoSetting.js").wait(function () {
+				g_oVideoSetting.initPage();
+			});
+		});
+	</script>
+</body>
+</html>

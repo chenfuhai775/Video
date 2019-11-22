@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<Playback>
+	<Page>
+		<laPlaybackList>录像回放</laPlaybackList>
+		<laStartDate>时间：</laStartDate>
+		<laChn>通道：</laChn>
+		<laType>类型：</laType>
+		<optTypeAll>全部</optTypeAll>
+		<optTypeAlarm>报警</optTypeAlarm>
+		<optTypeTiming>定时</optTypeTiming>
+		<laFirstPage>首页</laFirstPage>
+		<laLastPage>最后一页</laLastPage>
+	</Page>
+	<Js>
+	</Js>
+</Playback>

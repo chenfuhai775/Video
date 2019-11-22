@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?> 
+<FileVersion>
+<Platform name='win32'>
+    <npWebVideoPlugin.dll>3,0,5,9</npWebVideoPlugin.dll>
+    <WebVideoActiveX.ocx>3,0,5,9</WebVideoActiveX.ocx>
+    <PlayCtrl.dll>6,5,1,9</PlayCtrl.dll>
+    <StreamTransClient.dll>1,1,2,10</StreamTransClient.dll>
+    <SystemTransform.dll>2,3,0,7</SystemTransform.dll>
+    <NetStream.dll>1,0,5,3</NetStream.dll>
+    <AudioIntercom.dll>1,1,0,4</AudioIntercom.dll>
+</Platform>
+</FileVersion>

@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<UsersManage>
+	<Page>
+		<laUsers>用户管理</laUsers>
+		<laIndex>序号</laIndex>
+		<laUserName>用户名</laUserName>
+		<laUserPsw>用户密码</laUserPsw>
+		<laCheckPsw>确认密码</laCheckPsw>
+		<laUserStatus>用户状态</laUserStatus>
+		<laCtrl>操作</laCtrl>
+		<laUserAdd>添加新用户</laUserAdd>
+		<laUserEdit>编辑用户</laUserEdit>
+		<aEnable>启用</aEnable>
+		<aDisable>停用</aDisable>
+		<btnEdit>编辑</btnEdit>
+		<btnDel>删除</btnDel>
+		<laUserInfo>用户资料</laUserInfo>
+	</Page>
+	<Js>
+		<DelOk>删除成功</DelOk>
+		<DelFailed>删除失败</DelFailed>
+		<aAddOk>添加成功</aAddOk>
+		<aAddFailed>添加失败</aAddFailed>
+		<aEditOk>保存成功</aEditOk>
+		<aEditFailed>保存失败</aEditFailed>
+		<dialogTitle>系统提示</dialogTitle>
+		<dialogContent1>真的要删除这个用户吗？</dialogContent1>
+		<btnConfirm>保存</btnConfirm>
+		<btnCancel>取消</btnCancel>
+		<InputTips>请输入</InputTips>
+		<RangeTips>范围</RangeTips>
+		<WrongTips>错误的</WrongTips>
+		<LengthTips>长度不能超过</LengthTips>
+		<NullTips>不能为空</NullTips>
+		<aPswErr>密码与确认密码不一样</aPswErr>
+	</Js>
+</UsersManage>

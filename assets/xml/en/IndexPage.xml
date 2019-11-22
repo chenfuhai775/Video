@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<IndexPage>
+	<Page>
+		<slogan>Make Security Simple!</slogan>
+		<sysVersion>V1.0.0</sysVersion>
+		<sysDescription>Easy to create a more comfortable, convenient and safe house-wide intelligent life!</sysDescription>
+		<txtMyhome>My home</txtMyhome>
+		<txtTemperature>Indoor temperature</txtTemperature>
+		<txtEnvironmental>Environmental control</txtEnvironmental>
+		<txtSecurity>Security device</txtSecurity>
+		<txtSmart>Smart device</txtSmart>
+		<txtMore>View More</txtMore>
+		<txtSysStatus>System state:</txtSysStatus>		
+		<status0>Away</status0>
+		<status1>Disarm</status1>
+		<status2>Home Stay</status2>
+		<txtVideo>My video</txtVideo>
+		<txtChanel>Video chanel</txtChanel>
+	</Page>
+	<Js>
+		<armOk>Away Success!</armOk>
+		<disarmOk>Disarm Success!</disarmOk>
+		<homeOk>Home Stay Success!</homeOk>
+		<cleanOk>Alarm Cancel Success!</cleanOk>
+	</Js>
+</IndexPage>

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<SysLog>
+	<Page>
+		<laSysLogList>日志查询</laSysLogList>
+		<laSelDate>选择时间：</laSelDate>
+		<laDate>时间</laDate>
+		<laType>日志类型：</laType>
+		<optTypeAlarm>报警日志</optTypeAlarm>
+		<optTypeOpt>操作日志</optTypeOpt>
+		<optTypeSys>系统日志</optTypeSys>
+		<laIndex>ID</laIndex>
+		<laEventType>事件类型</laEventType>
+		<laAreaName>区域名称</laAreaName>
+		<laUserInfo>用户信息</laUserInfo>
+		<laDetail>详细</laDetail>
+		<laFirstPage>首页</laFirstPage>
+		<laLastPage>最后一页</laLastPage>
+	</Page>
+	<Js>
+		<dialogTitle>日期选择错误</dialogTitle>
+		<btnConfirm>确定</btnConfirm>
+		
+		
+	</Js>
+</SysLog>

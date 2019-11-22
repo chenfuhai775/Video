@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<Login>
+	<Page>
+		<laSystemTitle>Smart Security System</laSystemTitle>
+		<laPageTitle>Login</laPageTitle>
+		<txtUsername>Username</txtUsername>
+		<txtPassword>Password</txtPassword>
+		<laUsername>Enter your username!</laUsername>
+		<laPassword>Enter your user password!</laPassword>
+		<laBtnLogin>Login</laBtnLogin>
+	</Page>
+	<Js>
+		<LoginTips1>Please enter the user name.</LoginTips1>
+		<LoginTips2>User name cannot be longer than 16 characters.</LoginTips2>
+		<LoginTips3>The length of the password cannot be longer than 16 characters.</LoginTips3>
+		<LoginTips4>User name or password is incorrect. Please enter again.</LoginTips4>
+		<LoginTips5>Please enter the password.</LoginTips5>
+		<NetworkErrorTips>Network Abnormal</NetworkErrorTips>
+		<ConnectTimeoutTips>Connection timeout.</ConnectTimeoutTips>
+		<CookieTips>Please enable the cookie of the browser first.</CookieTips>
+		<dialogTitle>Message！</dialogTitle>
+		<btnConfirm>Ok</btnConfirm>
+		<btnCancel>Cancel</btnCancel>
+	</Js>
+</Login>
+

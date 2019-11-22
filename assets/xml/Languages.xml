@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Languages>
+	<Language>
+		<value>zh</value>
+		<name>中文</name>
+	</Language>
+	<Language default="true">
+		<value>en</value>
+		<name>English</name>
+	</Language>
+</Languages>

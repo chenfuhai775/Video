@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title></title>
+        <!-- CSS -->
+        <link rel="stylesheet" href="assets/css/main.min.css">
+		<link rel="stylesheet" href="assets/css/app.css">
+		<link rel="shortcut" href="/favicon.ico"/>
+    </head>
+<body style="background:#fff;">
+	<div class="am-g">
+		<div class="login-head">
+			<span id="SysTitle" class="am-text-primary"></span>
+		</div>
+	</div>
+    <div class="login-content">
+       <div class="am-container">
+            <div class="row ">
+                <div class="am-u-md-4 am-u-md-offset-7 form-box">
+                    <div class="form-top">
+                        <div class="form-top-left">
+                            <span id="laPageTitle" name="laPageTitle"></span>
+                        </div>
+                        <div class="form-top-right">
+                            <div class="am-form-group">
+								<select class="selectLanguage" id="LanguageSelect" name="LanguageSelect" onChange="g_oLogin.changeFrameLanguage(this.value)" ></select>
+							</div>
+                        </div>
+                    </div>
+					
+                    <div class="form-bottom contact-form">
+                        <form role="form" method="post" id="loginForm">
+                            <div class="username">
+                                <div class="usernameinner">
+                                    <input type="text" name="loginUserName" id="loginUserName" placeholder="" autofocus/>
+                                </div>
+                            </div>
+                            <div class="password">
+                                <div class="passwordinner">
+                                    <input type="password" name="loginPassword" id="loginPassword" placeholder=""/>
+                                </div>
+                            </div>
+							<div style="height:35px;"><div style="display:none;" class="form-message" id="msgError"></div></div>
+                            <input type="button"  class="am-btn am-radius am-btn-primary am-btn-block" name="laBtnLogin" id="laBtnLogin" onClick="g_oLogin.doLogin()">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>                     
+    </div>
+    <div class="copyrights">© 2019  Meian Technology All Rights Reserved.</div>
+	<script type="text/javascript" src="assets/js/LAB.min.js"></script>
+	<script>
+		$LAB
+		.script("assets/js/global_config.js").wait(function () {
+			$LAB
+			.script("assets/js/jquery.min.js").wait()
+			.script("assets/js/jquery.cookie.js").wait()
+			.script("assets/js/public.js").wait()
+			.script("assets/js/Translator.js").wait()
+			.script("assets/js/common.js").wait()
+			.script("assets/js/login.js").wait(function () {
+				g_oLogin.initLogin();
+			});
+		});
+	</script>
+</body>
+</html>

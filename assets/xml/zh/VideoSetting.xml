@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<VideoSetting>
+	<Page>
+		<tabChnAdd>添加摄像机</tabChnAdd>
+		<laIpcSearch>搜索摄像机</laIpcSearch>
+		<tabChnSet>通道设置</tabChnSet>
+		<tabVideoLoss>视频丢失设置</tabVideoLoss>
+		<laIndex>序号</laIndex>
+		<laIpAddr>有线IP地址</laIpAddr>
+		<laStaIpAddr>WiFi地址</laStaIpAddr>
+		<laChanel>通道</laChanel>
+		<laDevPort>端口</laDevPort>
+		<laProtocol>协议</laProtocol>
+		<laState>状态</laState>
+		<laDevOpt>操作</laDevOpt>
+		<laONVIF>ONVIF搜索</laONVIF>
+		<laPrivate>私有协议搜索</laPrivate>
+		<laOneKey>一键配置</laOneKey>
+		<laDevSearch>设备搜索中...</laDevSearch>
+		<btnAdd>添加</btnAdd>
+		<strConnect>已连接</strConnect>
+		<strDisConnect>未连接</strDisConnect>
+		<optOK>操作成功</optOK>
+		<DataTimeout>请求数据超时</DataTimeout>
+		<laAddIpc>添加摄像机</laAddIpc>
+		<laChnSel >通道</laChnSel>
+		<laChannelConfig >通道配置</laChannelConfig>
+		<laEnable >使能</laEnable>
+		<laTimeSync >同步时间</laTimeSync>
+		<laProtocolType >连接协议</laProtocolType>
+		<laDomain >域名</laDomain>
+		<laPort >端口</laPort>
+		<laUserName>用户名</laUserName>
+		<laUserPwd >用户密码</laUserPwd>
+		<laVideoLossConfig>视频丢失</laVideoLossConfig>
+		<laTriggerDelay>触发延时</laTriggerDelay>
+		<laTimerLink>定时关联</laTimerLink>
+		<laArmLink>布撤防关联</laArmLink>
+		<laBell>警号音</laBell>
+		<laEmail>发送邮件</laEmail>
+		<laBeep>蜂鸣器</laBeep>
+		<laUploadCms>上传cms平台</laUploadCms>
+	</Page>
+	<Js>
+		<btnCancel>取消</btnCancel>
+		<btnConfirm>确定</btnConfirm>
+		<btnSave>保存</btnSave>
+	</Js>
+</VideoSetting>

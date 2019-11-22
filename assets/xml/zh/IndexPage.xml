@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<IndexPage>
+	<Page>
+		<slogan>智慧改变生活！</slogan>
+		<sysVersion>V1.0.0</sysVersion>
+		<txtSysStatus>状态</txtSysStatus>	
+		<status0>系统撤防</status0>
+		<status3>外出布防</status3>
+		<status1>系统撤防</status1>
+		<status2>在家布防</status2>
+		<status4>清除报警</status4>
+		<txtVideo>视频</txtVideo>
+		<txtChanel>通道</txtChanel>
+		<txtPTZ>云台</txtPTZ>
+		<txtAlarm>安防</txtAlarm>
+		<laZoomout>调焦 -</laZoomout>
+		<laZoomin>调焦 +</laZoomin>
+		<laFocusout>聚焦 -</laFocusout>
+		<laFocusin>聚焦 +</laFocusin>
+		<laIrisout>光圈 -</laIrisout>
+		<laIrisin>光圈 +</laIrisin>
+		<btnPlay>预览</btnPlay>
+		<btnCapture>抓图</btnCapture>
+		<btnRecord>录像</btnRecord>
+		<btnEzoom>电子放大</btnEzoom>
+		<btnSound>声音</btnSound>
+		<btnIntercom>对讲</btnIntercom>
+		<btnFullscreen>全屏</btnFullscreen>
+		<btnOneScreen>单画面</btnOneScreen>
+		<btnFourScreen>4画面</btnFourScreen>
+		<btnNineScreen>9画面</btnNineScreen>
+	</Page>
+	<Js>
+		<armOk>外出布防成功！</armOk>
+		<disarmOk>系统撤防成功！</disarmOk>
+		<homeOk>在家布防成功！</homeOk>
+		<cleanOk>清除报警成功！</cleanOk>
+		<dialogTitle>系统提示！</dialogTitle>
+		<btnConfirm>确定</btnConfirm>
+		
+		<mainStream>主码流</mainStream>
+		<subStream>子码流</subStream>
+		<stoppreview>停止预览</stoppreview>
+		<previewfailed>预览失败</previewfailed>
+		<jsPreview>预览</jsPreview>
+		<jsOpensound>打开声音</jsOpensound>
+		<jsClosesound>关闭声音</jsClosesound>
+		<jsOpenSoundFailed>打开声音失败</jsOpenSoundFailed>
+	</Js>
+</IndexPage>

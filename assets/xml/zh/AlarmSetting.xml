@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<AlarmSetting>
+	<Page>
+		<tabAlarmPara>报警参数</tabAlarmPara>
+		<tabTelSet>电话设置</tabTelSet>
+		<laAlarmParaconfig>报警参数</laAlarmParaconfig>
+		<laEnterDelay>进入延时(0-255秒)</laEnterDelay>
+		<laOutDelay>退出延时(0-255秒)</laOutDelay>
+		<laBellDelay>警号时间(0-30分)</laBellDelay>
+		<laDetectLost>探测器丢失检测时间(0-99时)</laDetectLost>
+		<laAcLoss>交流掉电检测时间(0-999分)</laAcLoss>
+		<laArmReport>布撤防报告</laArmReport>
+		<laArmTone>布撤防提示音</laArmTone>
+		<laArmForce>强制布撤防</laArmForce>
+		<laAlarmLimit>报警限制</laAlarmLimit>
+		<laEmergencyTip>紧急提示音</laEmergencyTip>
+		<laDoorDetect>门磁检测</laDoorDetect>
+		<laWlsTamperCheck>探测器拆动检测</laWlsTamperCheck>
+		<laPhoneConfig>用户电话设置</laPhoneConfig>
+		<laPhoneNumber1>号码 1</laPhoneNumber1>
+		<laPhoneNumber2>号码 2</laPhoneNumber2>
+		<laPhoneNumber3>号码 3</laPhoneNumber3>
+		<laPhoneNumber4>号码 4</laPhoneNumber4>
+		
+	</Page>
+	<Js>
+		<laParaCfgErr>参数设置有误</laParaCfgErr>
+		<btnSave>保存</btnSave>
+		<optOK>操作成功</optOK>
+	</Js>
+</AlarmSetting>

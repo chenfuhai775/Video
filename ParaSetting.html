@@ -1,0 +1,357 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="assets/css/main.min.css">
+    <link rel="stylesheet" href="assets/css/app.css">
+</head>
+
+<body data-type="index">
+    <header class="am-topbar am-topbar-inverse admin-header">
+		<!-- logo -->
+		<div class="am-fl tpl-header-logo">
+			<span id="LogoText" name="LogoText"></span>
+		</div>
+		<!-- 顶部右侧内容 -->
+		<div class="tpl-header-fluid">
+			<div class="am-fl tpl-header-switch-button am-icon-navicon">
+            </div>
+			<button class="am-topbar-btn am-topbar-toggle am-btn am-btn-sm am-btn-success am-show-sm-only" data-am-collapse="{target: '#topbar-collapse'}"><span class="am-sr-only">导航切换</span> <span class="am-icon-bars"></span></button>
+			<div class="am-fr am-collapse am-topbar-collapse" id="topbar-collapse">
+				<ul class="am-nav am-nav-pills am-topbar-nav tpl-header-list">
+					<!-- 欢迎语 -->
+					<li class="am-text-sm">
+						<a href="UsersManage.html"><span class="am-icon-user"></span> <span id="UserName"></span> </a>
+					</li>
+					<li class="am-dropdown" data-am-dropdown="" data-am-dropdown-toggle="" id="lastMsgLog">
+						<a class="am-dropdown-toggle tpl-header-list-link" onClick="g_oParaSetting.displayLastMsg()" href="javascript:;">
+							<span class="am-icon-bell"></span> <span id="laMessage" name="laMessage"></span> <span class="am-badge tpl-badge-danger am-round" id="alarmInfoNum"></span>
+						</a>
+						<ul class="am-dropdown-content tpl-dropdown-content">
+							<li class="tpl-dropdown-content-external">
+								<h3><label name="laNewMessage"></label></h3><a href="log.html" name="laAll"></a>
+							</li>
+							<li id="logList">
+							</li>
+
+						</ul>
+					</li>
+					<li>
+						<a href="javascript:loginOut();" class="tpl-header-list-link">
+							<span class="am-icon-sign-out tpl-header-list-ico-out-size"></span> <span name="laExit"></span>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</header>
+
+    <div class="tpl-page-container tpl-page-header-fixed">
+        <!-- 侧边导航栏 -->
+		<div class="left-sidebar">
+            <div class="tpl-left-nav-title">
+				<a class="more" href="ParaSetting.html&time"><i class="am-icon-clock-o"></i></a>
+                <span id="data"></span>&nbsp;&nbsp;<span id="time"></span>
+            </div>
+            <div class="tpl-left-nav-list">
+                <ul class="tpl-left-nav-menu">
+                    <li class="tpl-left-nav-item">
+                        <a href="index.html" class="nav-link tpl-left-nav-link-list">
+                            <i class="am-icon-play-circle-o am-icon-fw"></i>
+                            <span name="laHome"></span>
+                        </a>
+                    </li>
+                    <li class="tpl-left-nav-item">
+                        <a href="playback.html" class="nav-link tpl-left-nav-link-list">
+                            <i class="am-icon-file-video-o am-icon-fw"></i>
+                            <span name="laPlayback"></span>
+                        </a>
+                    </li>
+					<li class="tpl-left-nav-item">
+                        <a href="log.html" class="nav-link tpl-left-nav-link-list">
+                            <i class="am-icon-calendar am-icon-fw"></i>
+                            <span name="laLog"></span>
+                        </a>
+                    </li>
+					<li class="tpl-left-nav-item">
+                        <a href="javascript:;" class="nav-link tpl-left-nav-link-list">
+                            <i class="am-icon-toggle-on am-icon-fw"></i>
+                            <span name="laSmart"></span>
+							<i class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right"></i>
+                        </a>
+						<ul class="tpl-left-nav-sub-menu" style="display: none;">
+                            <li>
+                                <a href="device.html">
+                                    <i class="am-icon-angle-right"></i>
+                                    <span name="laDevList"></span>
+                                </a>
+								<a href="area.html">
+                                    <i class="am-icon-angle-right"></i>
+                                    <span name="laAreaList"></span>
+                                </a>
+							</li>
+						</ul>
+                    </li>
+                    <li class="tpl-left-nav-item">
+                        <a href="javascript:;" class="nav-link tpl-left-nav-link-list active">
+                            <i class="am-icon-cogs am-icon-fw"></i>
+                            <span name="laConfig"></span>
+                            <i class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right tpl-left-nav-more-ico-rotate"></i>
+                        </a>
+                        <ul class="tpl-left-nav-sub-menu" style="display: block;">
+                            <li>
+                                <a href="ParaSetting.html" class="active">
+                                    <i class="am-icon-angle-right"></i>
+                                    <span name="laDevice"></span>
+                                    <i class="am-icon-star tpl-left-nav-content-ico am-fr am-margin-right"></i>
+                                </a>
+                                <a href="NetworkSetting.html">
+                                    <i class="am-icon-angle-right"></i>
+                                    <span name="laNetwork"></span>
+									<i class="am-icon-star tpl-left-nav-content-ico am-fr am-margin-right"></i>
+                                </a>
+								<a href="VideoSetting.html">
+									<i class="am-icon-angle-right"></i>
+									<span name="laVideo"></span>
+								</a>
+								<a href="AlarmSetting.html">
+									<i class="am-icon-angle-right"></i>
+									<span name="laAlarm"></span>
+								</a>
+								<a href="UsersManage.html">
+									<i class="am-icon-angle-right"></i>
+									<span name="laUser"></span>
+								</a>
+								<a href="System.html">
+									<i class="am-icon-angle-right"></i>
+									<span name="laSystem"></span>
+								</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="tpl-content-wrapper">
+            <div class="tpl-portlet-components">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span class="am-icon-list-alt"></span> <span id="laDevice" name="laDevice"></span>
+                    </div>
+                </div>
+                <div class="tpl-block">
+					<div class="am-u-sm-12">
+						<div class="am-tabs" data-am-tabs="{noSwipe: 1}">
+							  <ul class="am-tabs-nav am-nav am-nav-tabs">
+								<li class="am-active"><a href="#tab1" id="aBaseInfo" name="aBaseInfo"></a></li>
+								<li><a href="#tab2" id="aTimeSettings" name="aTimeSettings"></a></li>
+							  </ul>
+							  <div class="am-tabs-bd">
+								<div class="am-tab-panel am-fade am-in am-active" id="tab1">
+									<form class="am-u-sm-12 am-u-md-6 tpl-amazeui-form am-form am-form-horizontal">
+										<div class="am-form-group">
+											<label class="am-u-sm-4 am-form-label" name="laChannelNum"></label>
+											<div class="am-u-sm-8">
+												<input id="ChannelNum" disabled="disabled">
+											</div>
+										</div>
+										<div class="am-form-group">
+											<label class="am-u-sm-4 am-form-label" name="laDiskNum"></label>
+											<div class="am-u-sm-8">
+												<input id="DiskNum" class="tpl-form-input" disabled="disabled">
+											</div>
+										</div>
+										<div class="am-form-group">
+											<label class="am-u-sm-4 am-form-label" name="laMaxAreaNum"></label>
+											<div class="am-u-sm-8">
+												<input id="MaxAreaNum" class="tpl-form-input" disabled="disabled">
+											</div>
+										</div>
+										<div class="am-form-group">
+											<label class="am-u-sm-4 am-form-label" name="laMaxDevNum"></label>
+											<div class="am-u-sm-8">
+												<input id="MaxDevNum" class="tpl-form-input" disabled="disabled">
+											</div>
+										</div>
+										<div class="am-form-group">
+											<label class="am-u-sm-4 am-form-label" name="laWiredDevNum"></label>
+											<div class="am-u-sm-8">
+												<input id="MaxWiredDevNum" class="tpl-form-input" disabled="disabled">
+											</div>
+										</div>
+										<div class="am-form-group">
+											<label class="am-u-sm-4 am-form-label" name="laDeviceType"></label>
+											<div class="am-u-sm-8">
+												<input id="DeviceType" class="tpl-form-input" disabled="disabled">
+											</div>
+										</div>
+										<div class="am-form-group">
+											<label class="am-u-sm-4 am-form-label" name="laDeviceSn"></label>
+											<div class="am-u-sm-8">
+												<input id="DeviceSn" class="tpl-form-input" disabled="disabled">
+											</div>
+										</div>
+										<div class="am-form-group">
+											<label class="am-u-sm-4 am-form-label" name="laFirmwareVersion"></label>
+											<div class="am-u-sm-8">
+												<input id="FirmwareVersion" class="tpl-form-input" disabled="disabled">
+											</div>
+										</div>
+										<div class="am-form-group">
+											<label class="am-u-sm-4 am-form-label" name="laDeviceID"></label>
+											<div class="am-u-sm-8">
+												<input id="DeviceID" class="tpl-form-input" disabled="disabled">
+											</div>
+										</div>
+										<div class="am-form-group">
+											<label class="am-u-sm-4 am-form-label" name="laReleaseDate"></label>
+											<div class="am-u-sm-8">
+												<input id="ReleaseDate" class="tpl-form-input" disabled="disabled">
+											</div>
+										</div>
+										<div class="am-form-group">
+											<label class="am-u-sm-4 am-form-label" name="laQrcode"></label>
+											<div class="am-u-sm-8" id="devQrcode">
+												
+											</div>
+										</div>
+									</form>
+								</div>
+								<div class="am-tab-panel am-fade" id="tab2">
+									<div class="am-u-sm-12 am-u-md-6 tpl-amazeui-form">
+										<form class="am-form am-form-horizontal">
+											<legend><span name="laNtpTimeSync"></span></legend>
+											<div class="am-form-group">
+												<div class="am-u-sm-4">
+													<label class="am-radio-inline">
+														<input type="radio" name="timeAdjustType" onclick="g_oParaSetting.settimeAdjustType(0)"><span name="laNtpTimeSync"></span>
+													</label>
+												</div>
+											</div>
+											<div class="am-form-group">
+												<label class="am-u-sm-4 am-form-label" name="laServerAdd"></label>
+												<div class="am-u-sm-8">
+													<input type="text" id="HostName" maxlength="64">
+													<small id="hostNametips" class="formtips"></small>
+												</div>
+											</div>
+											<div class="am-form-group">
+												<label class="am-u-sm-4 am-form-label" name="laNtpPort"></label>
+												<div class="am-u-sm-8">
+													<input type="text" id="NTPPort" oninput = "value=value.replace(/[^\d]/g,'')" maxlength="5">
+													<small id="NTPPorttips" class="formtips"></small>
+												</div>
+											</div>
+											<div class="am-form-group">
+												<label class="am-u-sm-4 am-form-label" name="laNtpInterval"></label>
+												<div class="am-u-sm-8">
+													<input type="text" id="NTPInterval" oninput = "value=value.replace(/[^\d]/g,'')" maxlength="5" >
+													<small id="NTPIntervaltips" class="formtips"></small>
+												</div>
+											</div>
+											<div class="am-form-group">
+												<label class="am-u-sm-4 am-form-label" name="laTimeZone"></label>
+												<div class="am-u-sm-8">
+													<select id="timezone" >
+														<option value="CST-12:00:00" id='timezoneOpt1' name='timezoneOpt1'></option>
+														<option value="CST-11:00:00" id='timezoneOpt2' name='timezoneOpt2'></option>
+														<option value="CST-10:00:00" id='timezoneOpt3' name='timezoneOpt3'></option>
+														<option value="CST-9:00:00" id='timezoneOpt4' name='timezoneOpt4'></option>
+														<option value="CST-8:00:00" id='timezoneOpt5' name='timezoneOpt5'></option>
+														<option value="CST-7:00:00" id='timezoneOpt6' name='timezoneOpt6'></option>
+														<option value="CST-6:00:00" id='timezoneOpt7' name='timezoneOpt7'></option>
+														<option value="CST-5:00:00" id='timezoneOpt8' name='timezoneOpt8'></option>
+														<option value="CST-4:30:00" id='timezoneOpt9' name='timezoneOpt9'></option>
+														<option value="CST-4:00:00" id='timezoneOpt10' name='timezoneOpt10'></option>
+														<option value="CST-3:30:00" id='timezoneOpt11' name='timezoneOpt11'></option>
+														<option value="CST-3:00:00" id='timezoneOpt12' name='timezoneOpt12'></option>
+														<option value="CST-2:00:00" id='timezoneOpt13' name='timezoneOpt13'></option>
+														<option value="CST-1:00:00" id='timezoneOpt14' name='timezoneOpt14'></option>
+														<option value="CST+0:00:00" id='timezoneOpt15' name='timezoneOpt15'></option>
+														<option value="CST+1:00:00" id='timezoneOpt16' name='timezoneOpt16'></option>
+														<option value="CST+2:00:00" id='timezoneOpt17' name='timezoneOpt17'></option>
+														<option value="CST+3:00:00" id='timezoneOpt18' name='timezoneOpt18'></option>
+														<option value="CST+3:30:00" id='timezoneOpt19' name='timezoneOpt19'></option>
+														<option value="CST+4:00:00" id='timezoneOpt20' name='timezoneOpt20'></option>
+														<option value="CST+4:30:00" id='timezoneOpt21' name='timezoneOpt21'></option>
+														<option value="CST+5:00:00" id='timezoneOpt22' name='timezoneOpt22'></option>
+														<option value="CST+5:30:00" id='timezoneOpt23' name='timezoneOpt23'></option>
+														<option value="CST+5:45:00" id='timezoneOpt24' name='timezoneOpt24'></option>
+														<option value="CST+6:00:00" id='timezoneOpt25' name='timezoneOpt25'></option>
+														<option value="CST+6:30:00" id='timezoneOpt26' name='timezoneOpt26'></option>
+														<option value="CST+7:00:00" id='timezoneOpt27' name='timezoneOpt27'></option>
+														<option value="CST+8:00:00" id='timezoneOpt28' name='timezoneOpt28'></option>
+														<option value="CST+9:00:00" id='timezoneOpt29' name='timezoneOpt29'></option>
+														<option value="CST+9:30:00" id='timezoneOpt30' name='timezoneOpt30'></option>
+														<option value="CST+10:00:00" id='timezoneOpt31' name='timezoneOpt31'></option>
+														<option value="CST+11:00:00" id='timezoneOpt32' name='timezoneOpt32'></option>
+														<option value="CST+12:00:00" id='timezoneOpt33' name='timezoneOpt33'></option>
+														<option value="CST+13:00:00" id='timezoneOpt34' name='timezoneOpt34'></option>
+													</select>
+												</div>
+											</div>
+											<legend><span name="laManualTimeSync"></span></legend>
+											<div class="am-form-group">
+												<div class="am-u-sm-4">
+													<label class="am-radio-inline">
+														<input type="radio" name="timeAdjustType" onclick="g_oParaSetting.settimeAdjustType(1)"><span name="laManualTimeSync"></span>
+													</label>
+												</div>
+											</div>
+											<div class="am-form-group">
+												<label class="am-u-sm-4 am-form-label" name="laDeviceTime"></label>
+												<div class="am-u-sm-8">
+													<input type="text" id="teDeviceTime" disabled="disabled">
+												</div>
+											</div>
+											<div class="am-form-group">
+												<label class="am-u-sm-4 am-form-label" name="laSelectTime"></label>
+												<div class="am-u-sm-8">
+													<input type="text" id="teSelectTime">							
+													<label class="am-checkbox-inline">
+													<input type="checkbox" id="chTimeSyncWithPC" onclick="g_oParaSetting.timeSyncWithPC()"><span name="laTimeSyncWithPC"></span>
+													</label>
+													
+												</div>
+											</div>
+											<div class="am-form-group">
+												<div class="am-u-sm-8 am-u-sm-push-4 am-btn-group-sm">
+													<button type="button" class="am-btn am-radius am-btn-primary" onclick="g_oParaSetting.setTimeInfo()"><span name="btnSave"></span></button>
+												</div>
+											</div>
+										</form>
+									</div>
+								</div>
+							  </div>
+						</div>
+					</div>
+                </div>
+            </div>
+        </div>
+    </div>
+	<!-- Javascript -->
+	<script type="text/javascript" src="assets/js/LAB.min.js"></script>
+	<script>
+		$LAB
+		.script("assets/js/global_config.js").wait(function () {
+			$LAB
+			.script("assets/js/jquery.min.js").wait()
+			.script("assets/js/amazeui.min.js").wait()
+			.script("assets/js/amazeui.dialog.js").wait()
+			.script("assets/js/amazeui.page.js").wait()
+			.script("assets/js/jquery.cookie.js").wait()
+			.script("assets/js/public.js").wait()
+			.script("assets/js/Translator.js").wait()
+			.script("assets/js/common.js").wait()
+			.script("assets/js/stringtest.js").wait()
+			.script("assets/js/checkform.js").wait()
+			.script("assets/js/ParaSetting.js").wait(function () {
+				g_oParaSetting.initPage();
+			});
+		});
+	</script>
+</body>
+</html>
