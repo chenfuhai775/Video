@@ -216,7 +216,7 @@
 					</div>
 				</div>
 				<div class="am-u-sm-12 am-u-md-9">
-					<div  id="chnFrame" class="am-g" style="border:1px solid red;">
+					<div class="am-g" id="chnFrame">
 					</div>
 					<div class="video_tool">
 						<button class="btn" type="button" title="" id="btnPlay" onClick="g_oIndexPage.RealPlayAll()"><i class="icon-play"></i></button>
@@ -245,29 +245,20 @@
     <script type='text/javascript' src="assets/jsVideo/player.js"></script>
 	<script type="text/javascript" src="assets/js/LAB.min.js"></script>
 	<script>
-		var chnNum = 1;
-		var strHtml = "";
-		if(1 == chnNum)
-		{
-			strHtml = "<canvas id=\"myCanvas1\" class=\"previewVideo\"></canvas>";
-		}else if(4 == chnNum){
-			for(var chn=1; chn<=4; chn++)
-			{
-				strHtml +=	"<canvas id=\"myCanvas"+chn+"\" class=\"previewVideo4 am-u-sm-6\"></canvas>"
-			}
-		}else if(9 == chnNum){
-			for(var chn=1; chn<=9; chn++)
-			{
-				strHtml +=	"<canvas id=\"myCanvas"+chn+"\" class=\"previewVideo9 am-u-sm-8\"></canvas>"
-			}
-		}
-		else if(16 == chnNum){
-			for(var chn=1; chn<=16; chn++)
-			{
-				strHtml +=	"<canvas id=\"myCanvas"+chn+"\" class=\"previewVideo16 am-u-sm-10\"></canvas>"
-			}
-		}
-		$("#chnFrame").html(strHtml);
+		$LAB
+		.script("assets/js/global_config.js").wait(function () {
+			$LAB
+			.script("assets/js/jquery.min.js").wait()
+			.script("assets/js/amazeui.min.js").wait()
+			.script("assets/js/amazeui.dialog.js").wait()
+			.script("assets/js/jquery.cookie.js").wait()
+			.script("assets/js/public.js").wait()
+			.script("assets/js/Translator.js").wait()
+			.script("assets/js/common.js").wait()
+			.script("assets/js/IndexPage.js").wait(function () {
+				g_oIndexPage.initPage();
+			});
+		});
 	</script>
 </body>
 </html>

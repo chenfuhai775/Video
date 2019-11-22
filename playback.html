@@ -33,8 +33,8 @@
 
         .ne-range_track, input.ne-range[type=range] {
             width: 100%;
-            height: 8px;
-            border-radius: 8px;
+            height: 4px;
+            border-radius: 4px;
             margin: .8em 0;
             padding: 0;
             cursor: pointer;
@@ -65,11 +65,11 @@
         .ne-range_tips > span {
             position: relative;
             display: inline-block;
-            padding: 0 3px;
+            padding: 0 1px;
             min-width: 1.2em;
             color: white;
             background: rgba(0, 0, 0, 0.5);
-            border-radius: 3px;
+            border-radius: 1px;
             text-align: center;
         }
 
@@ -100,8 +100,8 @@
         .ne-range {
             display: inline-block;
             position: relative;
-            width: 100%;
-            font-size: 1em;
+            width: 50%;
+            font-size: 0.1em;
         }
 
         .ne-range_thumb {
@@ -116,6 +116,11 @@
 
         .ne-cell-center {
             float: left;
+        }
+
+        #calendar {
+            width: 100%;
+            height: 90%;
         }
 
     </style>
@@ -254,80 +259,70 @@
     <!-- 内容区域 -->
     <div class="tpl-content-wrapper">
         <div class="tpl-portlet-components">
-            <div class="am-u-sm-12 am-u-md-8">
-                <div id="chnFrame" class="am-g" style="border:1px solid red;">
-                </div>
-            </div>
-            <div class="am-u-sm-12 am-u-md-4">
-                <div class="tpl-portlet-title">
-                    <div class="tpl-caption">
-                        <span class="am-icon-shield"></span>
-                        <span id="txtAlarm" name="txtAlarm"></span>
+            <div class="row">
+                <div class="am-u-sm-12 am-u-md-9">
+                    <div id="chnFrame" class="am-g">
+                        <canvas id="myCanvas1" class="previewVideo4 am-u-sm-6"></canvas>
+                        <canvas id="myCanvas2" class="previewVideo4 am-u-sm-6"></canvas>
+                        <canvas id="myCanvas3" class="previewVideo4 am-u-sm-6"></canvas>
+                        <canvas id="myCanvas4" class="previewVideo4 am-u-sm-6"></canvas>
                     </div>
                 </div>
-
-                <div id='wrap'>
-                    <div id='calendar'></div>
-                    <div style='clear:both'></div>
-                </div>
-
-                <div class="tpl-portlet-title">
-                    <div class="tpl-caption">
-                        <span class="am-icon-video-camera"></span> <span id="txtChanel" name="txtChanel"></span>
+                <div class="am-u-sm-12 am-u-md-3">
+                    <div id='wrap'>
+                        <div id='calendar'></div>
+                        <div style='clear:both'></div>
                     </div>
-                </div>
-                <div id="wrapper" class="wrapper">
-                    <ul class="tpl-task-list" id="ChnList">
-
-                    </ul>
-                </div>
-                <div class="tpl-portlet-title">
-                    <div class="tpl-caption">
-                        <span class="am-icon-arrows"></span> <span id="txtPTZ" name="txtPTZ"></span>
+                    <div class="tpl-portlet-title">
+                        <div class="tpl-caption">
+                            <span class="am-icon-video-camera"></span> <span id="txtChanel" name="txtChanel"></span>
+                        </div>
                     </div>
-                </div>
-                <div id="wrapper" class="wrapper">
-                    <div class="ptz-ctrl-l">
-                        <span class="direction"><i class="icon-ptz-left-up"
-                                                   onClick="g_oIndexPage.ptzLeftUp()"></i></span>
-                        <span class="direction"><i class="icon-ptz-up" onClick="g_oIndexPage.ptzUp()"></i></span>
-                        <span class="direction"><i class="icon-ptz-right-up"
-                                                   onClick="g_oIndexPage.ptzRightUp()"></i></span>
-                        <span class="direction"><i class="icon-ptz-left"
-                                                   onClick="g_oIndexPage.ptzLeft()"></i></span>
-                        <span class="direction"><i class="icon-ptz-auto"
-                                                   onClick="g_oIndexPage.ptzAuto()"></i></span>
-                        <span class="direction"><i class="icon-ptz-right"
-                                                   onClick="g_oIndexPage.ptzRight()"></i></span>
-                        <span class="direction"><i class="icon-ptz-left-down"
-                                                   onClick="g_oIndexPage.ptzLeftDown()"></i></span>
-                        <span class="direction"><i class="icon-ptz-down"
-                                                   onClick="g_oIndexPage.ptzDown()"></i></span>
-                        <span class="direction"><i class="icon-ptz-right-down"
-                                                   onClick="g_oIndexPage.ptzRightDown()"></i></span>
-                    </div>
-                    <div class="ptz-ctrl-r">
-							<span class="operation">
-								<i class="icon-ptz-zoomout" id="laZoomout" onClick="g_oIndexPage.ptzZoomOut()"></i>
-								<i class="icon-ptz-zoomin" id="laZoomin" onClick="g_oIndexPage.ptzZoomIn()"></i>
-							</span>
-                        <span class="operation">
-								<i class="icon-ptz-focusout" id="laFocusout" onClick="g_oIndexPage.ptzFocusOut()"></i>
-								<i class="icon-ptz-focusin" id="laFocusin" onClick="g_oIndexPage.ptzFocusIn()"></i>
-							</span>
-                        <span class="operation">
-								<i class="icon-ptz-irisout" id="laIrisout" onClick="g_oIndexPage.ptzIriOut()"></i>
-								<i class="icon-ptz-irisin" id="laIrisin" onClick="g_oIndexPage.ptzIriIn()"></i>
-							</span>
+                    <div id="wrapper" class="wrapper">
+                        <ul class="tpl-task-list" id="ChnList">
+                            <li style="width: 25%;float: left;">
+                                <div   class="checkbox checkbox-inline">
+                                    <label>
+                                        <input onClick="g_oPlayback.playAndStop(this)" type="checkbox" value="1">
+                                        通道1
+                                    </label>
+                                </div>
+                            </li>
+                            <li style="width: 25%;float: left;">
+                                <div class="checkbox checkbox-inline">
+                                    <label>
+                                        <input onClick="g_oPlayback.playAndStop(this)" type="checkbox" value="2">
+                                        通道2
+                                    </label>
+                                </div>
+                            </li>
+                            <li style="width: 25%;float: left;">
+                                <div class="checkbox checkbox-inline">
+                                    <label>
+                                        <input onClick="g_oPlayback.playAndStop(this)" type="checkbox" value="3">
+                                        通道3
+                                    </label>
+                                </div>
+                            </li>
+                            <li style="width: 25%;float: left;">
+                                <div class="checkbox checkbox-inline">
+                                    <label>
+                                        <input onClick="g_oPlayback.playAndStop(this)" type="checkbox" value="4">
+                                        通道4
+                                    </label>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
-        </div>
-        <div id="d3" style="width: 100%;height: 50px;">
-            <div class="ne-cell-center" style="width: 4%">
-                <label class="ne-label" style="color: #333333; font-size: 1vw">0</label>
+            <div class="row">
+                <div class="am-u-sm-12 am-u-md-9">
+                    <input type="range" id="slider" onmouseup="g_oPlayback.changeProgress(this)" name="slider" class="ne-range" value="0"
+                           style="margin-top: 1vw;"/>
+                </div>
+                <div id="CurrTime" class="am-u-sm-12 am-u-md-3" style="line-height: 40px"></div>
             </div>
-            <input type="range" id="slider" name="slider" class="ne-range" value="0" style="margin-top: 1vw;"/>
         </div>
     </div>
 </div>
@@ -348,59 +343,9 @@
             .script("assets/js/playback.js").wait()
             .script("assets/js/fullcalendar.js").wait(function () {
 
-            $.fn.RangeSlider = function (cfg) {
-                this.sliderCfg = {
-                    min: cfg && !isNaN(parseFloat(cfg.min)) ? Number(cfg.min) : null,
-                    max: cfg && !isNaN(parseFloat(cfg.max)) ? Number(cfg.max) : null,
-                    step: cfg && Number(cfg.step) ? cfg.step : 1,
-                    callback: cfg && cfg.callback ? cfg.callback : null
-                };
-                var $input = $(this);
-                var min = this.sliderCfg.min;
-                var max = this.sliderCfg.max;
-                var step = this.sliderCfg.step;
-                var callback = this.sliderCfg.callback;
-
-                $input.attr('min', min)
-                    .attr('max', max)
-                    .attr('step', step);
-
-                $input.bind("input", function (e) {
-                    $input.attr('value', this.value);
-                    $input.css('background-size', this.value * 100.0 / max + '% 100%');
-                    if ($.isFunction(callback)) {
-                        callback(this);
-                    }
-                });
-            };
-            var change = function ($input) {            /*拖动滑块的事件，内容可自行定义*/
-                alert($input.value);
-            }
-
-            $('#slider').RangeSlider({min: 0, max: 864000, step: 1, callback: change});
-
-            var change = function ($input) {            /*拖动滑块的事件，内容可自行定义*/
-                $("#amount").val($input.value);
-            }
-            $('#amount').bind("input", function (e) {
-                var value = 0;            // 过滤下输入内容，因为个别特殊机型手机在input设置了只能输入数字后还是能输入符号
-                if (/^[1-9][0-9]*/.test(this.value)) {
-                    value = this.value;
-                }            // 这里保证输入最大值为550，与滑块一致
-                if (this.value > 550) {
-                    value = 550;
-                    $("#amount").val(550);
-                }            // 这里设置滑块的值和css
-                $("#slider").val(value).css('background-size', value * 100.0 / 550 + '% 100%');
-            });
-            var calendar = $('#calendar').fullCalendar({
-                header: {
-                    left: 'title',
-                    right: 'prev,next today'
-                },
-                height: 200
-            });
+            g_oPlayback.initPage();
         });
+
     });
 </script>
 </body>
