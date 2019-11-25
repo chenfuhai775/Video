@@ -776,6 +776,15 @@ ul.tpl-dropdown-content li>a.tpl-dropdown-content-message:last-child {
 	}
 }
 
+.previewVideoPayBack  {
+    border:1px solid #eee; min-height:340px; padding:0; background:#000;
+}
+@media only screen and (max-width: 1000px) {
+    .previewVideoPayBack  {
+        border:1px solid #eee; min-height:120px; padding:0; background:#000;
+    }
+}
+
 .previewVideo9  {
     border:1px solid #eee; min-height:250px; width:33.3%; padding:0; background:#000;
 }

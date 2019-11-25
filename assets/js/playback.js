@@ -11,31 +11,27 @@ function Playback() {
 Playback.prototype = {
     //主页面初始化函数
     initPage: function () {
-        // g_oPlayback.defaultPlayDate = $.fullCalendar.formatDate(new Date(), "yyyy-MM-dd");
-
-        // this.m_szStartTimeSet = []; /// 开始时间集合
-        // this.m_szEndTimeSet = [];   /// 结束时间集合
-        // this.m_szFileNameSet = [];  /// 文件名集合
-        // this.m_szFileSizeSet = [];  /// 文件大小集合
-        //
-        // getMenuList();//加载菜单列表等文本
-        // this._getDeviceInfo();
-        // ///this._getLogList(5,'lTypeAlarm');//获取报警记录
-        // var szLanguage = $.cookie("language");
-        // translator.initLanguageSelect(szLanguage);
-        // this._lxdPlayback = translator.getLanguageXmlDoc("Playback");
-        // translator.translatePage(this._lxdPlayback, document);
-        // this.initDate();
-        // this.InitChnList(g_oCommon.m_iAnalogChannelNum + g_oCommon.m_iDigitalChannelNum);
-        // this.searchRecordFile(0);
-        //
-        // g_oPlayback.syncMsg();
-        // setInterval("g_oPlayback.syncMsg()", 2000);
 
         this.initProcess();
-
         this.initFullCalendar();
         this.initICheck();
+
+        this.m_szStartTimeSet = []; /// 开始时间集合
+        this.m_szEndTimeSet = [];   /// 结束时间集合
+        this.m_szFileNameSet = [];  /// 文件名集合
+        this.m_szFileSizeSet = [];  /// 文件大小集合
+
+        getMenuList();//加载菜单列表等文本
+        this._getDeviceInfo();
+        ///this._getLogList(5,'lTypeAlarm');//获取报警记录
+        var szLanguage = $.cookie("language");
+        translator.initLanguageSelect(szLanguage);
+        this._lxdPlayback = translator.getLanguageXmlDoc("Playback");
+        translator.translatePage(this._lxdPlayback, document);
+        this.initDate();
+
+        g_oPlayback.syncMsg();
+        setInterval("g_oPlayback.syncMsg()", 2000);
         setTimeout(g_oPlayback.initVideo(), 1);
 
     },
@@ -137,6 +133,7 @@ Playback.prototype = {
                         // bingEvent($this);
                     },
                     events: function (fetchInfo, successCallback, failureCallback) {
+                        console.info(11111);
                         var events = [];
                         $.ajax({
                             type: "POST",
@@ -187,7 +184,7 @@ Playback.prototype = {
                             }
                         });
                     },
-                    editable: true,
+                    // editable: true,
                     eventLimit: true, // allow "more" link when too many events
                 });
                 calendar.render();
@@ -222,11 +219,17 @@ Playback.prototype = {
             }
         };
 
-        for (var iChn = 1; iChn <= 4; iChn++) {
-            this.player[iChn - 1] = new Player();
-            if (this.player[iChn - 1]) {
-                var canvas = document.getElementById('myCanvas' + iChn);
-                this.player[iChn - 1].initPlayer(canvas, this.wAvDecoder);
+        for(var iChn=1; iChn<=4; iChn++)
+        {
+            this.player[iChn-1] = new Player();
+            console.log("aaaaaaaaaaaa");
+            if(this.player[iChn-1])
+            {
+                console.log("bbbbbbbbbbbb");
+                var canvas = document.getElementById('myCanvas'+iChn);
+                console.log(canvas);
+                this.player[iChn-1].initPlayer(canvas, this.wAvDecoder);
+                console.log("dddddddddddddddd");
             }
         }
     },
@@ -267,7 +270,6 @@ Playback.prototype = {
     },
 
     channelChecked: function (event) {
-        console.info(event);
         var object = $(event.target);
         if (this.channels.length == 4) {
             alert("最多选择四个通道");
@@ -321,26 +323,6 @@ Playback.prototype = {
     removeTimescale: function (chnNum) {
         $("#Timescale" + chnNum).remove();
     },
-    //获取通道列表
-    initChnList: function (chnNum) {
-        var chnNo;
-        for (var i = 0; i < chnNum; i++) {
-            var szChannelName = "";
-            chnNo = i + 1;
-            if (szChannelName == "") {
-                if (i < 9) {
-                    szChannelName = "Camera 0" + chnNo;
-                } else {
-                    szChannelName = "Camera " + chnNo;
-                }
-            }
-            var oOption = document.createElement("option");
-            document.getElementById("ChnSel").options.add(oOption);
-            oOption.value = chnNo;
-            oOption.innerText = szChannelName;
-
-        }
-    },
     //初始化日期控件
     initDate: function () {
         var time = new Date();
@@ -363,74 +345,6 @@ Playback.prototype = {
 
         $('#my-start').datepicker().on('changeDate.datepicker.amui', function (event) {
             $('#my-startDate').val($('#my-start').data('date'));
-        });
-    },
-    //搜索录像文件 iType 2:Start 1:next
-    searchRecordFile: function (offSet) {
-        var that = this;
-        var chnNo = $("#ChnSel").val();
-        var iType = $("#iTypeSel").val();
-        var startDate = $("#my-startDate").val();
-        var jsonCmd = {};
-
-        if ((0 == offSet) || (undefined == offSet))
-            that.m_iRcvNum = 0;
-
-        jsonCmd.Cmd = 7117;
-        jsonCmd.Id = "web";
-        jsonCmd.User = 123;
-        jsonCmd.Def = "JSON_CMD_GET_PLAYBACK_FILE_LIST";
-        jsonCmd.Ch = chnNo;
-        jsonCmd.Date = startDate;
-        jsonCmd.Offset = offSet;
-        var jsonStr = JSON.stringify(jsonCmd);
-
-        $.ajax({
-            type: "GET",
-            url: g_oCommon.m_lHttp + g_oCommon.m_szHostName + ":" + g_oCommon.m_lHttpPort + "/jsonStruct_get&" + Base64.encode(jsonStr) + "&",
-            async: !0,
-            timeout: 15e3,
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("If-Modified-Since", "0");
-                xhr.setRequestHeader("Authorization", "Basic " + g_oCommon.m_szUserPwdValue);
-            },
-            success: function (data) {
-                var jsonRcv = $.parseJSON(data);
-                console.log("searchRecordFile data = %s \n", data);
-
-                for (var i = 0; i < jsonRcv.L.length; i++) {
-                    var szStartTime = jsonRcv.L[i].S;
-                    var szStopTime = jsonRcv.L[i].E;
-                    var szFileName = jsonRcv.L[i].N;
-                    var szFileSize = jsonRcv.L[i].B;
-                    if ((undefined == szStartTime) || (undefined == szStopTime) || (undefined == szFileName) || (undefined == szFileSize))
-                        continue;
-
-                    that.m_szStartTimeSet.push(szStartTime);
-                    that.m_szEndTimeSet.push(szStopTime);
-                    that.m_szFileNameSet.push(szFileName);
-                    that.m_szFileSizeSet.push(szFileSize);
-                }
-
-                that.m_iRcvNum = that.m_iRcvNum + jsonRcv.L.length;
-
-                if (jsonRcv.L.length >= 10) {
-                    that.searchRecordFile(that.m_iRcvNum);
-                } else {
-                    console.log("fileLoad ================");
-                    that.fileLoad();
-                }
-
-            },
-            error: function (xhr, textStatus, errorThrown) {
-                if (xhr.status === 403) {
-                    that.m_iRcvNum = 0;
-                    alert("failed");
-                } else {
-                    that.m_iRcvNum = 0;
-                    alert("failed");
-                }
-            }
         });
     },
     //获取录像列表
@@ -585,6 +499,7 @@ Playback.prototype = {
     startRealPlay: function (iChn) {
         var that = this;
         if (0 == that.m_wasmLoaded) {
+            console.log("wasm not load!");
             return;
         }
         console.log("StartRealPlay -------- +++ iChannelNum = %s\n", iChn);

@@ -8,6 +8,12 @@
     <link rel="stylesheet" href="assets/css/main.min.css">
     <link rel="stylesheet" href="assets/css/app.css">
     <link rel="stylesheet" href="assets/skins/all.css?v=1.0.2">
+    <script type="text/javascript" src="assets/jsVideo/jquery.min.js"></script>
+    <script type='text/javascript' src="assets/jsVideo/common.js"></script>
+    <script type='text/javascript' src="assets/jsVideo/pcm-player.js"></script>
+    <script type='text/javascript' src="assets/jsVideo/webgl.js"></script>
+    <script type='text/javascript' src="assets/jsVideo/player.js"></script>
+
 
     <link href='https://use.fontawesome.com/releases/v5.0.6/css/all.css' rel='stylesheet'>
     <link href='assets/packages/core/main.css' rel='stylesheet' />
@@ -301,14 +307,16 @@
             <div class="row">
                 <div class="am-u-sm-12 am-u-md-9">
                     <div class="row" id="chnFrame" class="am-g">
-                        <canvas id="myCanvas1" class="previewVideo4 am-u-sm-6"></canvas>
-                        <canvas id="myCanvas2" class="previewVideo4 am-u-sm-6"></canvas>
-                        <canvas id="myCanvas3" class="previewVideo4 am-u-sm-6"></canvas>
-                        <canvas id="myCanvas4" class="previewVideo4 am-u-sm-6"></canvas>
+                        <canvas id="myCanvas1" class="previewVideoPayBack am-u-sm-6"></canvas>
+                        <canvas id="myCanvas2" class="previewVideoPayBack am-u-sm-6"></canvas>
+                        <canvas id="myCanvas3" class="previewVideoPayBack am-u-sm-6"></canvas>
+                        <canvas id="myCanvas4" class="previewVideoPayBack am-u-sm-6"></canvas>
+                    </div>
+                    <div class="row">
+                        <div style="border: 1px solid red;width:100%;height: 30px;"></div>
                     </div>
                 </div>
                 <div class="am-u-sm-12 am-u-md-3">
-
                     <div id='top' style="display:none">
                         <div class='left'>
                             <div id='theme-system-selector' class='selector'>
@@ -328,8 +336,6 @@
                         <div class='clear'></div>
                     </div>
                     <div id='calendar'></div>
-
-
                     <div class="tpl-portlet-title">
                         <div class="tpl-caption">
                             <span class="am-icon-video-camera"></span> <span id="txtChanel" name="txtChanel"></span>
@@ -390,11 +396,6 @@
             .script("assets/js/playback.js").wait()
             .script("assets/js/icheck.js?v=1.0.2").wait()
             .script("assets/js/custom.min.js?v=1.0.2").wait(function () {
-
-
-
-
-
             g_oPlayback.initPage();
         });
     });
