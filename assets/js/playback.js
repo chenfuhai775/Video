@@ -3,14 +3,14 @@ function Playback() {
     this.channels = new Array();
     //默认播放日期
     this.defaultPlayDate = null;
-	this.player = [];
-	this.m_wasmLoaded = 0;
+    this.player = [];
+    this.m_wasmLoaded = 0;
 }
 
 Playback.prototype = {
     //主页面初始化函数
     initPage: function () {
-        g_oPlayback.defaultPlayDate = $.fullCalendar.formatDate(new Date(), "yyyy-MM-dd");
+        // g_oPlayback.defaultPlayDate = $.fullCalendar.formatDate(new Date(), "yyyy-MM-dd");
         $.fn.RangeSlider = function (cfg) {
             this.sliderCfg = {
                 min: cfg && !isNaN(parseFloat(cfg.min)) ? Number(cfg.min) : null,
@@ -50,11 +50,13 @@ Playback.prototype = {
             selectable: true,
             dayClick: function (date, allDay, jsEvent, view) {
                 var currDate = $.fullCalendar.formatDate(date, "yyyy-MM-dd");
-                if (Dates.includes(currDate)) {
+                if (g_oPlayback.defaultPlayDate != currDate && Dates.includes(currDate)) {
                     g_oPlayback.defaultPlayDate = currDate;
                     $("#CurrTime").text(g_oPlayback.formatSeconds(0));
                     if (![null].includes(g_oPlayback.channels) && g_oPlayback.channels.length > 0) {
-                        alert("开始播放视频!");
+                        g_oPlayback.channels.forEach((item, index, array) => {
+                            g_oPlayback.StartRealPlay(item);
+                        });
                     }
                 }
             },
@@ -66,6 +68,18 @@ Playback.prototype = {
                     }
                 });
             }
+        });
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_flat-red', //每个风格都对应一个，这个不能写错哈。
+            radioClass: 'icheckbox_flat-red'
+        });
+
+        $('input').on('ifChecked', function (event) {
+            g_oPlayback.channelChecked(event);
+        });
+
+        $('input').on('ifUnchecked', function (event) {
+            g_oPlayback.channelUnChecked(event);
         });
 
         this.m_szStartTimeSet = []; /// 开始时间集合
@@ -98,19 +112,19 @@ Playback.prototype = {
             if ((null != g_oPlayback.player[chn]) && (undefined != g_oPlayback.player[chn])) {
                 switch (objData.t) {
                     case kInitDecoderRsp:
-						g_oPlayback.player[chn].onInitDecoder(objData);
+                        g_oPlayback.player[chn].onInitDecoder(objData);
                         break;
 
                     case kVideoFrame:
-						g_oPlayback.player[chn].onVideoFrame(objData);
+                        g_oPlayback.player[chn].onVideoFrame(objData);
                         break;
 
                     case kAudioFrame:
-						g_oPlayback.player[chn].onAudioFrame(objData);
+                        g_oPlayback.player[chn].onAudioFrame(objData);
                         break;
 
                     case kDecoderStatusReq:
-						g_oPlayback.m_wasmLoaded = 1;
+                        g_oPlayback.m_wasmLoaded = 1;
                         break;
                 }
             }
@@ -123,7 +137,6 @@ Playback.prototype = {
                 this.player[iChn - 1].initPlayer(canvas, this.wAvDecoder);
             }
         }
-
     },
 
     _getDeviceInfo: function () {
@@ -161,25 +174,58 @@ Playback.prototype = {
         console.info("播放到：" + g_oPlayback.formatSeconds(object.value));
     },
 
-    playAndStop: function (object) {
-
-        if (object.checked == true) {
-            if (this.channels.length == 3) {
-                alert("最多选择四个通道");
-                object.checked = false;
-            } else {
-                this.channels.push(object.value);
-                if (![null].includes(g_oPlayback.defaultPlayDate)) {
-                    alert("播放" + g_oPlayback.defaultPlayDate + object.value + "号通道视频!");
-                }
-            }
+    channelChecked: function (event) {
+        console.info(event);
+        var object = $(event.target);
+        if (this.channels.length == 4) {
+            alert("最多选择四个通道");
         } else {
+            this.channels.push(object.val());
             if (![null].includes(g_oPlayback.defaultPlayDate)) {
-                alert("关闭" + g_oPlayback.defaultPlayDate + object.value + "号通道视频!");
+                var TimeArr = ['08:00:00', '12:00:00', '13:00:00', '15:00:00', '16:00:05', '18:05:08'];
+                // var TimeArr = ['08:00:00', '12:00:00'];
+                g_oPlayback.AddTimescale(object, TimeArr);
+                g_oPlayback.StartRealPlay(object.val());
+                console.info("播放" + g_oPlayback.defaultPlayDate + object.value + "号通道视频!");
             }
-            this.channels.splice(this.channels.indexOf(object.value), 1);
         }
-        console.info(this.channels);
+    },
+
+    channelUnChecked: function (event) {
+        var object = $(event.target);
+        if (![null].includes(g_oPlayback.defaultPlayDate)) {
+            g_oPlayback.RemoveTimescale(object.val());
+            g_oPlayback.StopRealPlay(object.val());
+            console.info("关闭" + g_oPlayback.defaultPlayDate + object.val() + "号通道视频!");
+        }
+        this.channels.splice(this.channels.indexOf(object.value), 1);
+    },
+
+    AddTimescale: function (object, arrTimeSpace) {
+        var channelText = object.parent().parent().find("label").text();
+        var divBlock = $("<div class='timescaleBlock' id='Timescale" + object.val() + "' ><span style='float:left;line-height: 20px;font-size: 10px;color: #EC7063'>" + channelText + "</span></div>");
+        var leftLength = 0;
+        for (var i = 0; i < arrTimeSpace.length / 2; i++) {
+            var div = $("<div class='noVideo'></div>");
+            var startSecond = g_oPlayback.getTimeScale(arrTimeSpace[2 * i]);
+            var endSecond = g_oPlayback.getTimeScale(arrTimeSpace[2 * i + 1]);
+            var marginLeft = (startSecond - leftLength) / 86400 * 100;
+            var width = (endSecond - startSecond) / 86400 * 100;
+            leftLength = endSecond;
+            div.css({'float': 'left', 'margin-left': marginLeft + "%", 'width': width + '%'});
+            divBlock.append(div);
+        }
+        $("#timescale").append(divBlock);
+    },
+    getTimeScale: function (date) {
+        var arrDate = date.split(":");
+        var H = parseInt(arrDate[0]);       //获取当前小时数(0-23)
+        var M = parseInt(arrDate[1]);     //获取当前分钟数(0-59)
+        var S = parseInt(arrDate[2]);     //获取当前秒数(0-59)
+        return H * 3600 + M * 60 + S;
+    },
+    RemoveTimescale: function (chnNum) {
+        $("#Timescale" + chnNum).remove();
     },
     //获取通道列表
     InitChnList: function (chnNum) {
@@ -440,6 +486,28 @@ Playback.prototype = {
         S = S > 9 ? S : "0" + S;
         result = H + " : " + M + " : " + S;
         return g_oPlayback.defaultPlayDate + " " + result;
+    },
+
+    StartRealPlay: function (iChn) {
+        var that = this;
+        if (0 == that.m_wasmLoaded) {
+            return;
+        }
+        console.log("StartRealPlay -------- +++ iChannelNum = %s\n", iChn);
+        if (iChn > (g_oCommon.m_iAnalogChannelNum + g_oCommon.m_iDigitalChannelNum)) {
+            return;
+        }
+        if (this.player[iChn - 1]) {
+            var url = 'ws://' + g_oCommon.m_szHostName + ':8082/';
+            this.player[iChn - 1].playInner(url, iChn - 1, 0);
+        }
+    },
+
+    StopRealPlay: function (iChn) {
+        if (null != this.player[iChn - 1]) {
+            this.player[iChn - 1].stop();
+        }
+        console.log("StopRealPlay -------- +++ iChannelNum = %s\n", iChn);
     }
 }
 

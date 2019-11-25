@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="assets/css/main.min.css">
     <link rel="stylesheet" href="assets/css/app.css">
     <link rel="stylesheet" href="assets/css/fullcalendar.css">
+    <link rel="stylesheet" href="assets/skins/all.css?v=1.0.2">
     <style>
         /**
          * @range.css
@@ -123,9 +124,27 @@
             height: 90%;
         }
 
+        #timescale {
+            margin-top: 5px;
+            width: 100%;
+        }
+
+        .timescaleBlock {
+            height: 20px;
+            background-color: #40C35F;
+            margin-bottom: 2px;
+            text-align: left;
+        }
+
+        .noVideo {
+            background-color: #ccc;
+            width: 200px;
+            opacity: 0.8;
+            height: 20px;
+            float: left;
+        }
     </style>
 </head>
-
 <body data-type="index">
 <header class="am-topbar am-topbar-inverse admin-header">
     <!-- logo -->
@@ -261,7 +280,7 @@
         <div class="tpl-portlet-components">
             <div class="row">
                 <div class="am-u-sm-12 am-u-md-9">
-                    <div id="chnFrame" class="am-g">
+                    <div class="row" id="chnFrame" class="am-g">
                         <canvas id="myCanvas1" class="previewVideo4 am-u-sm-6"></canvas>
                         <canvas id="myCanvas2" class="previewVideo4 am-u-sm-6"></canvas>
                         <canvas id="myCanvas3" class="previewVideo4 am-u-sm-6"></canvas>
@@ -280,37 +299,20 @@
                     </div>
                     <div id="wrapper" class="wrapper">
                         <ul class="tpl-task-list" id="ChnList">
-                            <li style="width: 25%;float: left;">
-                                <div   class="checkbox checkbox-inline">
-                                    <label>
-                                        <input onClick="g_oPlayback.playAndStop(this)" type="checkbox" value="1">
-                                        通道1
-                                    </label>
-                                </div>
+                            <li style="float: left;width: 25%;">
+                                <input value="1" tabindex="1" type="checkbox" id="input-1">
+                                <label for="input-1"><span>通道1</span></label>
                             </li>
-                            <li style="width: 25%;float: left;">
-                                <div class="checkbox checkbox-inline">
-                                    <label>
-                                        <input onClick="g_oPlayback.playAndStop(this)" type="checkbox" value="2">
-                                        通道2
-                                    </label>
-                                </div>
+                            <li style="float: left;width: 25%;">
+                                <input value="2" tabindex="2" type="checkbox" id="input-2">
+                                <label for="input-2"><span>通道2</span></label>
                             </li>
-                            <li style="width: 25%;float: left;">
-                                <div class="checkbox checkbox-inline">
-                                    <label>
-                                        <input onClick="g_oPlayback.playAndStop(this)" type="checkbox" value="3">
-                                        通道3
-                                    </label>
-                                </div>
-                            </li>
-                            <li style="width: 25%;float: left;">
-                                <div class="checkbox checkbox-inline">
-                                    <label>
-                                        <input onClick="g_oPlayback.playAndStop(this)" type="checkbox" value="4">
-                                        通道4
-                                    </label>
-                                </div>
+                            <li style="float: left;width: 25%;">
+                                <input value="3" tabindex="3" type="checkbox" id="input-3">
+                                <label for="input-3"><span>通道3</span></label>
+                            <li style="float: left;width: 25%;">
+                                <input value="4" tabindex="4" type="checkbox" id="input-4">
+                                <label for="input-4"><span>通道4</span></label>
                             </li>
                         </ul>
                     </div>
@@ -318,10 +320,16 @@
             </div>
             <div class="row">
                 <div class="am-u-sm-12 am-u-md-9">
-                    <input type="range" id="slider" onmouseup="g_oPlayback.changeProgress(this)" name="slider" class="ne-range" value="0"
+                    <input type="range" id="slider" onmouseup="g_oPlayback.changeProgress(this)" name="slider"
+                           class="ne-range" value="0"
                            style="margin-top: 1vw;"/>
                 </div>
-                <div id="CurrTime" class="am-u-sm-12 am-u-md-3" style="line-height: 40px"></div>
+                <div id="CurrTime" class="am-u-sm-12 am-u-md-3" style="line-height: 40px">选择播放时间</div>
+            </div>
+            <div class="row">
+                <div class="am-u-sm-12 am-u-md-9">
+                    <div id="timescale"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -341,6 +349,9 @@
             .script("assets/js/Translator.js").wait()
             .script("assets/js/common.js").wait()
             .script("assets/js/playback.js").wait()
+
+            .script("assets/js/icheck.js?v=1.0.2").wait()
+            .script("assets/js/custom.min.js?v=1.0.2").wait()
             .script("assets/js/fullcalendar.js").wait(function () {
 
             g_oPlayback.initPage();
