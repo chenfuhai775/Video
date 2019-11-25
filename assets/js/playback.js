@@ -5,12 +5,41 @@ function Playback() {
     this.defaultPlayDate = null;
     this.player = [];
     this.m_wasmLoaded = 0;
+    this.Dates = ['2018-11-21', '2019-11-21', '2019-11-22'];
 }
 
 Playback.prototype = {
     //主页面初始化函数
     initPage: function () {
         // g_oPlayback.defaultPlayDate = $.fullCalendar.formatDate(new Date(), "yyyy-MM-dd");
+
+        // this.m_szStartTimeSet = []; /// 开始时间集合
+        // this.m_szEndTimeSet = [];   /// 结束时间集合
+        // this.m_szFileNameSet = [];  /// 文件名集合
+        // this.m_szFileSizeSet = [];  /// 文件大小集合
+        //
+        // getMenuList();//加载菜单列表等文本
+        // this._getDeviceInfo();
+        // ///this._getLogList(5,'lTypeAlarm');//获取报警记录
+        // var szLanguage = $.cookie("language");
+        // translator.initLanguageSelect(szLanguage);
+        // this._lxdPlayback = translator.getLanguageXmlDoc("Playback");
+        // translator.translatePage(this._lxdPlayback, document);
+        // this.initDate();
+        // this.InitChnList(g_oCommon.m_iAnalogChannelNum + g_oCommon.m_iDigitalChannelNum);
+        // this.searchRecordFile(0);
+        //
+        // g_oPlayback.syncMsg();
+        // setInterval("g_oPlayback.syncMsg()", 2000);
+
+        this.initProcess();
+
+        this.initFullCalendar();
+        this.initICheck();
+        setTimeout(g_oPlayback.initVideo(), 1);
+
+    },
+    initProcess: function () {
         $.fn.RangeSlider = function (cfg) {
             this.sliderCfg = {
                 min: cfg && !isNaN(parseFloat(cfg.min)) ? Number(cfg.min) : null,
@@ -36,71 +65,134 @@ Playback.prototype = {
                 }
             });
         };
-
         $('#slider').RangeSlider({min: 0, max: 86400, step: 1, callback: g_oPlayback.change});
-        var Dates = ['2018-11-21', '2019-11-21', '2019-11-22'];
-        var calendar = $('#calendar').fullCalendar({
-            header: {
-                left: 'prev,next',
-                center: 'title',
-                right: ''
-            },
-            height: 200,
-            width: 300,
-            selectable: true,
-            dayClick: function (date, allDay, jsEvent, view) {
-                var currDate = $.fullCalendar.formatDate(date, "yyyy-MM-dd");
-                if (g_oPlayback.defaultPlayDate != currDate && Dates.includes(currDate)) {
-                    g_oPlayback.defaultPlayDate = currDate;
-                    $("#CurrTime").text(g_oPlayback.formatSeconds(0));
-                    if (![null].includes(g_oPlayback.channels) && g_oPlayback.channels.length > 0) {
-                        g_oPlayback.channels.forEach((item, index, array) => {
-                            g_oPlayback.StartRealPlay(item);
-                        });
-                    }
-                }
-            },
-            events: function (start, end, timezone, callback) {
-                Dates.forEach((item, index, array) => {
-                    var currDate = new Date(item);
-                    if (start <= currDate && currDate <= end) {
-                        $($(".fc-day[data-date='" + $.fullCalendar.formatDate(currDate, "yyyy-MM-dd") + "']")[0]).css("background-color", "#FCF8E3");
-                    }
-                });
-            }
-        });
+    },
+
+    initICheck: function () {
         $('input').iCheck({
             checkboxClass: 'icheckbox_flat-red', //每个风格都对应一个，这个不能写错哈。
             radioClass: 'icheckbox_flat-red'
         });
-
         $('input').on('ifChecked', function (event) {
             g_oPlayback.channelChecked(event);
         });
-
         $('input').on('ifUnchecked', function (event) {
             g_oPlayback.channelUnChecked(event);
         });
+    },
 
-        this.m_szStartTimeSet = []; /// 开始时间集合
-        this.m_szEndTimeSet = [];   /// 结束时间集合
-        this.m_szFileNameSet = [];  /// 文件名集合
-        this.m_szFileSizeSet = [];  /// 文件大小集合
+    initFullCalendar: function () {
+        let calendarEl = document.getElementById('calendar');
+        let calendar;
 
-        getMenuList();//加载菜单列表等文本
-        this._getDeviceInfo();
-        ///this._getLogList(5,'lTypeAlarm');//获取报警记录
-        var szLanguage = $.cookie("language");
-        translator.initLanguageSelect(szLanguage);
-        this._lxdPlayback = translator.getLanguageXmlDoc("Playback");
-        translator.translatePage(this._lxdPlayback, document);
-        this.initDate();
-        this.InitChnList(g_oCommon.m_iAnalogChannelNum + g_oCommon.m_iDigitalChannelNum);
-        this.searchRecordFile(0);
+        initThemeChooser({
+            init: function (themeSystem) {
+                calendar = new FullCalendar.Calendar(calendarEl, {
+                    plugins: ['bootstrap', 'interaction', 'dayGrid', 'timeGrid', 'list'],
+                    header: {
+                        left: '',
+                        center: 'title',
+                        right: 'prev,next today'
+                    },
+                    themeSystem: themeSystem,
+                    contentHeight: 320,
+                    editable: false,
+                    businessHours: true, // display business hours
+                    navLinks: false, // can click day/week names to navigate views
+                    selectable: true,
+                    selectMirror: true,
+                    eventColor: '#378006',
+                    select: function (arg) {
+                        var currDate = arg.startStr;
+                        if (g_oPlayback.defaultPlayDate != currDate && g_oPlayback.Dates.includes(currDate)) {
+                            g_oPlayback.defaultPlayDate = currDate;
+                            $("#CurrTime").text(g_oPlayback.formatSeconds(0));
+                            if (![null].includes(g_oPlayback.channels) && g_oPlayback.channels.length > 0) {
+                                g_oPlayback.channels.forEach((item, index, array) => {
+                                    g_oPlayback.startRealPlay(item);
+                                });
+                            }
+                        }
+                    },
+                    eventClick: function (arg) {
+                        // console.info(arg.event.id);
+                        // if (confirm('delete event?')) {
+                        //     arg.event.remove()
+                        // }
+                    },
+                    eventRender: function (eventObj, $el) {
 
-        g_oPlayback.syncMsg();
-        setInterval("g_oPlayback.syncMsg()", 2000);
-        setTimeout(g_oPlayback.initVideo(), 1);
+
+                        // var $this = $(element);
+                        // $this.html("<div class='wz_title'>" + "你好" + "</div>");
+                    },
+                    eventAfterRender: function (event, element, view) {
+                        // //data 这个日程对应的数据   element 日程对应的dom元素   e 事件
+                        var $this = $(element);
+                        // //通过 操作 $this 可以从新定义dom
+                        // // 通过 wz_title wz_name 自定义css样式  例如：
+                        $this.html("<div class='wz_title'>" + "你好" + "</div>");
+                        // $this.after("<div class='wz_name'>" + data.name + "</div>");
+                        // //绑定事件
+                        // bingEvent($this);
+                    },
+                    events: function (fetchInfo, successCallback, failureCallback) {
+                        var events = [];
+                        $.ajax({
+                            type: "POST",
+                            url: "*",
+                            dataType: "json",
+                            success: function (result) {
+                                console.info(result.msg);
+                                if (result.status) {
+                                    console.info(result.obj.jobScheduleList);
+                                    var jobScheduleList = result.obj.jobScheduleList;
+                                    if (jobScheduleList.length > 1) {
+                                        $.each(jobScheduleList, function (i, j) {
+                                            events.push({
+                                                id: j.id,
+                                                title: j.jobAbstract,
+                                                start: new Date(j.startDate).format('yyyy-MM-dd hh:mm:ss'),           // will be parsed
+                                                end: new Date(j.endDate).format('yyyy-MM-dd hh:mm:ss')
+                                            });
+                                        })
+                                        //回调渲染日历
+                                        successCallback(events);
+                                    }
+                                }
+                            },
+                            error: function () {
+                                events.push({
+                                    id: 1,
+                                    title: 'v',
+                                    // textColor: '#ABB5C2',
+                                    textColor: '#fff',
+                                    className: 'myBlock',
+                                    start: '2019-11-21',           // will be parsed
+                                    end: '2019-11-21',
+                                    borderColor: '#fff'
+                                }, {
+                                    id: 1,
+                                    title: 'v',
+                                    allDay: false,
+                                    // textColor: '#ABB5C2',
+                                    textColor: '#fff',
+                                    start: '2019-11-22',          // will be parsed
+                                    end: '2019-11-22',
+                                    className: 'myBlock',
+                                    borderColor: '#fff',
+                                    allDay: true
+                                });
+                                successCallback(events);
+                            }
+                        });
+                    },
+                    editable: true,
+                    eventLimit: true, // allow "more" link when too many events
+                });
+                calendar.render();
+            },
+        });
     },
 
     initVideo: function () {
@@ -184,8 +276,8 @@ Playback.prototype = {
             if (![null].includes(g_oPlayback.defaultPlayDate)) {
                 var TimeArr = ['08:00:00', '12:00:00', '13:00:00', '15:00:00', '16:00:05', '18:05:08'];
                 // var TimeArr = ['08:00:00', '12:00:00'];
-                g_oPlayback.AddTimescale(object, TimeArr);
-                g_oPlayback.StartRealPlay(object.val());
+                g_oPlayback.addTimescale(object, TimeArr);
+                g_oPlayback.startRealPlay(object.val());
                 console.info("播放" + g_oPlayback.defaultPlayDate + object.value + "号通道视频!");
             }
         }
@@ -194,14 +286,14 @@ Playback.prototype = {
     channelUnChecked: function (event) {
         var object = $(event.target);
         if (![null].includes(g_oPlayback.defaultPlayDate)) {
-            g_oPlayback.RemoveTimescale(object.val());
-            g_oPlayback.StopRealPlay(object.val());
+            g_oPlayback.removeTimescale(object.val());
+            g_oPlayback.stopRealPlay(object.val());
             console.info("关闭" + g_oPlayback.defaultPlayDate + object.val() + "号通道视频!");
         }
         this.channels.splice(this.channels.indexOf(object.value), 1);
     },
 
-    AddTimescale: function (object, arrTimeSpace) {
+    addTimescale: function (object, arrTimeSpace) {
         var channelText = object.parent().parent().find("label").text();
         var divBlock = $("<div class='timescaleBlock' id='Timescale" + object.val() + "' ><span style='float:left;line-height: 20px;font-size: 10px;color: #EC7063'>" + channelText + "</span></div>");
         var leftLength = 0;
@@ -217,6 +309,7 @@ Playback.prototype = {
         }
         $("#timescale").append(divBlock);
     },
+
     getTimeScale: function (date) {
         var arrDate = date.split(":");
         var H = parseInt(arrDate[0]);       //获取当前小时数(0-23)
@@ -224,11 +317,12 @@ Playback.prototype = {
         var S = parseInt(arrDate[2]);     //获取当前秒数(0-59)
         return H * 3600 + M * 60 + S;
     },
-    RemoveTimescale: function (chnNum) {
+
+    removeTimescale: function (chnNum) {
         $("#Timescale" + chnNum).remove();
     },
     //获取通道列表
-    InitChnList: function (chnNum) {
+    initChnList: function (chnNum) {
         var chnNo;
         for (var i = 0; i < chnNum; i++) {
             var szChannelName = "";
@@ -488,7 +582,7 @@ Playback.prototype = {
         return g_oPlayback.defaultPlayDate + " " + result;
     },
 
-    StartRealPlay: function (iChn) {
+    startRealPlay: function (iChn) {
         var that = this;
         if (0 == that.m_wasmLoaded) {
             return;
@@ -503,7 +597,7 @@ Playback.prototype = {
         }
     },
 
-    StopRealPlay: function (iChn) {
+    stopRealPlay: function (iChn) {
         if (null != this.player[iChn - 1]) {
             this.player[iChn - 1].stop();
         }

@@ -7,8 +7,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="assets/css/main.min.css">
     <link rel="stylesheet" href="assets/css/app.css">
-    <link rel="stylesheet" href="assets/css/fullcalendar.css">
     <link rel="stylesheet" href="assets/skins/all.css?v=1.0.2">
+
+    <link href='https://use.fontawesome.com/releases/v5.0.6/css/all.css' rel='stylesheet'>
+    <link href='assets/packages/core/main.css' rel='stylesheet' />
+    <link href='assets/packages/bootstrap/main.css' rel='stylesheet' />
+    <link href='assets/packages/timegrid/main.css' rel='stylesheet' />
+    <link href='assets/packages/daygrid/main.css' rel='stylesheet' />
+    <link href='assets/packages/list/main.css' rel='stylesheet' />
+    <script src='assets/packages/core/main.js'></script>
+    <script src='assets/packages/interaction/main.js'></script>
+    <script src='assets/packages/bootstrap/main.js'></script>
+    <script src='assets/packages/daygrid/main.js'></script>
+    <script src='assets/packages/timegrid/main.js'></script>
+    <script src='assets/packages/list/main.js'></script>
+    <script src='assets/packages/js/theme-chooser.js'></script>
     <style>
         /**
          * @range.css
@@ -120,8 +133,8 @@
         }
 
         #calendar {
-            width: 100%;
-            height: 90%;
+            max-width: 400px;
+            margin: 0 auto;
         }
 
         #timescale {
@@ -142,6 +155,13 @@
             opacity: 0.8;
             height: 20px;
             float: left;
+        }
+        .myBlock{
+            width: 20px;height: 20px;
+            margin-left: 10px;
+            text-align: center;
+            border-radius: 50%;
+            /*background: url("assets/img/1.png") no-repeat;*/
         }
     </style>
 </head>
@@ -288,10 +308,28 @@
                     </div>
                 </div>
                 <div class="am-u-sm-12 am-u-md-3">
-                    <div id='wrap'>
-                        <div id='calendar'></div>
-                        <div style='clear:both'></div>
+
+                    <div id='top' style="display:none">
+                        <div class='left'>
+                            <div id='theme-system-selector' class='selector'>
+                                Theme System:
+                                <select>
+                                    <option value='bootstrap' selected>Bootstrap 4</option>
+                                </select>
+                            </div>
+                            <div data-theme-system="bootstrap" class='selector' style='display:none'>
+                                Theme Name:
+                                <select>
+                                    <option value='' selected>Default</option>
+                                </select>
+                            </div>
+                            <span id='loading' style='display:none'>loading theme...</span>
+                        </div>
+                        <div class='clear'></div>
                     </div>
+                    <div id='calendar'></div>
+
+
                     <div class="tpl-portlet-title">
                         <div class="tpl-caption">
                             <span class="am-icon-video-camera"></span> <span id="txtChanel" name="txtChanel"></span>
@@ -337,6 +375,7 @@
 <!-- Javascript -->
 <script type="text/javascript" src="assets/js/LAB.min.js"></script>
 <script>
+
     $LAB
         .script("assets/js/global_config.js").wait(function () {
         $LAB
@@ -349,14 +388,15 @@
             .script("assets/js/Translator.js").wait()
             .script("assets/js/common.js").wait()
             .script("assets/js/playback.js").wait()
-
             .script("assets/js/icheck.js?v=1.0.2").wait()
-            .script("assets/js/custom.min.js?v=1.0.2").wait()
-            .script("assets/js/fullcalendar.js").wait(function () {
+            .script("assets/js/custom.min.js?v=1.0.2").wait(function () {
+
+
+
+
 
             g_oPlayback.initPage();
         });
-
     });
 </script>
 </body>
