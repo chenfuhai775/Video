@@ -14,7 +14,7 @@
     <script type='text/javascript' src="assets/jsVideo/webgl.js"></script>
     <script type='text/javascript' src="assets/jsVideo/player.js"></script>
 
-
+    <link rel="stylesheet" href="assets/rangeSlider/css/ion.rangeSlider.min.css">
     <link href='https://use.fontawesome.com/releases/v5.0.6/css/all.css' rel='stylesheet'>
     <link href='assets/packages/core/main.css' rel='stylesheet' />
     <link href='assets/packages/bootstrap/main.css' rel='stylesheet' />
@@ -29,115 +29,6 @@
     <script src='assets/packages/list/main.js'></script>
     <script src='assets/packages/js/theme-chooser.js'></script>
     <style>
-        /**
-         * @range.css
-        **/
-        .ne-range_thumb, input.ne-range[type=range]::-webkit-slider-thumb {
-            width: 2em;
-            height: 2em;
-            border-radius: 50%;
-            border: 0 /**1px solid #45bd5c*/;
-            background-color: #5cdf84;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.21);
-            -webkit-transition: border-color 0.15s, background-color 0.15s;
-            transition: border-color 0.15s, background-color 0.15s;
-            cursor: pointer;
-            background-clip: padding-box;
-            box-sizing: border-box;
-        }
-
-        .ne-range_thumb:active, input.ne-range[type=range]::-webkit-slider-thumb:active {
-            border: 0 /**1px solid #45bd5c*/;
-            background-color: #5cdf84;
-        }
-
-        .ne-range_track, input.ne-range[type=range] {
-            width: 100%;
-            height: 4px;
-            border-radius: 4px;
-            margin: .8em 0;
-            padding: 0;
-            cursor: pointer;
-            border: 0; /**background-color: #45bd5c;*/
-            background: -webkit-linear-gradient(#40c35f, #40c35f) no-repeat #cccccc;
-            background-size: 0% 100%;
-        }
-
-        .ne-range_track > span {
-            display: block;
-            width: 0%;
-            height: 100%;
-            background-color: #40c35f;
-        }
-
-        .ne-range_tips {
-            position: absolute;
-            margin-top: -2em;
-            width: 6em;
-            text-align: center;
-            margin-left: -3em;
-        }
-
-        .ne-range_thumb > .ne-range_tips {
-            margin-left: -2.15em;
-        }
-
-        .ne-range_tips > span {
-            position: relative;
-            display: inline-block;
-            padding: 0 1px;
-            min-width: 1.2em;
-            color: white;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 1px;
-            text-align: center;
-        }
-
-        .ne-range_tips > span::after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            bottom: -0.25em;
-            margin-left: -0.3em;
-            border: 0.3em solid rgba(0, 0, 0, 0.5);
-            border-right-color: transparent;
-            border-left-color: transparent;
-            border-bottom: 0;
-        }
-
-        /*Real Range*/
-        input.ne-range[type=range] {
-            position: relative;
-            outline: 0;
-            -webkit-appearance: none !important;
-        }
-
-        input.ne-range[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none !important;
-        }
-
-        /*Virtual Range*/
-        .ne-range {
-            display: inline-block;
-            position: relative;
-            width: 50%;
-            font-size: 0.1em;
-        }
-
-        .ne-range_thumb {
-            position: absolute;
-            top: 0;
-            margin-left: -0.85em;
-        }
-
-        .ne-range_thumb.ondrag > .ne-range_tips {
-            visibility: visible;
-        }
-
-        .ne-cell-center {
-            float: left;
-        }
-
         #calendar {
             max-width: 400px;
             margin: 0 auto;
@@ -149,14 +40,15 @@
         }
 
         .timescaleBlock {
-            height: 20px;
-            background-color: #40C35F;
+            height: 10px;
+            /*background-color: #40C35F;*/
+            background-color: #D7DCE4;
             margin-bottom: 2px;
             text-align: left;
         }
 
         .noVideo {
-            background-color: #ccc;
+            background-color: #40C35F;
             width: 200px;
             opacity: 0.8;
             height: 20px;
@@ -170,6 +62,7 @@
             /*background: url("assets/img/1.png") no-repeat;*/
         }
     </style>
+
 </head>
 <body data-type="index">
 <header class="am-topbar am-topbar-inverse admin-header">
@@ -313,7 +206,16 @@
                         <canvas id="myCanvas4" class="previewVideoPayBack am-u-sm-6"></canvas>
                     </div>
                     <div class="row">
-                        <div style="border: 1px solid red;width:100%;height: 30px;"></div>
+                        <div class="video_tool">
+                            <button class="btn" type="button" title="播放" id="btnPlay" onclick="g_oPlayback.realPlayAll(this)"><i class="icon-play"></i></button>
+                            <button class="btn" type="button" title="慢" id="btnCapture" onclick="g_oPlayback.CapturePicture()"><i class="icon-slow"></i></button>
+                            <button class="btn" type="button" title="快" id="btnRecord" onclick="g_oPlayback.RecordAll()"><i class="icon-fast"></i></button>
+                            <button class="btn" type="button" title="声音" id="btnSound" onclick="g_oPlayback.btOpenVoice()"><i class="icon-sound-on"></i></button>
+                            <button class="btn" type="button" title="X1" id="FastX1" onclick="g_oPlayback.fastForward(1)"><i class="icon-sound-on"></i></button>
+                            <button class="btn" type="button" title="X2" id="FastX2" onclick="g_oPlayback.fastForward(2)"><i class="icon-sound-on"></i></button>
+                            <button class="btn" type="button" title="X3" id="FastX3" onclick="g_oPlayback.fastForward(3)"><i class="icon-sound-on"></i></button>
+                            <span id="currTime"  style="line-height: 30px;float: right;font-weight: bold;"></span>
+                        </div>
                     </div>
                 </div>
                 <div class="am-u-sm-12 am-u-md-3">
@@ -343,32 +245,15 @@
                     </div>
                     <div id="wrapper" class="wrapper">
                         <ul class="tpl-task-list" id="ChnList">
-                            <li style="float: left;width: 25%;">
-                                <input value="1" tabindex="1" type="checkbox" id="input-1">
-                                <label for="input-1"><span>通道1</span></label>
-                            </li>
-                            <li style="float: left;width: 25%;">
-                                <input value="2" tabindex="2" type="checkbox" id="input-2">
-                                <label for="input-2"><span>通道2</span></label>
-                            </li>
-                            <li style="float: left;width: 25%;">
-                                <input value="3" tabindex="3" type="checkbox" id="input-3">
-                                <label for="input-3"><span>通道3</span></label>
-                            <li style="float: left;width: 25%;">
-                                <input value="4" tabindex="4" type="checkbox" id="input-4">
-                                <label for="input-4"><span>通道4</span></label>
-                            </li>
+
                         </ul>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="am-u-sm-12 am-u-md-9">
-                    <input type="range" id="slider" onmouseup="g_oPlayback.changeProgress(this)" name="slider"
-                           class="ne-range" value="0"
-                           style="margin-top: 1vw;"/>
+                   <div id="sliderBar"></div>
                 </div>
-                <div id="CurrTime" class="am-u-sm-12 am-u-md-3" style="line-height: 40px">选择播放时间</div>
             </div>
             <div class="row">
                 <div class="am-u-sm-12 am-u-md-9">
@@ -395,7 +280,10 @@
             .script("assets/js/common.js").wait()
             .script("assets/js/playback.js").wait()
             .script("assets/js/icheck.js?v=1.0.2").wait()
+            .script("assets/rangeSlider/js/ion.rangeSlider.min.js").wait()
             .script("assets/js/custom.min.js?v=1.0.2").wait(function () {
+
+
             g_oPlayback.initPage();
         });
     });

@@ -954,6 +954,7 @@ ul.tpl-dropdown-content li>a.tpl-dropdown-content-message:last-child {
 	border:#eee 1px solid;
 	min-height:50px;
 	padding:7px;
+    width: 100%;
 }
 .video_tool .btn {
   padding: 3px 5px;

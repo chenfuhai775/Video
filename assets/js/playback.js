@@ -5,7 +5,8 @@ function Playback() {
     this.defaultPlayDate = null;
     this.player = [];
     this.m_wasmLoaded = 0;
-    this.Dates = ['2018-11-21', '2019-11-21', '2019-11-22'];
+    this.m_MaxChannelNumber = 4;
+    this.videoDates = [];
 }
 
 Playback.prototype = {
@@ -14,7 +15,7 @@ Playback.prototype = {
 
         this.initProcess();
         this.initFullCalendar();
-        this.initICheck();
+        this.initChannels();
 
         this.m_szStartTimeSet = []; /// 开始时间集合
         this.m_szEndTimeSet = [];   /// 结束时间集合
@@ -28,40 +29,31 @@ Playback.prototype = {
         translator.initLanguageSelect(szLanguage);
         this._lxdPlayback = translator.getLanguageXmlDoc("Playback");
         translator.translatePage(this._lxdPlayback, document);
-        this.initDate();
 
         g_oPlayback.syncMsg();
         setInterval("g_oPlayback.syncMsg()", 2000);
         setTimeout(g_oPlayback.initVideo(), 1);
-
     },
     initProcess: function () {
-        $.fn.RangeSlider = function (cfg) {
-            this.sliderCfg = {
-                min: cfg && !isNaN(parseFloat(cfg.min)) ? Number(cfg.min) : null,
-                max: cfg && !isNaN(parseFloat(cfg.max)) ? Number(cfg.max) : null,
-                step: cfg && Number(cfg.step) ? cfg.step : 1,
-                callback: cfg && cfg.callback ? cfg.callback : null
-            };
-            var $input = $(this);
-            var min = this.sliderCfg.min;
-            var max = this.sliderCfg.max;
-            var step = this.sliderCfg.step;
-            var callback = this.sliderCfg.callback;
 
-            $input.attr('min', min)
-                .attr('max', max)
-                .attr('step', step);
+        $("#sliderBar").ionRangeSlider({
+            min: 0,
+            max: 86400,
+            step: 1,
+            grid: true,
+            hide_min_max: true,
+            from: 0,
+            skin: 'modern',
+            prettify_enabled: true,
+            prettify_separator: ",",
+            prettify: function (val) {
+                return g_oPlayback.formatSeconds(val);
+            },
+            onChange: function (val) {
+                console.info(val);
+            }
+        });
 
-            $input.bind("input", function (e) {
-                $input.attr('value', this.value);
-                $input.css('background-size', this.value * 100.0 / max + '% 100%');
-                if ($.isFunction(callback)) {
-                    callback(this);
-                }
-            });
-        };
-        $('#slider').RangeSlider({min: 0, max: 86400, step: 1, callback: g_oPlayback.change});
     },
 
     initICheck: function () {
@@ -74,6 +66,36 @@ Playback.prototype = {
         });
         $('input').on('ifUnchecked', function (event) {
             g_oPlayback.channelUnChecked(event);
+        });
+    },
+
+    initChannels: function () {
+        var json = {}
+        json.Cmd = 1501;
+        json.Id = "123123123";
+        json.User = 12345678;
+        json.Def = "JSON_VIDEO_LIST";
+        let jsonReqStr = JSON.stringify(json);
+        $.ajax({
+            type: "POST",
+            url: g_oCommon.m_lHttp + g_oCommon.m_szHostName + ":" + g_oCommon.m_lHttpPort + "/jsonStruct_get&" + Base64.encode(jsonReqStr) + "&",
+            dataType: "json",
+            success: function (result) {
+                if (0 == result.Ack) {
+                    for (var i = 0; i < result.L.length; i++) {
+                        var div = $(" <li style=\"float: left;width: 25%;\">\n" +
+                            "                                <input value=" + result.L[i].C + " tabindex=" + result.L[i].C + " type=\"checkbox\" id=\"input-" + result.L[i].C + "\">\n" +
+                            "                                <label for=\"input-" + result.L[i].C + "\"><span>通道" + result.L[i].C + "</span></label>\n" +
+                            "                            </li>");
+
+                        $("#ChnList").append(div);
+                    }
+                }
+                g_oPlayback.initICheck();
+            },
+            error: function () {
+                console.info("获取通道信息发生错误");
+            }
         });
     },
 
@@ -97,90 +119,57 @@ Playback.prototype = {
                     navLinks: false, // can click day/week names to navigate views
                     selectable: true,
                     selectMirror: true,
-                    eventColor: '#378006',
+                    eventColor: '#A78CF1',
                     select: function (arg) {
-                        var currDate = arg.startStr;
-                        if (g_oPlayback.defaultPlayDate != currDate && g_oPlayback.Dates.includes(currDate)) {
+                        let currDate = arg.startStr;
+                        if (g_oPlayback.defaultPlayDate != currDate && g_oPlayback.videoDates.includes(currDate)) {
                             g_oPlayback.defaultPlayDate = currDate;
-                            $("#CurrTime").text(g_oPlayback.formatSeconds(0));
-                            if (![null].includes(g_oPlayback.channels) && g_oPlayback.channels.length > 0) {
-                                g_oPlayback.channels.forEach((item, index, array) => {
-                                    g_oPlayback.startRealPlay(item);
-                                });
-                            }
+                            g_oPlayback.clearTimeTick();
+                            g_oPlayback.searchTimeTick();
+                            $("#currTime").text(currDate);
                         }
                     },
                     eventClick: function (arg) {
-                        // console.info(arg.event.id);
-                        // if (confirm('delete event?')) {
-                        //     arg.event.remove()
-                        // }
                     },
                     eventRender: function (eventObj, $el) {
-
-
-                        // var $this = $(element);
-                        // $this.html("<div class='wz_title'>" + "你好" + "</div>");
-                    },
-                    eventAfterRender: function (event, element, view) {
-                        // //data 这个日程对应的数据   element 日程对应的dom元素   e 事件
-                        var $this = $(element);
-                        // //通过 操作 $this 可以从新定义dom
-                        // // 通过 wz_title wz_name 自定义css样式  例如：
-                        $this.html("<div class='wz_title'>" + "你好" + "</div>");
-                        // $this.after("<div class='wz_name'>" + data.name + "</div>");
-                        // //绑定事件
-                        // bingEvent($this);
                     },
                     events: function (fetchInfo, successCallback, failureCallback) {
-                        console.info(11111);
-                        var events = [];
+                        g_oPlayback.videoDates.length = 0;
+                        var start = new Date(fetchInfo.start).Format('yyyy-MM');
+                        var end = new Date(fetchInfo.end).Format('yyyy-MM');
+                        var json = {}
+                        json.Cmd = 7115;
+                        json.Id = "123123123";
+                        json.User = 12345678;
+                        json.Def = "JSON_CMD_GET_PLAYBACK_DAY";
+                        json.Month = "2019-11";
+                        let jsonReqStr = JSON.stringify(json);
+                        let events = [];
                         $.ajax({
                             type: "POST",
-                            url: "*",
+                            url: g_oCommon.m_lHttp + g_oCommon.m_szHostName + ":" + g_oCommon.m_lHttpPort + "/jsonStruct_get&" + Base64.encode(jsonReqStr) + "&",
                             dataType: "json",
                             success: function (result) {
-                                console.info(result.msg);
-                                if (result.status) {
-                                    console.info(result.obj.jobScheduleList);
-                                    var jobScheduleList = result.obj.jobScheduleList;
-                                    if (jobScheduleList.length > 1) {
-                                        $.each(jobScheduleList, function (i, j) {
-                                            events.push({
-                                                id: j.id,
-                                                title: j.jobAbstract,
-                                                start: new Date(j.startDate).format('yyyy-MM-dd hh:mm:ss'),           // will be parsed
-                                                end: new Date(j.endDate).format('yyyy-MM-dd hh:mm:ss')
-                                            });
-                                        })
-                                        //回调渲染日历
-                                        successCallback(events);
+                                if (0 == result.Ack) {
+                                    for (var i = 0; i < result.Day.length; i++) {
+                                        var day = result.Day[i] + 1;
+                                        var event = {};
+                                        event.id = i;
+                                        event.title = 'v';
+                                        event.textColor = '#fff';
+                                        event.className = 'myBlock';
+                                        event.start = json.Month + "-" + day;         // will be parsed
+                                        event.end = json.Month + "-" + day;
+                                        event.borderColor = '#fff'
+                                        events.push(event);
+                                        g_oPlayback.videoDates.push(event.start);
                                     }
+                                    //回调渲染日历
+                                    successCallback(events);
                                 }
                             },
                             error: function () {
-                                events.push({
-                                    id: 1,
-                                    title: 'v',
-                                    // textColor: '#ABB5C2',
-                                    textColor: '#fff',
-                                    className: 'myBlock',
-                                    start: '2019-11-21',           // will be parsed
-                                    end: '2019-11-21',
-                                    borderColor: '#fff'
-                                }, {
-                                    id: 1,
-                                    title: 'v',
-                                    allDay: false,
-                                    // textColor: '#ABB5C2',
-                                    textColor: '#fff',
-                                    start: '2019-11-22',          // will be parsed
-                                    end: '2019-11-22',
-                                    className: 'myBlock',
-                                    borderColor: '#fff',
-                                    allDay: true
-                                });
-                                successCallback(events);
+                                console.info("获取录像信息发生错误");
                             }
                         });
                     },
@@ -219,19 +208,96 @@ Playback.prototype = {
             }
         };
 
-        for(var iChn=1; iChn<=4; iChn++)
-        {
-            this.player[iChn-1] = new Player();
-            console.log("aaaaaaaaaaaa");
-            if(this.player[iChn-1])
-            {
-                console.log("bbbbbbbbbbbb");
-                var canvas = document.getElementById('myCanvas'+iChn);
-                console.log(canvas);
-                this.player[iChn-1].initPlayer(canvas, this.wAvDecoder);
-                console.log("dddddddddddddddd");
+        for (var iChn = 1; iChn <= 4; iChn++) {
+            this.player[iChn - 1] = new Player();
+            if (this.player[iChn - 1]) {
+                var canvas = document.getElementById('myCanvas' + iChn);
+                this.player[iChn - 1].initPlayer(canvas, this.wAvDecoder);
             }
         }
+    },
+
+    searchTimeTick: function (event) {
+        if (![null].includes(g_oPlayback.defaultPlayDate)) {
+            let channels = [null, undefined].includes(event) ? g_oPlayback.channels : event.val();
+            let json = {};
+            json.Cmd = 7116;
+            json.Id = "123123123";
+            json.User = 12345678;
+            json.Def = "JSON_CMD_GET_PLAYBACK_TIME_AXIS";
+            json.Date = g_oPlayback.defaultPlayDate;
+            for (let i = 0; i < channels.length; i++) {
+                json.Ch = channels[i];
+                let jsonReqStr = JSON.stringify(json);
+                $.ajax({
+                    type: "POST",
+                    url: g_oCommon.m_lHttp + g_oCommon.m_szHostName + ":" + g_oCommon.m_lHttpPort + "/jsonStruct_get&" + Base64.encode(jsonReqStr) + "&",
+                    dataType: "json",
+                    success: function (result) {
+                        if (0 == result.Ack) {
+                            event = $("#input-" + channels[i]);
+                            g_oPlayback.addTimescale(event, result.L);
+                        }
+                    },
+                    error: function () {
+                        console.info("获取获取当天回放时间轴失败");
+                    }
+                });
+            }
+
+        }
+    },
+
+    clearTimeTick: function () {
+        $("#timescale").empty();
+    },
+    //快进
+    fastForward: function (number) {
+        let slider = $("#sliderBar").data("ionRangeSlider");
+        if (1 == number) {
+            slider.update({
+                max: 86400,
+                from: 0,
+            });
+        } else if (2 == number) {
+            slider.update({
+                max: 3600,
+                from: 0,
+            });
+        } else {
+            slider.update({
+                max: 960,
+                from: 0,
+            });
+        }
+    },
+
+    channelChecked: function (event) {
+        let object = $(event.target);
+        this.channels.push(object.val());
+        g_oPlayback.changeChannels();
+        this.searchTimeTick(object);
+    },
+
+    channelUnChecked: function (event) {
+        var object = $(event.target);
+        this.channels.splice(this.channels.indexOf(object.val()), 1);
+        g_oPlayback.changeChannels();
+        this.removeTimescale(object.val());
+    },
+
+    changeChannels: function (maxChannelNumber) {
+        var m_maxChannelNumber = maxChannelNumber == null ? g_oPlayback.m_MaxChannelNumber : maxChannelNumber;
+        $("input").not("input:checked").each(function () {
+            if (g_oPlayback.channels.length < m_maxChannelNumber)
+                $(this).iCheck('enable');
+            else
+                $(this).iCheck('disable');
+        });
+    },
+
+    change: function ($input) {
+        $("#CurrTime").text(g_oPlayback.formatSeconds($input.value));
     },
 
     _getDeviceInfo: function () {
@@ -261,50 +327,16 @@ Playback.prototype = {
         $("#btnNineScreen").attr("title", g_oCommon.getNodeValue("btnNineScreen"));
     },
 
-    change: function ($input) {
-        $("#CurrTime").text(g_oPlayback.formatSeconds($input.value));
-    },
-
-    changeProgress: function (object) {
-        console.info("播放到：" + g_oPlayback.formatSeconds(object.value));
-    },
-
-    channelChecked: function (event) {
-        var object = $(event.target);
-        if (this.channels.length == 4) {
-            alert("最多选择四个通道");
-        } else {
-            this.channels.push(object.val());
-            if (![null].includes(g_oPlayback.defaultPlayDate)) {
-                var TimeArr = ['08:00:00', '12:00:00', '13:00:00', '15:00:00', '16:00:05', '18:05:08'];
-                // var TimeArr = ['08:00:00', '12:00:00'];
-                g_oPlayback.addTimescale(object, TimeArr);
-                g_oPlayback.startRealPlay(object.val());
-                console.info("播放" + g_oPlayback.defaultPlayDate + object.value + "号通道视频!");
-            }
-        }
-    },
-
-    channelUnChecked: function (event) {
-        var object = $(event.target);
-        if (![null].includes(g_oPlayback.defaultPlayDate)) {
-            g_oPlayback.removeTimescale(object.val());
-            g_oPlayback.stopRealPlay(object.val());
-            console.info("关闭" + g_oPlayback.defaultPlayDate + object.val() + "号通道视频!");
-        }
-        this.channels.splice(this.channels.indexOf(object.value), 1);
-    },
-
-    addTimescale: function (object, arrTimeSpace) {
-        var channelText = object.parent().parent().find("label").text();
-        var divBlock = $("<div class='timescaleBlock' id='Timescale" + object.val() + "' ><span style='float:left;line-height: 20px;font-size: 10px;color: #EC7063'>" + channelText + "</span></div>");
-        var leftLength = 0;
-        for (var i = 0; i < arrTimeSpace.length / 2; i++) {
-            var div = $("<div class='noVideo'></div>");
-            var startSecond = g_oPlayback.getTimeScale(arrTimeSpace[2 * i]);
-            var endSecond = g_oPlayback.getTimeScale(arrTimeSpace[2 * i + 1]);
-            var marginLeft = (startSecond - leftLength) / 86400 * 100;
-            var width = (endSecond - startSecond) / 86400 * 100;
+    addTimescale: function (event, arrTimeSpace) {
+        let channelText = event.parent().parent().find("label").text();
+        let divBlock = $("<div class='timescaleBlock' id='Timescale" + event.val() + "' ><span style='float:left;line-height: 20px;font-size: 10px;color: #EC7063'>" + +"</span></div>");
+        let leftLength = 0;
+        for (let i = 0; i < arrTimeSpace.length; i++) {
+            let div = $("<div class='noVideo'></div>");
+            let startSecond = g_oPlayback.getTimeScale(arrTimeSpace[i].S);
+            let endSecond = g_oPlayback.getTimeScale(arrTimeSpace[i].E);
+            let marginLeft = (startSecond - leftLength) / 86400 * 100;
+            let width = (endSecond - startSecond) / 86400 * 100;
             leftLength = endSecond;
             div.css({'float': 'left', 'margin-left': marginLeft + "%", 'width': width + '%'});
             divBlock.append(div);
@@ -319,136 +351,9 @@ Playback.prototype = {
         var S = parseInt(arrDate[2]);     //获取当前秒数(0-59)
         return H * 3600 + M * 60 + S;
     },
-
+    //移除通道录像
     removeTimescale: function (chnNum) {
         $("#Timescale" + chnNum).remove();
-    },
-    //初始化日期控件
-    initDate: function () {
-        var time = new Date();
-        var year = time.getFullYear();
-        var month = time.getMonth() + 1;
-        var newMonth = month > 9 ? month : "0" + month;  //月
-        var day = time.getDate();
-        var newDay = day > 9 ? day : "0" + day;  //日
-        $("#my-startDate").val(year + "-" + newMonth + "-" + newDay);
-        var selLanguage = "";
-        var szLanguage = $.cookie("language");
-        if (szLanguage === "en") selLanguage = "en_US";
-        else if (szLanguage === "zh") selLanguage = "zh_CN";
-
-        $('#my-start').datepicker({
-            //locale:  'en_US',默认是中文
-            locale: selLanguage,
-            format: 'yyyy-mm-dd'
-        });
-
-        $('#my-start').datepicker().on('changeDate.datepicker.amui', function (event) {
-            $('#my-startDate').val($('#my-start').data('date'));
-        });
-    },
-    //获取录像列表
-    fileLoad: function () {
-        var that = this;
-        var nums = 8; //每页出现的数量
-        var pages = Math.ceil(that.m_iRcvNum / nums); //得到总页数
-        var laFirstPage = translator.translateNode(that._lxdPlayback, "laFirstPage");
-        var laLastPage = translator.translateNode(that._lxdPlayback, "laLastPage");
-        var laRecordTime = translator.translateNode(that._lxdPlayback, "laRecordTime");
-        var laFileSize = translator.translateNode(that._lxdPlayback, "laFileSize");
-
-        var thisDate = function (curr) {
-            var list = '',
-                last = curr * nums - 1;
-            last = last >= that.m_iRcvNum ? (that.m_iRcvNum - 1) : last;
-            for (var i = (curr * nums - nums); i <= last; i++) {
-                var szStartTime = that.m_szStartTimeSet[i];
-                var szStopTime = that.m_szEndTimeSet[i];
-                var szFileName = that.m_szFileNameSet[i];
-                var szFileSize = that.m_szFileSizeSet[i];
-                var SzUrl = szFileName;
-
-                var dateBegin = new Date("2019/01/01 " + szStartTime);//将-转化为/
-                var dateEnd = new Date("2019/01/01 " + szStopTime);//将-转化为/
-                console.log("dateBegin = %s, dateEnd = %s", "2019/01/01 " + szStartTime, "2019/01/01 " + szStopTime);
-                console.log("dateBegin = %s, dateEnd = %s", dateBegin, dateEnd);
-                var dateDiff = dateEnd.getTime() - dateBegin.getTime();//时间差的毫秒数
-                var dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000));//计算出相差天数
-                var leave1 = dateDiff % (24 * 3600 * 1000)    //计算天数后剩余的毫秒数
-                var hours = Math.floor(leave1 / (3600 * 1000))//计算出小时数
-                //计算相差分钟数
-                var leave2 = leave1 % (3600 * 1000)    //计算小时数后剩余的毫秒数
-                var minutes = Math.floor(leave2 / (60 * 1000))//计算相差分钟数
-                //计算相差秒数
-                var leave3 = leave2 % (60 * 1000)      //计算分钟数后剩余的毫秒数
-                var seconds = Math.round(leave3 / 1000)
-                var TimeLength = minutes + "‘" + seconds + "“";
-
-                list += "<div class='am-u-sm-12 am-u-md-6 am-u-lg-3'>";
-                list += "	<div class='tpl-table-images-content'>";
-                list += "		<div class='tpl-table-images-content-i-time'><span>" + szStartTime + "</span><span class='am-fr'>" + TimeLength + "</span></div>";
-                list += "			<a href='javascript:void(0);' onclick='g_oPlayback.videoPlay(\"" + SzUrl + "\",\"" + szStartTime + "\")' class='tpl-table-images-content-i'><img src='assets/img/a1.png'></a>";
-                list += "		<div class='tpl-table-images-content-i-time'><span>" + szFileSize + "</span><a href='" + SzUrl + "'><span class='am-icon-download am-fr'></span></a></div>";
-                list += "	</div>";
-                list += "</div>";
-            }
-            return list;
-        };
-        //返回的是一个page示例，拥有实例方法
-        var $page = $("#page").page({
-            pages: pages, //页数
-            curr: 1, //当前页
-            theme: 'default', //主题
-            groups: 5, //连续显示分页数
-            prev: '<', //若不显示，设置false即可
-            next: '>', //若不显示，设置false即可
-            //first: "首页",
-            first: laFirstPage,
-            //last: "尾页", //false则不显示
-            last: laLastPage,
-            before: function (context, next) { //加载前触发，如果没有执行next()则中断加载
-                console.log('开始加载...');
-                context.time = (new Date()).getTime(); //只是演示，并没有什么卵用，可以保存一些数据到上下文中
-                next();
-            },
-            render: function (context, $element, index) { //渲染[context：对this的引用，$element：当前元素，index：当前索引]
-                //逻辑处理
-                if (index == 'last') { //虽然上面设置了last的文字为尾页，但是经过render处理，结果变为最后一页
-                    //$element.find('a').html('最后一页');
-                    $element.find('a').html(laLastPage);
-                    return $element; //如果有返回值则使用返回值渲染
-                }
-                return false; //没有返回值则按默认处理
-            },
-            after: function (context, next) { //加载完成后触发
-                var time = (new Date()).getTime(); //没有什么卵用的演示
-                console.log('分页组件加载完毕，耗时：' + (time - context.time) + 'ms');
-                next();
-            },
-            /*
-             * 触发分页后的回调，如果首次加载时后端已处理好分页数据则需要在after中判断终止或在jump中判断first是否为假
-             */
-            jump: function (context, first) {
-                console.log('当前第：' + context.option.curr + "页");
-                $("#content").html(thisDate(context.option.curr));
-            }
-        });
-    },
-
-    videoPlay: function (url, time) {
-        document.getElementById('videoTitle').innerHTML = time;
-        var modalContentHtml = ""
-        modalContentHtml += "<video src='" + url + "' controls autoplay width='100%' style='outline:none;'></video>";
-        document.getElementById('modalContent').innerHTML = modalContentHtml;
-        $('#videoPlay').modal({
-            relatedTarget: this,
-            width: 640,
-            height: 400,
-        });
-        $('#videoPlay').find('.am-close-spin').on('click', function () {
-            document.getElementById('modalContent').innerHTML = "";
-        });
-
     },
 
     displayLastMsg: function () {
@@ -493,7 +398,8 @@ Playback.prototype = {
         S = parseInt(((value % 3600) % 60));
         S = S > 9 ? S : "0" + S;
         result = H + " : " + M + " : " + S;
-        return g_oPlayback.defaultPlayDate + " " + result;
+        // return g_oPlayback.defaultPlayDate + " " + result;
+        return result;
     },
 
     startRealPlay: function (iChn) {
@@ -517,6 +423,34 @@ Playback.prototype = {
             this.player[iChn - 1].stop();
         }
         console.log("StopRealPlay -------- +++ iChannelNum = %s\n", iChn);
+    },
+
+    realPlayAll: function (event) {
+        if (![null].includes(g_oPlayback.defaultPlayDate)) {
+            if ($(event).children(0).hasClass("icon-play")) {
+                g_oPlayback.channels.forEach((item, index, array) => {
+                    this.startRealPlay(item);
+                });
+                $(event).children(0).removeClass("icon-play");
+                $(event).children(0).addClass("icon-stop");
+                this.changeChannels(-1);
+            } else {
+                g_oPlayback.channels.forEach((item, index, array) => {
+                    this.stopRealPlay(item);
+                });
+                $(event).children(0).removeClass("icon-stop");
+                $(event).children(0).addClass("icon-play");
+                this.changeChannels(10);
+            }
+        }
+    },
+
+    stopRealPlayAll: function () {
+        if (![null].includes(g_oPlayback.defaultPlayDate)) {
+            g_oPlayback.channels.forEach((item, index, array) => {
+                this.stopRealPlay(item);
+            });
+        }
     }
 }
 
