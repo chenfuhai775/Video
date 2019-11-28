@@ -1,5 +1,6 @@
 function Playback() {
     this._lxdPlayback = null;  //Playback.xml
+    //[{channelNumber:0-通道,checked:是否选中[0-否,1-是],play:是否播放中[0-否,1-是],stream:码流 0-主,1-子}]
     this.channels = new Array();
     //默认播放日期
     this.defaultPlayDate = null;
@@ -83,11 +84,14 @@ Playback.prototype = {
             success: function (result) {
                 if (0 == result.Ack) {
                     for (var i = 0; i < result.L.length; i++) {
-                        var div = $(" <li style=\"float: left;width: 25%;\">\n" +
-                            "                                <input value=" + result.L[i].C + " tabindex=" + result.L[i].C + " type=\"checkbox\" id=\"input-" + result.L[i].C + "\">\n" +
-                            "                                <label for=\"input-" + result.L[i].C + "\"><span>通道" + result.L[i].C + "</span></label>\n" +
-                            "                            </li>");
+                        let div = "<li style='width: 50%;float: left;'>";
+                        div += "     <input value=" + (parseInt(result.L[i].C) + 1) + " tabindex=" + (parseInt(result.L[i].C) + 1) + " type=\"checkbox\" id=\"input-" + (parseInt(result.L[i].C) + 1) + "\">\n";
 
+                        div += "    <img src='assets/img/sub_stream.png' id='Stream" + (parseInt(result.L[i].C) + 1) + "Img' onclick='g_oPlayback.switchStream(" + (parseInt(result.L[i].C) + 1) + ")'/>";
+                        div += "    <img src='assets/img/Camera_1.png' id='Camera" + (parseInt(result.L[i].C) + 1) + "Img' onclick='g_oPlayback.StartRealPlay(" + (parseInt(result.L[i].C) + 1) + ")'/>";
+                        //div += "<span style='cursor:pointer;color:#000000;-moz-user-select:none;' id='Selected" + (parseInt(result.L[i].C) + 1) + "color'  onClick='g_oIndexPage.SetFontColor(" + (parseInt(result.L[i].C) + 1) + ")' onDblClick='g_oIndexPage.StartRealPlay(" + (parseInt(result.L[i].C) + 1) + ")' onselectstart='return false;'>&nbsp;Camera" + (parseInt(result.L[i].C) + 1) + "</span>";
+                        div += "     <label for=\"input-" + (parseInt(result.L[i].C) + 1) + "\"><span>Camera" + (parseInt(result.L[i].C) + 1) + "</span></label>\n";
+                        div += "</li>";
                         $("#ChnList").append(div);
                     }
                 }
@@ -184,7 +188,13 @@ Playback.prototype = {
         this.wAvDecoder.onmessage = function (evt) {
             var objData = evt.data;
             var chn = parseInt(objData.chn, 10);
-
+            let index = 0;
+            let channel = g_oPlayback.channels.find(x => {
+                return x.channelNumber === (chn + 1);
+            });
+            if (![null, undefined].includes(channel)) {
+                index = g_oPlayback.channels.indexOf(channel);
+            }
             if ((null != g_oPlayback.player[chn]) && (undefined != g_oPlayback.player[chn])) {
                 switch (objData.t) {
                     case kInitDecoderRsp:
@@ -192,11 +202,11 @@ Playback.prototype = {
                         break;
 
                     case kVideoFrame:
-                        g_oPlayback.player[chn].onVideoFrame(objData);
+                        g_oPlayback.player[index].onVideoFrame(objData);
                         break;
 
                     case kAudioFrame:
-                        g_oPlayback.player[chn].onAudioFrame(objData);
+                        g_oPlayback.player[index].onAudioFrame(objData);
                         break;
 
                     case kDecoderStatusReq:
@@ -208,6 +218,7 @@ Playback.prototype = {
 
         g_oPlayback.initCanvas();
     },
+
     initCanvas: function () {
         for (var iChn = 1; iChn <= 4; iChn++) {
             this.player[iChn - 1] = new Player();
@@ -217,9 +228,19 @@ Playback.prototype = {
             }
         }
     },
+
     searchTimeTick: function (event) {
         if (![null].includes(g_oPlayback.defaultPlayDate)) {
-            let channels = [null, undefined].includes(event) ? g_oPlayback.channels : event.val();
+            let channels = [];
+            if ([null, undefined].includes(event))
+                channels = g_oPlayback.channels;
+            else {
+                let channelNumber = parseInt(event.val());
+                channels.push({'channelNumber': channelNumber});
+            }
+            channels.sort(function (a, b) {
+                return a.channelNumber - b.channelNumber;
+            });
             let json = {};
             json.Cmd = 7116;
             json.Id = "123123123";
@@ -227,7 +248,7 @@ Playback.prototype = {
             json.Def = "JSON_CMD_GET_PLAYBACK_TIME_AXIS";
             json.Date = g_oPlayback.defaultPlayDate;
             for (let i = 0; i < channels.length; i++) {
-                json.Ch = channels[i];
+                json.Ch = channels[i].channelNumber;
                 let jsonReqStr = JSON.stringify(json);
                 $.ajax({
                     type: "POST",
@@ -235,7 +256,7 @@ Playback.prototype = {
                     dataType: "json",
                     success: function (result) {
                         if (0 == result.Ack) {
-                            event = $("#input-" + channels[i]);
+                            event = $("#input-" + channels[i].channelNumber);
                             g_oPlayback.addTimescale(event, result.L);
                         }
                     },
@@ -248,7 +269,7 @@ Playback.prototype = {
         }
     },
 
-    reDrawTimeTick:function(start){
+    reDrawTimeTick: function (start) {
         g_oPlayback.defaultPlayDate = new Date(start).Format("yyyy-MM-dd");
         g_oPlayback.clearTimeTick();
         g_oPlayback.searchTimeTick();
@@ -281,22 +302,58 @@ Playback.prototype = {
 
     channelChecked: function (event) {
         let object = $(event.target);
-        this.channels.push(object.val());
+        let channelNumber = parseInt(object.val());
+        g_oPlayback.updateChannelStatus(channelNumber, {'checked': true, 'stream': 1});
         g_oPlayback.changeChannels();
         this.searchTimeTick(object);
     },
 
     channelUnChecked: function (event) {
-        var object = $(event.target);
-        this.channels.splice(this.channels.indexOf(object.val()), 1);
+        let object = $(event.target);
+        let channelNumber = parseInt(object.val());
+        g_oPlayback.updateChannelStatus(channelNumber, {'checked': false});
         g_oPlayback.changeChannels();
         this.removeTimescale(object.val());
     },
 
+    updateChannelStatus: function (channelNumber, params) {
+        let channel = this.channels.find(x => {
+            return x.channelNumber === channelNumber;
+        });
+        if ([null, undefined].includes(channel)) {
+            params.channelNumber = channelNumber;
+            this.channels.push(params);
+        } else {
+            for (let item in params) {
+                channel[item] = params[item];
+            }
+        }
+        console.info(this.channels);
+    },
+
+    switchStream: function (channelNumber) {
+        var szId = "#Stream" + channelNumber + "Img";
+        let channel = this.channels.find(x => {
+            return x.channelNumber === channelNumber;
+        });
+        var params = {'stream': 0};
+        if (![null, undefined].includes(channel)) {
+            params['stream'] = channel.stream == 0 ? 1 : 0;
+        }
+        if (params['stream'] === 0) {
+            $(szId).attr("src", "assets/img/main_stream.png").attr("title", parent.translator.translateNode(this._lxdIndexPage, "mainStream"));
+        } else {
+            $(szId).attr("src", "assets/img/sub_stream.png").attr("title", parent.translator.translateNode(this._lxdIndexPage, "subStream"));
+        }
+        g_oPlayback.updateChannelStatus(channelNumber, params);
+    },
+
+    //更新channel状态
     changeChannels: function (maxChannelNumber) {
-        var m_maxChannelNumber = maxChannelNumber == null ? g_oPlayback.m_MaxChannelNumber : maxChannelNumber;
+        let m_maxChannelNumber = maxChannelNumber == null ? g_oPlayback.m_MaxChannelNumber : maxChannelNumber;
+        let checkTotal = g_oPlayback.channels.filter(x => x.checked === true).length;
         $("input").not("input:checked").each(function () {
-            if (g_oPlayback.channels.length < m_maxChannelNumber)
+            if (checkTotal < m_maxChannelNumber)
                 $(this).iCheck('enable');
             else
                 $(this).iCheck('disable');
@@ -409,54 +466,45 @@ Playback.prototype = {
         return result;
     },
 
-    startRealPlay: function (iChn) {
+    startRealPlay: function (iChn, index) {
         var that = this;
         if (0 == that.m_wasmLoaded) {
             console.log("wasm not load!");
             return;
         }
-        console.log("StartRealPlay -------- +++ iChannelNum = %s\n", iChn);
-        if (iChn > (g_oCommon.m_iAnalogChannelNum + g_oCommon.m_iDigitalChannelNum)) {
-            return;
-        }
-        if (this.player[iChn - 1]) {
+        if (this.player[index]) {
             var url = 'ws://' + g_oCommon.m_szHostName + ':8082/';
-            this.player[iChn - 1].playInner(url, iChn - 1, 1);
+            this.player[index].playInner(url, iChn.channelNumber - 1, iChn.stream);
         }
     },
 
-    stopRealPlay: function (iChn) {
-        if (null != this.player[iChn - 1]) {
-            this.player[iChn - 1].stop();
+    stopRealPlay: function (index) {
+        if (null != this.player[index]) {
+            this.player[index].stop();
         }
         console.log("StopRealPlay -------- +++ iChannelNum = %s\n", iChn);
     },
 
     realPlayAll: function (event) {
         if (![null].includes(g_oPlayback.defaultPlayDate)) {
+            g_oPlayback.channels.sort(function (a, b) {
+                return a.channelNumber - b.channelNumber;
+            });
             if ($(event).children(0).hasClass("icon-play")) {
                 g_oPlayback.channels.forEach((item, index, array) => {
-                    this.startRealPlay(item);
+                    this.startRealPlay(item, index);
                 });
                 $(event).children(0).removeClass("icon-play");
                 $(event).children(0).addClass("icon-stop");
                 this.changeChannels(-1);
             } else {
                 g_oPlayback.channels.forEach((item, index, array) => {
-                    this.stopRealPlay(item);
+                    this.stopRealPlay(index);
                 });
                 $(event).children(0).removeClass("icon-stop");
                 $(event).children(0).addClass("icon-play");
                 this.changeChannels(10);
             }
-        }
-    },
-
-    stopRealPlayAll: function () {
-        if (![null].includes(g_oPlayback.defaultPlayDate)) {
-            g_oPlayback.channels.forEach((item, index, array) => {
-                this.stopRealPlay(item);
-            });
         }
     }
 }
