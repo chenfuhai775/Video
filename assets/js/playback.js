@@ -12,7 +12,6 @@ function Playback() {
 Playback.prototype = {
     //主页面初始化函数
     initPage: function () {
-
         this.initProcess();
         this.initFullCalendar();
         this.initChannels();
@@ -34,6 +33,7 @@ Playback.prototype = {
         setInterval("g_oPlayback.syncMsg()", 2000);
         setTimeout(g_oPlayback.initVideo(), 1);
     },
+
     initProcess: function () {
 
         $("#sliderBar").ionRangeSlider({
@@ -123,13 +123,11 @@ Playback.prototype = {
                     select: function (arg) {
                         let currDate = arg.startStr;
                         if (g_oPlayback.defaultPlayDate != currDate && g_oPlayback.videoDates.includes(currDate)) {
-                            g_oPlayback.defaultPlayDate = currDate;
-                            g_oPlayback.clearTimeTick();
-                            g_oPlayback.searchTimeTick();
-                            $("#currTime").text(currDate);
+                            g_oPlayback.reDrawTimeTick(currDate);
                         }
                     },
                     eventClick: function (arg) {
+                        g_oPlayback.reDrawTimeTick(arg.event.start);
                     },
                     eventRender: function (eventObj, $el) {
                     },
@@ -208,6 +206,9 @@ Playback.prototype = {
             }
         };
 
+        g_oPlayback.initCanvas();
+    },
+    initCanvas: function () {
         for (var iChn = 1; iChn <= 4; iChn++) {
             this.player[iChn - 1] = new Player();
             if (this.player[iChn - 1]) {
@@ -216,7 +217,6 @@ Playback.prototype = {
             }
         }
     },
-
     searchTimeTick: function (event) {
         if (![null].includes(g_oPlayback.defaultPlayDate)) {
             let channels = [null, undefined].includes(event) ? g_oPlayback.channels : event.val();
@@ -246,6 +246,13 @@ Playback.prototype = {
             }
 
         }
+    },
+
+    reDrawTimeTick:function(start){
+        g_oPlayback.defaultPlayDate = new Date(start).Format("yyyy-MM-dd");
+        g_oPlayback.clearTimeTick();
+        g_oPlayback.searchTimeTick();
+        $("#currTime").text(g_oPlayback.defaultPlayDate);
     },
 
     clearTimeTick: function () {
@@ -414,7 +421,7 @@ Playback.prototype = {
         }
         if (this.player[iChn - 1]) {
             var url = 'ws://' + g_oCommon.m_szHostName + ':8082/';
-            this.player[iChn - 1].playInner(url, iChn - 1, 0);
+            this.player[iChn - 1].playInner(url, iChn - 1, 1);
         }
     },
 
