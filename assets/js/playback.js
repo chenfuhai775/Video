@@ -519,9 +519,11 @@ Playback.prototype = {
     },
     //打开或关闭视频通道
     openCheckChannels: function (channels) {
+
         channels.filter(x => {
             return x.execute === false
         }).forEach((item, index, array) => {
+            let parentIndex = this.channels.indexOf(this.channels.find(x => x.channelNumber == item.channelNumber));
             if (item.checked) {
                 if (item.isPlay) {
                     let that = this;
@@ -529,18 +531,18 @@ Playback.prototype = {
                         console.log("wasm not load!");
                         return;
                     }
-                    if (this.player[index]) {
-                        this.player[index].stop();
+                    if (this.player[parentIndex]) {
+                        this.player[parentIndex].stop();
                         let url = 'ws://' + g_oCommon.m_szHostName + ':8082/';
                         let newDateTime = new Date(this.defaultPlayDate + " " + this.defaultPlayTime).Format("yyyy-MM-dd-hh-mm-ss");
                         //playType 0-直播，1-录像
-                        this.player[index].playInner(url, item.channelNumber - 1, item.stream, null, 1, newDateTime);
+                        this.player[parentIndex].playInner(url, item.channelNumber - 1, item.stream, null, 1, newDateTime);
                     }
                 } else {
-                    if (null != this.player[index]) {
-                        this.player[index].stop();
+                    if (null != this.player[parentIndex]) {
+                        this.player[parentIndex].stop();
                     }
-                    console.log("StopRealPlay -------- +++ iChannelNum = %s\n", index);
+                    console.log("StopRealPlay -------- +++ iChannelNum = %s\n", parentIndex);
                 }
                 this.reDrawIcon(item);
                 item.execute = true;
