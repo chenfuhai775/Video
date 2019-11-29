@@ -1,13 +1,17 @@
 function Playback() {
     this._lxdPlayback = null;  //Playback.xml
-    //[{channelNumber:0-通道,checked:是否选中[0-否,1-是],play:是否播放中[0-否,1-是],stream:码流 0-主,1-子}]
+    //[{channelNumber:0-通道,checked:是否选中[0-否,1-是],isPlay:是否播放中[0-否,1-是],stream:码流 0-主,1-子,execute-true,false}]
     this.channels = new Array();
-    //默认播放日期
-    this.defaultPlayDate = null;
+    //默认播放日期(yyyy-MM-dd)
+    this.defaultPlayDate = new Date().Format("yyyy-MM-dd");
+    //当前播放时间(yyyy-MM-dd hh:mm:ss)
+    this.defaultPlayTime = new Date().Format("00:00:00");
     this.player = [];
     this.m_wasmLoaded = 0;
     this.m_MaxChannelNumber = 4;
     this.videoDates = [];
+    this.timeClock = null;
+    this.hasPlay = false;
 }
 
 Playback.prototype = {
@@ -16,6 +20,7 @@ Playback.prototype = {
         this.initProcess();
         this.initFullCalendar();
         this.initChannels();
+        this.reSetTickTime();
 
         this.m_szStartTimeSet = []; /// 开始时间集合
         this.m_szEndTimeSet = [];   /// 结束时间集合
@@ -25,7 +30,7 @@ Playback.prototype = {
         getMenuList();//加载菜单列表等文本
         this._getDeviceInfo();
         ///this._getLogList(5,'lTypeAlarm');//获取报警记录
-        var szLanguage = $.cookie("language");
+        let szLanguage = $.cookie("language");
         translator.initLanguageSelect(szLanguage);
         this._lxdPlayback = translator.getLanguageXmlDoc("Playback");
         translator.translatePage(this._lxdPlayback, document);
@@ -51,10 +56,18 @@ Playback.prototype = {
                 return g_oPlayback.formatSeconds(val);
             },
             onChange: function (val) {
-                console.info(val);
+                g_oPlayback.defaultPlayTime = g_oPlayback.formatSeconds(val.from);
+                g_oPlayback.reSetTickTime();
+            },
+            onFinish: function (data) { //拖动结束回调
+                g_oPlayback.defaultPlayTime = g_oPlayback.formatSeconds(data.from);
+                g_oPlayback.channels.forEach((item, index, array) => {
+                    item.execute = false;
+                    item.isPlay = true;
+                });
+                g_oPlayback.startRealPlay();
             }
         });
-
     },
 
     initICheck: function () {
@@ -71,7 +84,7 @@ Playback.prototype = {
     },
 
     initChannels: function () {
-        var json = {}
+        let json = {}
         json.Cmd = 1501;
         json.Id = "123123123";
         json.User = 12345678;
@@ -83,12 +96,12 @@ Playback.prototype = {
             dataType: "json",
             success: function (result) {
                 if (0 == result.Ack) {
-                    for (var i = 0; i < result.L.length; i++) {
+                    for (let i = 0; i < result.L.length; i++) {
                         let div = "<li style='width: 50%;float: left;'>";
                         div += "     <input value=" + (parseInt(result.L[i].C) + 1) + " tabindex=" + (parseInt(result.L[i].C) + 1) + " type=\"checkbox\" id=\"input-" + (parseInt(result.L[i].C) + 1) + "\">\n";
 
                         div += "    <img src='assets/img/sub_stream.png' id='Stream" + (parseInt(result.L[i].C) + 1) + "Img' onclick='g_oPlayback.switchStream(" + (parseInt(result.L[i].C) + 1) + ")'/>";
-                        div += "    <img src='assets/img/Camera_1.png' id='Camera" + (parseInt(result.L[i].C) + 1) + "Img' onclick='g_oPlayback.StartRealPlay(" + (parseInt(result.L[i].C) + 1) + ")'/>";
+                        div += "    <img src='assets/img/Camera_1.png' id='Camera" + (parseInt(result.L[i].C) + 1) + "Img' onclick='g_oPlayback.switchPlayStatus(" + (parseInt(result.L[i].C) + 1) + ")'/>";
                         //div += "<span style='cursor:pointer;color:#000000;-moz-user-select:none;' id='Selected" + (parseInt(result.L[i].C) + 1) + "color'  onClick='g_oIndexPage.SetFontColor(" + (parseInt(result.L[i].C) + 1) + ")' onDblClick='g_oIndexPage.StartRealPlay(" + (parseInt(result.L[i].C) + 1) + ")' onselectstart='return false;'>&nbsp;Camera" + (parseInt(result.L[i].C) + 1) + "</span>";
                         div += "     <label for=\"input-" + (parseInt(result.L[i].C) + 1) + "\"><span>Camera" + (parseInt(result.L[i].C) + 1) + "</span></label>\n";
                         div += "</li>";
@@ -106,7 +119,6 @@ Playback.prototype = {
     initFullCalendar: function () {
         let calendarEl = document.getElementById('calendar');
         let calendar;
-
         initThemeChooser({
             init: function (themeSystem) {
                 calendar = new FullCalendar.Calendar(calendarEl, {
@@ -123,23 +135,26 @@ Playback.prototype = {
                     navLinks: false, // can click day/week names to navigate views
                     selectable: true,
                     selectMirror: true,
-                    eventColor: '#A78CF1',
+                    // eventColor: '#A78CF1'
+                    eventColor: '#EC7063',
                     select: function (arg) {
                         let currDate = arg.startStr;
                         if (g_oPlayback.defaultPlayDate != currDate && g_oPlayback.videoDates.includes(currDate)) {
-                            g_oPlayback.reDrawTimeTick(currDate);
+                            g_oPlayback.defaultPlayDate = arg.startStr;
+                            g_oPlayback.reDrawTimeTick();
                         }
                     },
                     eventClick: function (arg) {
-                        g_oPlayback.reDrawTimeTick(arg.event.start);
+                        g_oPlayback.defaultPlayDate = new Date(arg.event.start).Format("yyyy-MM-dd");
+                        g_oPlayback.reDrawTimeTick();
                     },
                     eventRender: function (eventObj, $el) {
                     },
                     events: function (fetchInfo, successCallback, failureCallback) {
                         g_oPlayback.videoDates.length = 0;
-                        var start = new Date(fetchInfo.start).Format('yyyy-MM');
-                        var end = new Date(fetchInfo.end).Format('yyyy-MM');
-                        var json = {}
+                        let start = new Date(fetchInfo.start).Format('yyyy-MM');
+                        let end = new Date(fetchInfo.end).Format('yyyy-MM');
+                        let json = {}
                         json.Cmd = 7115;
                         json.Id = "123123123";
                         json.User = 12345678;
@@ -153,9 +168,9 @@ Playback.prototype = {
                             dataType: "json",
                             success: function (result) {
                                 if (0 == result.Ack) {
-                                    for (var i = 0; i < result.Day.length; i++) {
-                                        var day = result.Day[i] + 1;
-                                        var event = {};
+                                    for (let i = 0; i < result.Day.length; i++) {
+                                        let day = result.Day[i];
+                                        let event = {};
                                         event.id = i;
                                         event.title = 'v';
                                         event.textColor = '#fff';
@@ -186,8 +201,8 @@ Playback.prototype = {
     initVideo: function () {
         this.wAvDecoder = new Worker("assets/jsVideo/AvDecoder.js");
         this.wAvDecoder.onmessage = function (evt) {
-            var objData = evt.data;
-            var chn = parseInt(objData.chn, 10);
+            let objData = evt.data;
+            let chn = parseInt(objData.chn, 10);
             let index = 0;
             let channel = g_oPlayback.channels.find(x => {
                 return x.channelNumber === (chn + 1);
@@ -202,28 +217,30 @@ Playback.prototype = {
                         break;
 
                     case kVideoFrame:
-                        g_oPlayback.player[index].onVideoFrame(objData);
+                        g_oPlayback.player[index].onVideoFrame(objData)
                         break;
-
-                    case kAudioFrame:
+                    case
+                    kAudioFrame:
                         g_oPlayback.player[index].onAudioFrame(objData);
                         break;
 
-                    case kDecoderStatusReq:
+                    case
+                    kDecoderStatusReq:
                         g_oPlayback.m_wasmLoaded = 1;
                         break;
                 }
             }
-        };
+        }
+        ;
 
         g_oPlayback.initCanvas();
     },
 
     initCanvas: function () {
-        for (var iChn = 1; iChn <= 4; iChn++) {
+        for (let iChn = 1; iChn <= 4; iChn++) {
             this.player[iChn - 1] = new Player();
             if (this.player[iChn - 1]) {
-                var canvas = document.getElementById('myCanvas' + iChn);
+                let canvas = document.getElementById('myCanvas' + iChn);
                 this.player[iChn - 1].initPlayer(canvas, this.wAvDecoder);
             }
         }
@@ -233,7 +250,9 @@ Playback.prototype = {
         if (![null].includes(g_oPlayback.defaultPlayDate)) {
             let channels = [];
             if ([null, undefined].includes(event))
-                channels = g_oPlayback.channels;
+                channels = g_oPlayback.channels.filter(x => {
+                    return x.checked == true;
+                });
             else {
                 let channelNumber = parseInt(event.val());
                 channels.push({'channelNumber': channelNumber});
@@ -248,7 +267,7 @@ Playback.prototype = {
             json.Def = "JSON_CMD_GET_PLAYBACK_TIME_AXIS";
             json.Date = g_oPlayback.defaultPlayDate;
             for (let i = 0; i < channels.length; i++) {
-                json.Ch = channels[i].channelNumber;
+                json.Ch = channels[i].channelNumber - 1;
                 let jsonReqStr = JSON.stringify(json);
                 $.ajax({
                     type: "POST",
@@ -269,17 +288,22 @@ Playback.prototype = {
         }
     },
 
-    reDrawTimeTick: function (start) {
-        g_oPlayback.defaultPlayDate = new Date(start).Format("yyyy-MM-dd");
+    //设置当前播放时间点
+    reSetTickTime: function () {
+        let newDateTime = new Date(this.defaultPlayDate + " " + this.defaultPlayTime).Format("yyyy-MM-dd hh:mm:ss");
+        $("#currTime").text(newDateTime);
+    },
+    //重绘录像刻度表
+    reDrawTimeTick: function () {
         g_oPlayback.clearTimeTick();
         g_oPlayback.searchTimeTick();
-        $("#currTime").text(g_oPlayback.defaultPlayDate);
+        g_oPlayback.reSetTickTime();
     },
-
+    //清空录像刻度表
     clearTimeTick: function () {
         $("#timescale").empty();
     },
-    //快进
+    //快进x1 x2 x3
     fastForward: function (number) {
         let slider = $("#sliderBar").data("ionRangeSlider");
         if (1 == number) {
@@ -303,7 +327,13 @@ Playback.prototype = {
     channelChecked: function (event) {
         let object = $(event.target);
         let channelNumber = parseInt(object.val());
-        g_oPlayback.updateChannelStatus(channelNumber, {'checked': true, 'stream': 1});
+        let params = {
+            'checked': true,
+            'stream': 1,
+            'isPlay': true,
+            'execute': false
+        }
+        g_oPlayback.updateChannelStatus(channelNumber, params);
         g_oPlayback.changeChannels();
         this.searchTimeTick(object);
     },
@@ -328,44 +358,66 @@ Playback.prototype = {
                 channel[item] = params[item];
             }
         }
-        console.info(this.channels);
     },
-
+    //更改主子码流状态
     switchStream: function (channelNumber) {
-        var szId = "#Stream" + channelNumber + "Img";
         let channel = this.channels.find(x => {
             return x.channelNumber === channelNumber;
         });
-        var params = {'stream': 0};
+        let oldStream = channel.execute ? (channel.stream === 1 ? 1 : 0) : (channel.stream === 1 ? 0 : 1);
+        let newStream;
+        let params = {'stream': 1, 'execute': false};
         if (![null, undefined].includes(channel)) {
-            params['stream'] = channel.stream == 0 ? 1 : 0;
+            newStream = channel.stream == 1 ? 0 : 1;
         }
-        if (params['stream'] === 0) {
-            $(szId).attr("src", "assets/img/main_stream.png").attr("title", parent.translator.translateNode(this._lxdIndexPage, "mainStream"));
-        } else {
-            $(szId).attr("src", "assets/img/sub_stream.png").attr("title", parent.translator.translateNode(this._lxdIndexPage, "subStream"));
+        if (newStream != oldStream) {
+            params.stream = newStream;
+            params.isPlay = channel.isPlay && channel.execute;
+            g_oPlayback.updateChannelStatus(channelNumber, params);
+            g_oPlayback.startRealPlay(channelNumber);
         }
-        g_oPlayback.updateChannelStatus(channelNumber, params);
     },
-
+    //更改播放状态
+    switchPlayStatus: function (channelNumber) {
+        let channel = this.channels.find(x => {
+            return x.channelNumber === channelNumber;
+        });
+        let oldIsPlay = channel.execute ? channel.isPlay : !channel.isPlay;
+        let newIsPlay;
+        let params = {'isPlay': true, 'execute': false};
+        if (![null, undefined].includes(channel)) {
+            newIsPlay = channel.execute ? !channel.isPlay : channel.isPlay;
+        }
+        if (newIsPlay != oldIsPlay) {
+            params.isPlay = newIsPlay;
+            g_oPlayback.updateChannelStatus(channelNumber, params);
+            g_oPlayback.startRealPlay(channelNumber);
+        }
+    },
     //更新channel状态
     changeChannels: function (maxChannelNumber) {
         let m_maxChannelNumber = maxChannelNumber == null ? g_oPlayback.m_MaxChannelNumber : maxChannelNumber;
         let checkTotal = g_oPlayback.channels.filter(x => x.checked === true).length;
-        $("input").not("input:checked").each(function () {
-            if (checkTotal < m_maxChannelNumber)
+        if (maxChannelNumber == 10) {
+            $("input").each(function () {
                 $(this).iCheck('enable');
-            else
+            });
+        } else if (maxChannelNumber == -1) {
+            $("input").each(function () {
                 $(this).iCheck('disable');
-        });
-    },
-
-    change: function ($input) {
-        $("#CurrTime").text(g_oPlayback.formatSeconds($input.value));
+            });
+        } else {
+            $("input").not("input:checked").each(function () {
+                if (checkTotal < m_maxChannelNumber)
+                    $(this).iCheck('enable');
+                else
+                    $(this).iCheck('disable');
+            });
+        }
     },
 
     _getDeviceInfo: function () {
-        var szLanguage = $.cookie("language");
+        let szLanguage = $.cookie("language");
         translator.initLanguageSelect(szLanguage);
         this._lxdIndexPage = translator.getLanguageXmlDoc("IndexPage");
         translator.translatePage(this._lxdIndexPage, document);
@@ -409,10 +461,10 @@ Playback.prototype = {
     },
 
     getTimeScale: function (date) {
-        var arrDate = date.split(":");
-        var H = parseInt(arrDate[0]);       //获取当前小时数(0-23)
-        var M = parseInt(arrDate[1]);     //获取当前分钟数(0-59)
-        var S = parseInt(arrDate[2]);     //获取当前秒数(0-59)
+        let arrDate = date.split(":");
+        let H = parseInt(arrDate[0]);       //获取当前小时数(0-23)
+        let M = parseInt(arrDate[1]);     //获取当前分钟数(0-59)
+        let S = parseInt(arrDate[2]);     //获取当前秒数(0-59)
         return H * 3600 + M * 60 + S;
     },
     //移除通道录像
@@ -435,10 +487,10 @@ Playback.prototype = {
             beforeSend: function (xhr) {
             },
             success: function (data) {
-                var json = $.parseJSON(data);
+                let json = $.parseJSON(data);
 
                 if (json.Ask == 0) {
-                    var eventNum = json.EventNum;
+                    let eventNum = json.EventNum;
 
                     if (!($("#lastMsgLog").hasClass("am-dropdown-flip") && $("#lastMsgLog").hasClass("am-active")))
                         $("#alarmInfoNum").text(eventNum);
@@ -451,62 +503,123 @@ Playback.prototype = {
     },
 
     formatSeconds: function (value) {
-        var result = '';
-        var H = 0;// 分
-        var M = 0;// 小时
-        var S = 0;// 天
+        let result = '';
+        let H = 0;// 分
+        let M = 0;// 小时
+        let S = 0;// 天
         H = parseInt(value / 3600);
         H = H > 9 ? H : "0" + H;
         M = parseInt((value % 3600) / 60);
         M = M > 9 ? M : "0" + M;
         S = parseInt(((value % 3600) % 60));
         S = S > 9 ? S : "0" + S;
-        result = H + " : " + M + " : " + S;
+        result = H + ":" + M + ":" + S;
         // return g_oPlayback.defaultPlayDate + " " + result;
         return result;
     },
-
-    startRealPlay: function (iChn, index) {
-        var that = this;
-        if (0 == that.m_wasmLoaded) {
-            console.log("wasm not load!");
-            return;
-        }
-        if (this.player[index]) {
-            var url = 'ws://' + g_oCommon.m_szHostName + ':8082/';
-            this.player[index].playInner(url, iChn.channelNumber - 1, iChn.stream);
-        }
+    //打开或关闭视频通道
+    openCheckChannels: function (channels) {
+        channels.filter(x => {
+            return x.execute === false
+        }).forEach((item, index, array) => {
+            if (item.checked) {
+                if (item.isPlay) {
+                    let that = this;
+                    if (0 == that.m_wasmLoaded) {
+                        console.log("wasm not load!");
+                        return;
+                    }
+                    if (this.player[index]) {
+                        this.player[index].stop();
+                        let url = 'ws://' + g_oCommon.m_szHostName + ':8082/';
+                        let newDateTime = new Date(this.defaultPlayDate + " " + this.defaultPlayTime).Format("yyyy-MM-dd-hh-mm-ss");
+                        //playType 0-直播，1-录像
+                        this.player[index].playInner(url, item.channelNumber - 1, item.stream, null, 1, newDateTime);
+                    }
+                } else {
+                    if (null != this.player[index]) {
+                        this.player[index].stop();
+                    }
+                    console.log("StopRealPlay -------- +++ iChannelNum = %s\n", index);
+                }
+                this.reDrawIcon(item);
+                item.execute = true;
+            }
+        });
     },
+    //单个开启视频
+    startRealPlay: function (channelNumber) {
+        let tempChannels = [];
+        if (![null, undefined].includes(channelNumber)) {
+            tempChannels = g_oPlayback.channels.filter(x => {
+                return x.channelNumber == channelNumber
+            });
+        } else
+            tempChannels = g_oPlayback.channels;
 
-    stopRealPlay: function (index) {
-        if (null != this.player[index]) {
-            this.player[index].stop();
-        }
-        console.log("StopRealPlay -------- +++ iChannelNum = %s\n", iChn);
-    },
-
-    realPlayAll: function (event) {
         if (![null].includes(g_oPlayback.defaultPlayDate)) {
-            g_oPlayback.channels.sort(function (a, b) {
+            //通道数组排序
+            tempChannels.sort(function (a, b) {
                 return a.channelNumber - b.channelNumber;
             });
-            if ($(event).children(0).hasClass("icon-play")) {
-                g_oPlayback.channels.forEach((item, index, array) => {
-                    this.startRealPlay(item, index);
-                });
-                $(event).children(0).removeClass("icon-play");
-                $(event).children(0).addClass("icon-stop");
-                this.changeChannels(-1);
+            let slider = $("#sliderBar").data("ionRangeSlider");
+            this.openCheckChannels(tempChannels);
+
+            this.hasPlay = g_oPlayback.channels.filter(x => {
+                return x.isPlay == true && x.execute == true
+            }).length > 0;
+
+            if (!this.hasPlay) {
+                clearInterval(this.timeClock);
+                this.timeClock = null;
             } else {
-                g_oPlayback.channels.forEach((item, index, array) => {
-                    this.stopRealPlay(index);
-                });
-                $(event).children(0).removeClass("icon-stop");
-                $(event).children(0).addClass("icon-play");
-                this.changeChannels(10);
+                if (null == this.timeClock) {
+                    //时间定时器
+                    this.timeClock = setInterval(function () {
+                        slider.update({
+                            from: slider.old_from + 1
+                        });
+                        g_oPlayback.defaultPlayTime = g_oPlayback.formatSeconds(slider.old_from);
+                        g_oPlayback.reSetTickTime();
+                    }, 1000);
+                }
             }
         }
+    },
+    //全开或者全关视频
+    realPlayAll: function (event) {
+        this.channels.filter((item, index, array) => {
+            item.execute = false;
+            if (!this.hasPlay || $(event).children(0).hasClass("icon-play"))
+                item.isPlay = true;
+            else
+                item.isPlay = false;
+        });
+        this.startRealPlay();
+    },
+
+    reDrawIcon: function (item) {
+        if (item.checked && item.isPlay)
+            $("#Camera" + item.channelNumber + "Img").attr("src", "assets/img/Camera_2.png").attr("title", parent.translator.translateNode(this._lxdIndexPage, "jsPreview"));
+        else
+            $("#Camera" + item.channelNumber + "Img").attr("src", "assets/img/Camera_1.png").attr("title", parent.translator.translateNode(this._lxdIndexPage, "stoppreview"));
+
+        if (0 == item.stream)
+            $("#Stream" + item.channelNumber + "Img").attr("src", "assets/img/main_stream.png").attr("title", parent.translator.translateNode(this._lxdIndexPage, "mainStream"));
+        else
+            $("#Stream" + item.channelNumber + "Img").attr("src", "assets/img/sub_stream.png").attr("title", parent.translator.translateNode(this._lxdIndexPage, "subStream"));
+
+        let playSize = g_oPlayback.channels.filter(x => x.checked === true && x.isPlay).length;
+
+        if (playSize > 0) {
+            $("#btnPlay").children(0).removeClass("icon-play");
+            $("#btnPlay").children(0).addClass("icon-stop");
+        } else {
+            $("#btnPlay").children(0).removeClass("icon-stop");
+            $("#btnPlay").children(0).addClass("icon-play");
+        }
+        this.changeChannels(playSize > 0 ? -1 : 10);
     }
 }
 
-var g_oPlayback = new Playback();
+let g_oPlayback = new Playback();
