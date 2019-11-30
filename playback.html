@@ -208,12 +208,10 @@
                     <div class="row">
                         <div class="video_tool">
                             <button class="btn" type="button" title="播放" id="btnPlay" onclick="g_oPlayback.realPlayAll(this)"><i class="icon-play"></i></button>
-                            <button class="btn" type="button" title="慢" id="btnCapture" onclick="g_oPlayback.CapturePicture()"><i class="icon-slow"></i></button>
-                            <button class="btn" type="button" title="快" id="btnRecord" onclick="g_oPlayback.RecordAll()"><i class="icon-fast"></i></button>
-                            <button class="btn" type="button" title="声音" id="btnSound" onclick="g_oPlayback.btOpenVoice()"><i class="icon-sound-on"></i></button>
-                            <button class="btn" type="button" title="X1" id="FastX1" onclick="g_oPlayback.fastForward(1)"><i class="icon-sound-on"></i></button>
-                            <button class="btn" type="button" title="X2" id="FastX2" onclick="g_oPlayback.fastForward(2)"><i class="icon-sound-on"></i></button>
-                            <button class="btn" type="button" title="X3" id="FastX3" onclick="g_oPlayback.fastForward(3)"><i class="icon-sound-on"></i></button>
+                            <button class="btn" type="button" title="X1" id="FastX1" onclick="g_oPlayback.fastForward(1)"><i class="icon-sound-x1"></i></button>
+                            <button class="btn" type="button" title="X2" id="FastX2" onclick="g_oPlayback.fastForward(2)"><i class="icon-sound-x2"></i></button>
+                            <button class="btn" type="button" title="X3" id="FastX3" onclick="g_oPlayback.fastForward(3)"><i class="icon-sound-x3"></i></button>
+                            <button class="btn" type="button" title="" id="btnSound" onClick="g_oIndexPage.btOpenVoice()"><i class="icon-sound-off"></i></button>
                             <span id="currTime"  style="line-height: 30px;font-size:18px;float: right;font-weight: bold;"></span>
                         </div>
                     </div>
@@ -283,9 +281,11 @@
             .script("assets/rangeSlider/js/ion.rangeSlider.min.js").wait()
             .script("assets/js/custom.min.js?v=1.0.2").wait(function () {
 
-
             g_oPlayback.initPage();
         });
+        window.onbeforeunload = function(event) {
+            g_oPlayback.closeAll();
+        }
     });
 </script>
 </body>

@@ -118,6 +118,10 @@ class Player {
 
         this.clearRenderVideoFrame();
         console.log(this.webglPlayer);
+        this.initPcmPlay();
+    }
+
+    initPcmPlay(){
         if (this.pcmPlayer == null) {
             var sampleFmt = 1;
             var channels = 1;
@@ -349,6 +353,9 @@ class Player {
         //this.audioQueue.push(new Uint8Array(frame.d));        
         switch (this.playerState) {
             case playerStatePlaying: //Directly display audio.
+                if (null == this.pcmPlayer) {
+                    this.initPcmPlay();
+                }
                 this.pcmPlayer.play(new Uint8Array(frame.d));
                 break;
             case playerStatePausing: //Temp cache.

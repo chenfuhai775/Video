@@ -15,17 +15,17 @@ function Playback() {
 }
 
 Playback.prototype = {
+    closeAll:function(){
+        this.player.forEach((item,index,array)=>{
+            item.stop();
+        })
+    },
     //主页面初始化函数
     initPage: function () {
         this.initProcess();
         this.initFullCalendar();
         this.initChannels();
         this.reSetTickTime();
-
-        this.m_szStartTimeSet = []; /// 开始时间集合
-        this.m_szEndTimeSet = [];   /// 结束时间集合
-        this.m_szFileNameSet = [];  /// 文件名集合
-        this.m_szFileSizeSet = [];  /// 文件大小集合
 
         getMenuList();//加载菜单列表等文本
         this._getDeviceInfo();
@@ -230,9 +230,7 @@ Playback.prototype = {
                         break;
                 }
             }
-        }
-        ;
-
+        };
         g_oPlayback.initCanvas();
     },
 

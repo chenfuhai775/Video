@@ -1003,6 +1003,15 @@ ul.tpl-dropdown-content li>a.tpl-dropdown-content-message:last-child {
 .video_tool i.icon-sound-on {
   background-position: -220px -5px;
 }
+.video_tool i.icon-sound-x1 {
+    background-position: -203px -31px;
+}
+.video_tool i.icon-sound-x2 {
+    background-position: -228px -31px;
+}
+.video_tool i.icon-sound-x3 {
+    background-position: -254px -31px;
+}
 .video_tool i.icon-sound-off {
   background-position: -240px -5px;
 }
