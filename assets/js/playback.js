@@ -7,6 +7,7 @@ function Playback() {
     //当前播放时间(yyyy-MM-dd hh:mm:ss)
     this.defaultPlayTime = new Date().Format("00:00:00");
     this.player = [];
+    this.audioPlayer = null;
     this.m_wasmLoaded = 0;
     this.m_MaxChannelNumber = 4;
     this.videoDates = [];
@@ -15,8 +16,8 @@ function Playback() {
 }
 
 Playback.prototype = {
-    closeAll:function(){
-        this.player.forEach((item,index,array)=>{
+    closeAll: function () {
+        this.player.forEach((item, index, array) => {
             item.stop();
         })
     },
@@ -26,7 +27,6 @@ Playback.prototype = {
         this.initFullCalendar();
         this.initChannels();
         this.reSetTickTime();
-
         getMenuList();//加载菜单列表等文本
         this._getDeviceInfo();
         ///this._getLogList(5,'lTypeAlarm');//获取报警记录
@@ -38,6 +38,7 @@ Playback.prototype = {
         g_oPlayback.syncMsg();
         setInterval("g_oPlayback.syncMsg()", 2000);
         setTimeout(g_oPlayback.initVideo(), 1);
+        this.initAudio();
     },
 
     initProcess: function () {
@@ -198,6 +199,22 @@ Playback.prototype = {
         });
     },
 
+    btOpenVoice: function (event) {
+        if ($(event).children(0).hasClass("icon-sound-off")) {
+            $(event).children(0).removeClass("icon-sound-off");
+            $(event).children(0).addClass("icon-sound-on");
+            if (null != this.audioPlayer) {
+                this.audioPlayer.start();
+            }
+        } else {
+            $(event).children(0).removeClass("icon-sound-on");
+            $(event).children(0).addClass("icon-sound-off");
+            if (null != this.audioPlayer) {
+                this.audioPlayer.stop();
+            }
+        }
+    },
+
     initVideo: function () {
         this.wAvDecoder = new Worker("assets/jsVideo/AvDecoder.js");
         this.wAvDecoder.onmessage = function (evt) {
@@ -219,13 +236,10 @@ Playback.prototype = {
                     case kVideoFrame:
                         g_oPlayback.player[index].onVideoFrame(objData)
                         break;
-                    case
-                    kAudioFrame:
+                    case kAudioFrame:
                         g_oPlayback.player[index].onAudioFrame(objData);
                         break;
-
-                    case
-                    kDecoderStatusReq:
+                    case kDecoderStatusReq:
                         g_oPlayback.m_wasmLoaded = 1;
                         break;
                 }
@@ -242,6 +256,10 @@ Playback.prototype = {
                 this.player[iChn - 1].initPlayer(canvas, this.wAvDecoder);
             }
         }
+    },
+
+    initAudio: function () {
+        this.audioPlayer = new audioPlayer();
     },
 
     searchTimeTick: function (event) {

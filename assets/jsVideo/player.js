@@ -8,7 +8,8 @@ const decoderStateFinished = 3;
 const playerStateIdle = 0;
 const playerStatePlaying = 1;
 const playerStatePausing = 2;
-
+var m_strJsPath = document.scripts;
+m_strJsPath = m_strJsPath[m_strJsPath.length - 1].src.substring(0, m_strJsPath[m_strJsPath.length - 1].src.lastIndexOf("/") + 1);
 //Constant.
 const maxVideoFrameQueueSize = 16;
 const downloadSpeedByteRateCoef = 1.5;
@@ -22,6 +23,7 @@ self.Module = {
 function onWasmLoaded() {
     console.log("Wasm loaded.");
 }
+
 
 class Player {
     constructor() {
@@ -94,11 +96,11 @@ class Player {
 
     initPlayer(canvas, wAvDecoder) {
         if (!canvas) {
-            ret = {
+           let ret = {
                 e: -2,
                 m: "Canvas not set"
             };
-            success = false;
+            let success = false;
             this.logger.logError("[ER] playVideo error, canvas empty.");
             return 0;
         }
@@ -121,7 +123,7 @@ class Player {
         this.initPcmPlay();
     }
 
-    initPcmPlay(){
+    initPcmPlay() {
         if (this.pcmPlayer == null) {
             var sampleFmt = 1;
             var channels = 1;

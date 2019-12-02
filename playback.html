@@ -13,6 +13,8 @@
     <script type='text/javascript' src="assets/jsVideo/pcm-player.js"></script>
     <script type='text/javascript' src="assets/jsVideo/webgl.js"></script>
     <script type='text/javascript' src="assets/jsVideo/player.js"></script>
+    <script type='text/javascript' src="assets/jsAudio/recorder.js"></script>
+    <script type='text/javascript' src="assets/jsAudio/audioPlayer.js"></script>
 
     <link rel="stylesheet" href="assets/rangeSlider/css/ion.rangeSlider.min.css">
     <link href='https://use.fontawesome.com/releases/v5.0.6/css/all.css' rel='stylesheet'>
@@ -211,7 +213,7 @@
                             <button class="btn" type="button" title="X1" id="FastX1" onclick="g_oPlayback.fastForward(1)"><i class="icon-sound-x1"></i></button>
                             <button class="btn" type="button" title="X2" id="FastX2" onclick="g_oPlayback.fastForward(2)"><i class="icon-sound-x2"></i></button>
                             <button class="btn" type="button" title="X3" id="FastX3" onclick="g_oPlayback.fastForward(3)"><i class="icon-sound-x3"></i></button>
-                            <button class="btn" type="button" title="" id="btnSound" onClick="g_oIndexPage.btOpenVoice()"><i class="icon-sound-off"></i></button>
+                            <button class="btn" type="button" title="" id="btnSound" onClick="g_oPlayback.btOpenVoice(this)"><i class="icon-sound-off"></i></button>
                             <span id="currTime"  style="line-height: 30px;font-size:18px;float: right;font-weight: bold;"></span>
                         </div>
                     </div>
@@ -280,7 +282,6 @@
             .script("assets/js/icheck.js?v=1.0.2").wait()
             .script("assets/rangeSlider/js/ion.rangeSlider.min.js").wait()
             .script("assets/js/custom.min.js?v=1.0.2").wait(function () {
-
             g_oPlayback.initPage();
         });
         window.onbeforeunload = function(event) {
