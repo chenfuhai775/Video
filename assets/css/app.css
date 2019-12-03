@@ -786,7 +786,7 @@ ul.tpl-dropdown-content li>a.tpl-dropdown-content-message:last-child {
 }
 
 .previewVideo9  {
-    border:1px solid #eee; min-height:250px; width:33.3%; padding:0; background:#000;
+    border:1px solid #eee; min-height:300px; width:33.3%; padding:0; background:#000;
 }
 @media only screen and (max-width: 1000px) {
 	.previewVideo9  {
@@ -1018,8 +1018,11 @@ ul.tpl-dropdown-content li>a.tpl-dropdown-content-message:last-child {
 .video_tool i.icon-fullscreen {
   background-position: -176px -31px;
 }
-.video_tool i.icon-Intercom {
+.video_tool i.icon-Intercom-on {
   background-position: -152px -31px;
+}
+.video_tool i.icon-Intercom-off {
+    background-position: -264px -5px;
 }
 .video_tool i.one-screen {
 	background-position: -111px -4px;

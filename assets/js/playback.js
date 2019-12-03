@@ -73,8 +73,8 @@ Playback.prototype = {
 
     initICheck: function () {
         $('input').iCheck({
-            checkboxClass: 'icheckbox_flat-red', //每个风格都对应一个，这个不能写错哈。
-            radioClass: 'icheckbox_flat-red'
+            checkboxClass: 'icheckbox_flat-blue', //每个风格都对应一个，这个不能写错哈。
+            radioClass: 'icheckbox_flat-blue'
         });
         $('input').on('ifChecked', function (event) {
             g_oPlayback.channelChecked(event);
@@ -136,9 +136,17 @@ Playback.prototype = {
                     navLinks: false, // can click day/week names to navigate views
                     selectable: true,
                     selectMirror: true,
-                    // eventColor: '#A78CF1'
-                    eventColor: '#EC7063',
+                    // eventColor: '#A78CF1',
+                    // eventColor: '#3F66C4',
+                    eventColor: '#D7DCDE',
+
                     select: function (arg) {
+                        calendar.getEvents().forEach(function (item) {
+                            if (new Date(arg.start).Format("yyyy-MM-dd") == new Date(item.start).Format("yyyy-MM-dd"))
+                                item.setProp("backgroundColor", "#3498DB");
+                            else
+                                item.setProp("backgroundColor", "#D7DCDE");
+                        });
                         let currDate = arg.startStr;
                         if (g_oPlayback.defaultPlayDate != currDate && g_oPlayback.videoDates.includes(currDate)) {
                             g_oPlayback.defaultPlayDate = arg.startStr;
@@ -146,6 +154,12 @@ Playback.prototype = {
                         }
                     },
                     eventClick: function (arg) {
+                        calendar.getEvents().forEach(function (item) {
+                            if (new Date(arg.event.start).Format("yyyy-MM-dd") == new Date(item.start).Format("yyyy-MM-dd"))
+                                item.setProp("backgroundColor", "#3498DB");
+                            else
+                                item.setProp("backgroundColor", "#D7DCDE");
+                        });
                         g_oPlayback.defaultPlayDate = new Date(arg.event.start).Format("yyyy-MM-dd");
                         g_oPlayback.reDrawTimeTick();
                     },
@@ -153,22 +167,41 @@ Playback.prototype = {
                     },
                     events: function (fetchInfo, successCallback, failureCallback) {
                         g_oPlayback.videoDates.length = 0;
-                        let start = new Date(fetchInfo.start).Format('yyyy-MM');
-                        let end = new Date(fetchInfo.end).Format('yyyy-MM');
+                        let currDate = calendar == null ? new Date() : new Date(calendar.view.title);
+                        let start = new Date(fetchInfo.start);
+                        let end = new Date(fetchInfo.end);
+
+                        let tempDate = new Date(currDate.getFullYear(), currDate.getMonth(), 1);
+                        let tempYear = tempDate.getFullYear();
+                        let tempMonth = tempDate.getMonth();
+                        if (![null, undefined].includes(calendar)) {
+                            if (start < calendar.state.currentDate && end > calendar.state.currentDate) {
+                                let prevDate = new Date(tempYear, tempMonth - 1, 1);
+                                let prevYear = prevDate.getFullYear();
+                                let prevMonth = prevDate.getMonth();
+                                currDate = new Date(prevYear, prevMonth);
+                            } else {
+                                let nextDate = new Date(tempYear, tempMonth + 1, 1);
+                                let nextYear = nextDate.getFullYear();
+                                let nextMonth = nextDate.getMonth();
+                                currDate = new Date(nextYear, nextMonth);
+                            }
+                        }
+
                         let json = {}
                         json.Cmd = 7115;
                         json.Id = "123123123";
                         json.User = 12345678;
                         json.Def = "JSON_CMD_GET_PLAYBACK_DAY";
-                        json.Month = "2019-11";
+                        json.Month = currDate.getFullYear() + "-" + (currDate.getMonth() + 1);
                         let jsonReqStr = JSON.stringify(json);
-                        let events = [];
                         $.ajax({
                             type: "POST",
                             url: g_oCommon.m_lHttp + g_oCommon.m_szHostName + ":" + g_oCommon.m_lHttpPort + "/jsonStruct_get&" + Base64.encode(jsonReqStr) + "&",
                             dataType: "json",
                             success: function (result) {
                                 if (0 == result.Ack) {
+                                    let events = [];
                                     for (let i = 0; i < result.Day.length; i++) {
                                         let day = result.Day[i];
                                         let event = {};
@@ -176,9 +209,9 @@ Playback.prototype = {
                                         event.title = 'v';
                                         event.textColor = '#fff';
                                         event.className = 'myBlock';
-                                        event.start = json.Month + "-" + day;         // will be parsed
-                                        event.end = json.Month + "-" + day;
-                                        event.borderColor = '#fff'
+                                        event.start = currDate.getFullYear() + "-" + (currDate.getMonth() + 1) + "-" + (day > 9 ? day : "0" + day);         // will be parsed
+                                        event.end = currDate.getFullYear() + "-" + (currDate.getMonth() + 1) + "-" + (day > 9 ? day : "0" + day);
+                                        event.borderColor = '#ccc';
                                         events.push(event);
                                         g_oPlayback.videoDates.push(event.start);
                                     }
@@ -191,6 +224,8 @@ Playback.prototype = {
                             }
                         });
                     },
+                    loading: function (sign) {
+                    },
                     // editable: true,
                     eventLimit: true, // allow "more" link when too many events
                 });
@@ -200,15 +235,15 @@ Playback.prototype = {
     },
 
     btOpenVoice: function (event) {
-        if ($(event).children(0).hasClass("icon-sound-off")) {
-            $(event).children(0).removeClass("icon-sound-off");
-            $(event).children(0).addClass("icon-sound-on");
+        if ($(event).children(0).hasClass("icon-Intercom-off")) {
+            $(event).children(0).removeClass("icon-Intercom-off");
+            $(event).children(0).addClass("icon-Intercom-on");
             if (null != this.audioPlayer) {
                 this.audioPlayer.start();
             }
         } else {
-            $(event).children(0).removeClass("icon-sound-on");
-            $(event).children(0).addClass("icon-sound-off");
+            $(event).children(0).removeClass("icon-Intercom-on");
+            $(event).children(0).addClass("icon-Intercom-off");
             if (null != this.audioPlayer) {
                 this.audioPlayer.stop();
             }
@@ -589,7 +624,7 @@ Playback.prototype = {
 
             if (!this.hasPlay) {
                 clearInterval(this.timeClock);
-                this.timeClock = null;
+                this.timeClock = null
             } else {
                 if (null == this.timeClock) {
                     //时间定时器

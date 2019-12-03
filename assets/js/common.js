@@ -21,7 +21,7 @@
     this.m_iChannelId = [];
     for (var t = 0; 256 > t; t++) this.m_iChannelId[t] = -1;
     this.m_iAnalogChannelNum = 0,
-    this.m_iDigitalChannelNum = 4,
+    this.m_iDigitalChannelNum = 16,
     this.m_iZeroChanNum = 0,
     this.m_iTalkNum = 0,
     this.m_bTalk = 0,
