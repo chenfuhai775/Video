@@ -22,10 +22,10 @@ and limitations under the License.
 ***************************************************************************** */
 /* global Reflect, Promise */
 
-var extendStatics = function(d, b) {
+let extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        function (d, b) { for (let p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
     return extendStatics(d, b);
 };
 
@@ -35,7 +35,7 @@ function __extends(d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
 
-var BootstrapTheme = /** @class */ (function (_super) {
+let BootstrapTheme = /** @class */ (function (_super) {
     __extends(BootstrapTheme, _super);
     function BootstrapTheme() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -73,7 +73,7 @@ BootstrapTheme.prototype.iconClasses = {
 BootstrapTheme.prototype.iconOverrideOption = 'bootstrapFontAwesome';
 BootstrapTheme.prototype.iconOverrideCustomButtonOption = 'bootstrapFontAwesome';
 BootstrapTheme.prototype.iconOverridePrefix = 'fa-';
-var main = createPlugin({
+let main = createPlugin({
     themeClasses: {
         bootstrap: BootstrapTheme
     }

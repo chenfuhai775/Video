@@ -4,7 +4,7 @@
     (global = global || self, (global.FullCalendarLocales = global.FullCalendarLocales || {}, global.FullCalendarLocales.ko = factory()));
 }(this, function () { 'use strict';
 
-    var ko = {
+    let ko = {
         code: "ko",
         buttonText: {
             prev: "이전달",

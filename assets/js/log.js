@@ -244,7 +244,7 @@ SysLog.prototype = {
 	syncMsg: function(){
 		$.ajax({
 				type: "get",
-				url: g_oCommon.m_lHttp + g_oCommon.m_szHostName + ":" + g_oCommon.m_lHttpPort + "/system/syncMsgInfo",
+				url: g_oCommon.m_lHttp + g_oCommon.m_szHostName + ":" + g_oCommon.m_lHttpPort + "/system/getStatusInfo",
 				async: !0,
 				timeout: 15e3,
 				beforeSend: function (xhr) {

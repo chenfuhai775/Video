@@ -6,12 +6,12 @@ Docs & License: https://fullcalendar.io/
 
 // Creating
 // ----------------------------------------------------------------------------------------------------------------
-var elementPropHash = {
+let elementPropHash = {
     className: true,
     colSpan: true,
     rowSpan: true
 };
-var containerTagHash = {
+let containerTagHash = {
     '<tr': 'tbody',
     '<td': 'tr'
 };

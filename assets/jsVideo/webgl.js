@@ -109,6 +109,12 @@ class WebGLPlayer {
         gl.v.fill(width >> 1, height >> 1, videoFrame.subarray(uOffset + vOffset, videoFrame.length));
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
+    clearRenderVideoFrame(videoWidth, videoHeight, yLength, uvLength) {
+        let raw_data = new Uint8Array(videoWidth * videoHeight + videoWidth * videoHeight / 2);
+        raw_data.fill(0x00, 0, videoWidth * videoHeight);
+        raw_data.fill(0x80, videoWidth * videoHeight, videoWidth * videoHeight + videoWidth * videoHeight / 2);
+        this.renderFrame(raw_data, videoWidth, videoHeight, yLength, uvLength);
+    }
     fullscreen() {
         var canvas = this.canvas;
         if (canvas.RequestFullScreen) {

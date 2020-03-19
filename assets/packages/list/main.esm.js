@@ -22,10 +22,10 @@ and limitations under the License.
 ***************************************************************************** */
 /* global Reflect, Promise */
 
-var extendStatics = function(d, b) {
+let extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        function (d, b) { for (let p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
     return extendStatics(d, b);
 };
 
@@ -35,10 +35,10 @@ function __extends(d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
 
-var ListEventRenderer = /** @class */ (function (_super) {
+let ListEventRenderer = /** @class */ (function (_super) {
     __extends(ListEventRenderer, _super);
     function ListEventRenderer(listView) {
-        var _this = _super.call(this, listView.context) || this;
+        let _this = _super.call(this, listView.context) || this;
         _this.listView = listView;
         return _this;
     }
@@ -54,15 +54,15 @@ var ListEventRenderer = /** @class */ (function (_super) {
     };
     // generates the HTML for a single event row
     ListEventRenderer.prototype.renderSegHtml = function (seg) {
-        var _a = this.context, view = _a.view, theme = _a.theme;
-        var eventRange = seg.eventRange;
-        var eventDef = eventRange.def;
-        var eventInstance = eventRange.instance;
-        var eventUi = eventRange.ui;
-        var url = eventDef.url;
-        var classes = ['fc-list-item'].concat(eventUi.classNames);
-        var bgColor = eventUi.backgroundColor;
-        var timeHtml;
+        let _a = this.context, view = _a.view, theme = _a.theme;
+        let eventRange = seg.eventRange;
+        let eventDef = eventRange.def;
+        let eventInstance = eventRange.instance;
+        let eventUi = eventRange.ui;
+        let url = eventDef.url;
+        let classes = ['fc-list-item'].concat(eventUi.classNames);
+        let bgColor = eventUi.backgroundColor;
+        let timeHtml;
         if (eventDef.allDay) {
             timeHtml = getAllDayHtml(view);
         }
@@ -120,18 +120,18 @@ var ListEventRenderer = /** @class */ (function (_super) {
 /*
 Responsible for the scroller, and forwarding event-related actions into the "grid".
 */
-var ListView = /** @class */ (function (_super) {
+let ListView = /** @class */ (function (_super) {
     __extends(ListView, _super);
     function ListView(context, viewSpec, dateProfileGenerator, parentEl) {
-        var _this = _super.call(this, context, viewSpec, dateProfileGenerator, parentEl) || this;
+        let _this = _super.call(this, context, viewSpec, dateProfileGenerator, parentEl) || this;
         _this.computeDateVars = memoize(computeDateVars);
         _this.eventStoreToSegs = memoize(_this._eventStoreToSegs);
-        var eventRenderer = _this.eventRenderer = new ListEventRenderer(_this);
+        let eventRenderer = _this.eventRenderer = new ListEventRenderer(_this);
         _this.renderContent = memoizeRendering(eventRenderer.renderSegs.bind(eventRenderer), eventRenderer.unrender.bind(eventRenderer));
         _this.el.classList.add('fc-list-view');
-        var listViewClassNames = (_this.theme.getClass('listView') || '').split(' '); // wish we didn't have to do this
-        for (var _i = 0, listViewClassNames_1 = listViewClassNames; _i < listViewClassNames_1.length; _i++) {
-            var listViewClassName = listViewClassNames_1[_i];
+        let listViewClassNames = (_this.theme.getClass('listView') || '').split(' '); // wish we didn't have to do this
+        for (let _i = 0, listViewClassNames_1 = listViewClassNames; _i < listViewClassNames_1.length; _i++) {
+            let listViewClassName = listViewClassNames_1[_i];
             if (listViewClassName) { // in case input was empty string
                 _this.el.classList.add(listViewClassName);
             }
@@ -148,7 +148,7 @@ var ListView = /** @class */ (function (_super) {
         return _this;
     }
     ListView.prototype.render = function (props) {
-        var _a = this.computeDateVars(props.dateProfile), dayDates = _a.dayDates, dayRanges = _a.dayRanges;
+        let _a = this.computeDateVars(props.dateProfile), dayDates = _a.dayDates, dayRanges = _a.dayRanges;
         this.dayDates = dayDates;
         this.renderContent(this.eventStoreToSegs(props.eventStore, props.eventUiBases, dayRanges));
     };
@@ -175,21 +175,21 @@ var ListView = /** @class */ (function (_super) {
         return this.eventRangesToSegs(sliceEventStore(eventStore, eventUiBases, this.props.dateProfile.activeRange, this.nextDayThreshold).fg, dayRanges);
     };
     ListView.prototype.eventRangesToSegs = function (eventRanges, dayRanges) {
-        var segs = [];
-        for (var _i = 0, eventRanges_1 = eventRanges; _i < eventRanges_1.length; _i++) {
-            var eventRange = eventRanges_1[_i];
+        let segs = [];
+        for (let _i = 0, eventRanges_1 = eventRanges; _i < eventRanges_1.length; _i++) {
+            let eventRange = eventRanges_1[_i];
             segs.push.apply(segs, this.eventRangeToSegs(eventRange, dayRanges));
         }
         return segs;
     };
     ListView.prototype.eventRangeToSegs = function (eventRange, dayRanges) {
-        var _a = this, dateEnv = _a.dateEnv, nextDayThreshold = _a.nextDayThreshold;
-        var range = eventRange.range;
-        var allDay = eventRange.def.allDay;
-        var dayIndex;
-        var segRange;
-        var seg;
-        var segs = [];
+        let _a = this, dateEnv = _a.dateEnv, nextDayThreshold = _a.nextDayThreshold;
+        let range = eventRange.range;
+        let allDay = eventRange.def.allDay;
+        let dayIndex;
+        let segRange;
+        let seg;
+        let segs = [];
         for (dayIndex = 0; dayIndex < dayRanges.length; dayIndex++) {
             segRange = intersectRanges(range, dayRanges[dayIndex]);
             if (segRange) {
@@ -229,12 +229,12 @@ var ListView = /** @class */ (function (_super) {
     };
     // called by ListEventRenderer
     ListView.prototype.renderSegList = function (allSegs) {
-        var segsByDay = this.groupSegsByDay(allSegs); // sparse array
-        var dayIndex;
-        var daySegs;
-        var i;
-        var tableEl = htmlToElement('<table class="fc-list-table ' + this.calendar.theme.getClass('tableList') + '"><tbody></tbody></table>');
-        var tbodyEl = tableEl.querySelector('tbody');
+        let segsByDay = this.groupSegsByDay(allSegs); // sparse array
+        let dayIndex;
+        let daySegs;
+        let i;
+        let tableEl = htmlToElement('<table class="fc-list-table ' + this.calendar.theme.getClass('tableList') + '"><tbody></tbody></table>');
+        let tbodyEl = tableEl.querySelector('tbody');
         for (dayIndex = 0; dayIndex < segsByDay.length; dayIndex++) {
             daySegs = segsByDay[dayIndex];
             if (daySegs) { // sparse array, so might be undefined
@@ -251,9 +251,9 @@ var ListView = /** @class */ (function (_super) {
     };
     // Returns a sparse array of arrays, segs grouped by their dayIndex
     ListView.prototype.groupSegsByDay = function (segs) {
-        var segsByDay = []; // sparse array
-        var i;
-        var seg;
+        let segsByDay = []; // sparse array
+        let i;
+        let seg;
         for (i = 0; i < segs.length; i++) {
             seg = segs[i];
             (segsByDay[seg.dayIndex] || (segsByDay[seg.dayIndex] = []))
@@ -263,9 +263,9 @@ var ListView = /** @class */ (function (_super) {
     };
     // generates the HTML for the day headers that live amongst the event rows
     ListView.prototype.buildDayHeaderRow = function (dayDate) {
-        var dateEnv = this.dateEnv;
-        var mainFormat = createFormatter(this.opt('listDayFormat')); // TODO: cache
-        var altFormat = createFormatter(this.opt('listDayAltFormat')); // TODO: cache
+        let dateEnv = this.dateEnv;
+        let mainFormat = createFormatter(this.opt('listDayFormat')); // TODO: cache
+        let altFormat = createFormatter(this.opt('listDayAltFormat')); // TODO: cache
         return createElement('tr', {
             className: 'fc-list-heading',
             'data-date': dateEnv.formatIso(dayDate, { omitTime: true })
@@ -285,10 +285,10 @@ var ListView = /** @class */ (function (_super) {
 }(View));
 ListView.prototype.fgSegSelector = '.fc-list-item'; // which elements accept event actions
 function computeDateVars(dateProfile) {
-    var dayStart = startOfDay(dateProfile.renderRange.start);
-    var viewEnd = dateProfile.renderRange.end;
-    var dayDates = [];
-    var dayRanges = [];
+    let dayStart = startOfDay(dateProfile.renderRange.start);
+    let viewEnd = dateProfile.renderRange.end;
+    let dayDates = [];
+    let dayRanges = [];
     while (dayStart < viewEnd) {
         dayDates.push(dayStart);
         dayRanges.push({
@@ -300,7 +300,7 @@ function computeDateVars(dateProfile) {
     return { dayDates: dayDates, dayRanges: dayRanges };
 }
 
-var main = createPlugin({
+let main = createPlugin({
     views: {
         list: {
             class: ListView,

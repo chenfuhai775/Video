@@ -4,7 +4,7 @@
     (global = global || self, (global.FullCalendarLocales = global.FullCalendarLocales || {}, global.FullCalendarLocales.fr = factory()));
 }(this, function () { 'use strict';
 
-    var fr = {
+    let fr = {
         code: "fr",
         week: {
             dow: 1,

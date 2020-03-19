@@ -18,16 +18,23 @@ VideoSetting.prototype = {
 		///getLogList(5,'lTypeAlarm');				///获取报警记录
 		var szLanguage = $.cookie("language");
 		translator.initLanguageSelect(szLanguage);
-		this._lxdVideoSetting = translator.getLanguageXmlDoc("VideoSetting");
-		translator.translatePage(this._lxdVideoSetting, document);
-		this.InitChnList(g_oCommon.m_iAnalogChannelNum + g_oCommon.m_iDigitalChannelNum,"chnSel1");
-		this.InitChnList(g_oCommon.m_iAnalogChannelNum + g_oCommon.m_iDigitalChannelNum,"chnSel2");
-		this.channelSel("0");
-		this.videoLossSel("0");
-		g_oVideoSetting.syncMsg();
-		setInterval("g_oVideoSetting.syncMsg()", 2000);
+		
+		if(1 == g_oCommon.m_bDecodeCfg)
+		{
+			this._lxdVideoSetting = translator.getLanguageXmlDoc("VideoSetting");
+			translator.translatePage(this._lxdVideoSetting, document);
+			this.InitChnList(g_oCommon.m_iAnalogChannelNum + g_oCommon.m_iDigitalChannelNum,"chnSel1");
+			this.InitChnList(g_oCommon.m_iAnalogChannelNum + g_oCommon.m_iDigitalChannelNum,"chnSel2");
+			this.channelSel("0");
+			this.videoLossSel("0");
+			this.getEncode();
+			g_oVideoSetting.syncMsg();
+			setInterval("g_oVideoSetting.syncMsg()", 2000);
+		}
+		else
+			document.getElementById("decodeCfg").innerHTML = "";
 	},
-	
+
 	channelSel: function (chn) {
 		var json = {};
 		json.Cmd=1501;
@@ -700,7 +707,7 @@ VideoSetting.prototype = {
 	syncMsg: function(){
 		$.ajax({
 				type: "get",
-				url: g_oCommon.m_lHttp + g_oCommon.m_szHostName + ":" + g_oCommon.m_lHttpPort + "/system/syncMsgInfo",
+				url: g_oCommon.m_lHttp + g_oCommon.m_szHostName + ":" + g_oCommon.m_lHttpPort + "/system/getStatusInfo",
 				async: !0,
 				timeout: 15e3,
 				beforeSend: function (xhr) {
@@ -720,5 +727,86 @@ VideoSetting.prototype = {
 			}
 		})
 	},
+	getEncode: function () {
+		let json = {};
+		json.Cmd = 7037;
+		json.Id = "web";
+		json.User = 123;
+		json.Def = "JSON_CMD_GET_ENCONDE";
+		let jsonStr = JSON.stringify(json);
+		$.ajax({
+			type: "get",
+			url: g_oCommon.m_lHttp + g_oCommon.m_szHostName + ":" + g_oCommon.m_lHttpPort + "/jsonStruct_set",
+			timeout: 15e3,
+			async: !1,
+			processData: !1,
+			dataType: "json",
+			data: jsonStr,
+			beforeSend: function (xhr) {
+				xhr.setRequestHeader("If-Modified-Since", 0);
+				xhr.setRequestHeader("Authorization", "Basic " + g_oCommon.m_szUserPwdValue);
+			},
+			success: function (data) {
+				if (0 == data.Ack) {
+					$('#ddlMirror').val(data.Mirror);
+					$("#ddlframeRate").val(data.FrameRate);
+					$("#ddlResolution").val(data.Resolution);
+					$("#ddlQuality").val(data.Quality);
+					$("#ddlEncType").val(data.EncType);
+					$("#ddlSubEncSwitch").val(data.SubEncSwitch);
+					$("#ddlsubFrameRate").val(data.SubFrameRate);
+					$("#ddlSubRes").val(data.SubRes);
+					$("#ddlSubQuality").val(data.SubQuality);
+					$("#ddlSubEncType").val(data.SubEncType);
+				}
+			},
+			complete: function (t) {
+			}
+		})
+	},
+
+	setEncode: function () {
+		let json = {};
+		json.Cmd = 7038;
+		json.Id = "web";
+		json.User = 123;
+		json.Def = "JSON_CMD_SET_ENCONDE";
+
+		json.Mirror = $('#ddlMirror').val();
+		json.FrameRate = 	$("#ddlframeRate").val();
+		json.Resolution = $("#ddlResolution").val();
+		json.Quality = $("#ddlQuality").val();
+		json.EncType = $("#ddlEncType").val();
+		json.SubEncSwitch = $("#ddlSubEncSwitch").val();
+		json.SubFrameRate = $("#ddlsubFrameRate").val();
+		json.SubRes = $("#ddlSubRes").val();
+		json.SubQuality = $("#ddlSubQuality").val();
+		json.SubEncType = $("#ddlSubEncType").val();
+
+		let jsonStr = JSON.stringify(json);
+		$.ajax({
+			type: "put",
+			url: g_oCommon.m_lHttp + g_oCommon.m_szHostName + ":" + g_oCommon.m_lHttpPort + "/jsonStruct_set",
+			timeout: 15e3,
+			async: !1,
+			processData: !1,
+			dataType: "json",
+			data: jsonStr,
+			beforeSend: function (xhr) {
+				xhr.setRequestHeader("If-Modified-Since", 0);
+				xhr.setRequestHeader("Authorization", "Basic " + g_oCommon.m_szUserPwdValue);
+			},
+			success: function (data) {
+				if (0 == data.Ack) {
+					AMUI.dialog.tip({
+						tip: g_oCommon.getNodeValue('Success1'),
+						timeout: 1000
+					});
+				}
+			},
+			complete: function (t) {
+			}
+		})
+	}
 }
 var g_oVideoSetting= new VideoSetting();

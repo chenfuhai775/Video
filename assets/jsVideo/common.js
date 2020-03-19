@@ -9,13 +9,13 @@ const kAudioInfo            = 1;
 const kVideoInfo            = 2;
 const kAudioData            = 3;
 const kVideoData            = 4;
+const kSendAudioData        = 5;
 
 //Downloader request.
 const kGetFileInfoReq       = 0;
 const kDownloadFileReq      = 1;
 const kCloseDownloaderReq   = 2;
 const kReqAvStream          = 3;
-
 
 //Downloader response.
 const kGetFileInfoRsp       = 0;
@@ -65,14 +65,14 @@ Logger.prototype.logDebug = function (line) {
 }
 
 Logger.prototype.currentTimeStr = function () {
-    var now = new Date(Date.now());
-    var year = now.getFullYear();
-    var month = now.getMonth() + 1;
-    var day = now.getDate();
-    var hour = now.getHours();
-    var min = now.getMinutes();
-    var sec = now.getSeconds();
-    var ms = now.getMilliseconds();
+    let now = new Date(Date.now());
+    let year = now.getFullYear();
+    let month = now.getMonth() + 1;
+    let day = now.getDate();
+    let hour = now.getHours();
+    let min = now.getMinutes();
+    let sec = now.getSeconds();
+    let ms = now.getMilliseconds();
     return year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + sec + ":" + ms;
 }
 

@@ -4,7 +4,7 @@
     (global = global || self, (global.FullCalendarLocales = global.FullCalendarLocales || {}, global.FullCalendarLocales['fr-ca'] = factory()));
 }(this, function () { 'use strict';
 
-    var frCa = {
+    let frCa = {
         code: "fr",
         buttonText: {
             prev: "Précédent",

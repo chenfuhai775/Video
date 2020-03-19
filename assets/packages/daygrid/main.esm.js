@@ -22,10 +22,10 @@ and limitations under the License.
 ***************************************************************************** */
 /* global Reflect, Promise */
 
-var extendStatics = function(d, b) {
+let extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        function (d, b) { for (let p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
     return extendStatics(d, b);
 };
 
@@ -35,29 +35,29 @@ function __extends(d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
 
-var __assign = function() {
+let __assign = function() {
     __assign = Object.assign || function __assign(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
+        for (let s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+            for (let p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
         }
         return t;
     };
     return __assign.apply(this, arguments);
 };
 
-var DayGridDateProfileGenerator = /** @class */ (function (_super) {
+let DayGridDateProfileGenerator = /** @class */ (function (_super) {
     __extends(DayGridDateProfileGenerator, _super);
     function DayGridDateProfileGenerator() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     // Computes the date range that will be rendered.
     DayGridDateProfileGenerator.prototype.buildRenderRange = function (currentRange, currentRangeUnit, isRangeAllDay) {
-        var dateEnv = this.dateEnv;
-        var renderRange = _super.prototype.buildRenderRange.call(this, currentRange, currentRangeUnit, isRangeAllDay);
-        var start = renderRange.start;
-        var end = renderRange.end;
-        var endOfWeek;
+        let dateEnv = this.dateEnv;
+        let renderRange = _super.prototype.buildRenderRange.call(this, currentRange, currentRangeUnit, isRangeAllDay);
+        let start = renderRange.start;
+        let end = renderRange.end;
+        let endOfWeek;
         // year and month views should be aligned with weeks. this is already done for week
         if (/^(year|month)$/.test(currentRangeUnit)) {
             start = dateEnv.startOfWeek(start);
@@ -70,7 +70,7 @@ var DayGridDateProfileGenerator = /** @class */ (function (_super) {
         // ensure 6 weeks
         if (this.options.monthMode &&
             this.options.fixedWeekCount) {
-            var rowCnt = Math.ceil(// could be partial weeks due to hiddenDays
+            let rowCnt = Math.ceil(// could be partial weeks due to hiddenDays
             diffWeeks(start, end));
             end = addWeeks(end, 6 - rowCnt);
         }
@@ -92,9 +92,9 @@ Options:
   - show (callback)
   - hide (callback)
 */
-var Popover = /** @class */ (function () {
+let Popover = /** @class */ (function () {
     function Popover(options) {
-        var _this = this;
+        let _this = this;
         this.isHidden = true;
         this.margin = 10; // the space required between the popover and the edges of the scroll container
         // Triggered when the user clicks *anywhere* in the document, for the autoHide feature
@@ -128,9 +128,9 @@ var Popover = /** @class */ (function () {
     };
     // Creates `this.el` and renders content inside of it
     Popover.prototype.render = function () {
-        var _this = this;
-        var options = this.options;
-        var el = this.el = createElement('div', {
+        let _this = this;
+        let options = this.options;
+        let el = this.el = createElement('div', {
             className: 'fc-popover ' + (options.className || ''),
             style: {
                 top: '0',
@@ -160,13 +160,13 @@ var Popover = /** @class */ (function () {
     };
     // Positions the popover optimally, using the top/left/right options
     Popover.prototype.position = function () {
-        var options = this.options;
-        var el = this.el;
-        var elDims = el.getBoundingClientRect(); // only used for width,height
-        var origin = computeRect(el.offsetParent);
-        var clippingRect = computeClippingRect(options.parentEl);
-        var top; // the "position" (not "offset") values for the popover
-        var left; //
+        let options = this.options;
+        let el = this.el;
+        let elDims = el.getBoundingClientRect(); // only used for width,height
+        let origin = computeRect(el.offsetParent);
+        let clippingRect = computeClippingRect(options.parentEl);
+        let top; // the "position" (not "offset") values for the popover
+        let left; //
         // compute top and left
         top = options.top || 0;
         if (options.left !== undefined) {
@@ -203,26 +203,26 @@ var Popover = /** @class */ (function () {
 /* Event-rendering methods for the DayGrid class
 ----------------------------------------------------------------------------------------------------------------------*/
 // "Simple" is bad a name. has nothing to do with SimpleDayGrid
-var SimpleDayGridEventRenderer = /** @class */ (function (_super) {
+let SimpleDayGridEventRenderer = /** @class */ (function (_super) {
     __extends(SimpleDayGridEventRenderer, _super);
     function SimpleDayGridEventRenderer() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     // Builds the HTML to be used for the default element for an individual segment
     SimpleDayGridEventRenderer.prototype.renderSegHtml = function (seg, mirrorInfo) {
-        var _a = this.context, view = _a.view, options = _a.options;
-        var eventRange = seg.eventRange;
-        var eventDef = eventRange.def;
-        var eventUi = eventRange.ui;
-        var allDay = eventDef.allDay;
-        var isDraggable = view.computeEventDraggable(eventDef, eventUi);
-        var isResizableFromStart = allDay && seg.isStart && view.computeEventStartResizable(eventDef, eventUi);
-        var isResizableFromEnd = allDay && seg.isEnd && view.computeEventEndResizable(eventDef, eventUi);
-        var classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd, mirrorInfo);
-        var skinCss = cssToStr(this.getSkinCss(eventUi));
-        var timeHtml = '';
-        var timeText;
-        var titleHtml;
+        let _a = this.context, view = _a.view, options = _a.options;
+        let eventRange = seg.eventRange;
+        let eventDef = eventRange.def;
+        let eventUi = eventRange.ui;
+        let allDay = eventDef.allDay;
+        let isDraggable = view.computeEventDraggable(eventDef, eventUi);
+        let isResizableFromStart = allDay && seg.isStart && view.computeEventStartResizable(eventDef, eventUi);
+        let isResizableFromEnd = allDay && seg.isEnd && view.computeEventEndResizable(eventDef, eventUi);
+        let classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd, mirrorInfo);
+        let skinCss = cssToStr(this.getSkinCss(eventUi));
+        let timeHtml = '';
+        let timeText;
+        let titleHtml;
         classes.unshift('fc-day-grid-event', 'fc-h-event');
         // Only display a timed events time if it is the starting segment
         if (seg.isStart) {
@@ -274,16 +274,16 @@ var SimpleDayGridEventRenderer = /** @class */ (function (_super) {
 
 /* Event-rendering methods for the DayGrid class
 ----------------------------------------------------------------------------------------------------------------------*/
-var DayGridEventRenderer = /** @class */ (function (_super) {
+let DayGridEventRenderer = /** @class */ (function (_super) {
     __extends(DayGridEventRenderer, _super);
     function DayGridEventRenderer(dayGrid) {
-        var _this = _super.call(this, dayGrid.context) || this;
+        let _this = _super.call(this, dayGrid.context) || this;
         _this.dayGrid = dayGrid;
         return _this;
     }
     // Renders the given foreground event segments onto the grid
     DayGridEventRenderer.prototype.attachSegs = function (segs, mirrorInfo) {
-        var rowStructs = this.rowStructs = this.renderSegRows(segs);
+        let rowStructs = this.rowStructs = this.renderSegRows(segs);
         // append to each row's content skeleton
         this.dayGrid.rowEls.forEach(function (rowNode, i) {
             rowNode.querySelector('.fc-content-skeleton > table').appendChild(rowStructs[i].tbodyEl);
@@ -295,8 +295,8 @@ var DayGridEventRenderer = /** @class */ (function (_super) {
     };
     // Unrenders all currently rendered foreground event segments
     DayGridEventRenderer.prototype.detachSegs = function () {
-        var rowStructs = this.rowStructs || [];
-        var rowStruct;
+        let rowStructs = this.rowStructs || [];
+        let rowStruct;
         while ((rowStruct = rowStructs.pop())) {
             removeElement(rowStruct.tbodyEl);
         }
@@ -306,9 +306,9 @@ var DayGridEventRenderer = /** @class */ (function (_super) {
     // Returns an array of rowStruct objects (see the bottom of `renderSegRow`).
     // PRECONDITION: each segment shoud already have a rendered and assigned `.el`
     DayGridEventRenderer.prototype.renderSegRows = function (segs) {
-        var rowStructs = [];
-        var segRows;
-        var row;
+        let rowStructs = [];
+        let segRows;
+        let row;
         segRows = this.groupSegRows(segs); // group into nested arrays
         // iterate each row of segment groupings
         for (row = 0; row < segRows.length; row++) {

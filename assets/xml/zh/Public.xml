@@ -11,6 +11,7 @@
 		<laSmart>设备</laSmart>
 		<laAreaList>区域管理</laAreaList>
 		<laDevList>设备管理</laDevList>
+		<laScene>场景管理</laScene>
 		<laNewMessage>最新消息</laNewMessage>
 		<laPanelStatus>主机状态</laPanelStatus>
 		<laSD>SD卡</laSD>
@@ -24,6 +25,7 @@
 			<laDevice>主机参数</laDevice>
 			<laNetwork>网络设置</laNetwork>
 			<laVideo>视频设置</laVideo>
+			<laFrameImage>图像设置</laFrameImage>
 			<laAlarm>报警设置</laAlarm>
 			<laUser>用户管理</laUser>
 			<laSystem>系统维护</laSystem>

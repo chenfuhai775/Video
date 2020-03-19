@@ -39,6 +39,7 @@
     this.m_bSupportShttpsPlaybackTransCode = !1,
     this.m_bSupportStreamSecret = !1,
     this.m_bSupportReversPlayback = !0,
+	this.m_bDecodeCfg = 0,
     this.m_szCopyRight = "NpbWNoydm5gbm2mliBBbGwIFJlc6naHRzbCBUTHRkLRGlnaXRhZVwqlIaWt7aX9sb5d5IENvLiwggUVkLg==",
 	this.m_MsgInfoIndex = 0
 }
@@ -57,7 +58,6 @@ $.ajaxSetup({
         401 : function() {}
     }
 }),
-
 
 Common.prototype = {
 	

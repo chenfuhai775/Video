@@ -9,15 +9,32 @@
 		<laPlayback>Playback</laPlayback>
 		<laLog>Log</laLog>
 		<laSmart>Device</laSmart>
+		<laAreaList>Areas Manage</laAreaList>
+		<laDevList>Device Manage</laDevList>
+		<laScene>Scene Manage</laScene>
+		<laNewMessage>Latest message</laNewMessage>
+		<laPanelStatus>Host State</laPanelStatus>
+		<laSD>SD Card</laSD>
+		<laInternet>Internet</laInternet>
+		<la4G>4G</la4G>
+		<laPlatform>Platform</laPlatform>
+		<laPower>Battery</laPower>
+		<laAll>All</laAll>
 		<Config>
 			<laConfig>Configuration</laConfig>
 			<laDevice>Device Parameters</laDevice>
-			<laNetwork>Network Settings</laNetwork>
+			<laNetwork>Network Config.</laNetwork>
 			<laVideo>Video Config.</laVideo>
+			<laFrameImage>Screen Config.</laFrameImage>
 			<laAlarm>Alarm Config.</laAlarm>
 			<laUser>User Config.</laUser>
 			<laSystem>System Maintenance</laSystem>
 		</Config>
+		<Time>
+			<laDay>Yesterday</laDay>
+			<laJust>Just</laJust>
+			<laMinute>Minutes ago</laMinute>
+		</Time>
 	</Page>
 	<Js>
 		<dialogTitle>Message！</dialogTitle>

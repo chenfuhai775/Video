@@ -19,7 +19,5 @@
 	<Js>
 		<dialogTitle>日期选择错误</dialogTitle>
 		<btnConfirm>确定</btnConfirm>
-		
-		
 	</Js>
 </SysLog>

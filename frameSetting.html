@@ -1,0 +1,590 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="assets/css/main.min.css">
+    <link rel="stylesheet" href="assets/css/app.css">
+    <link rel="stylesheet" href="assets/css/css.css">
+
+    <link rel="stylesheet" href="assets/rangeSlider/css/ion.rangeSlider.min.css">
+    <link rel="stylesheet" href="assets/skins/all.css?v=1.0.2">
+    <link href='https://use.fontawesome.com/releases/v5.0.6/css/all.css' rel='stylesheet'>
+    <link href='assets/packages/core/main.css' rel='stylesheet'/>
+    <link href='assets/packages/bootstrap/main.css' rel='stylesheet'/>
+    <link href='assets/packages/timegrid/main.css' rel='stylesheet'/>
+    <link href='assets/packages/daygrid/main.css' rel='stylesheet'/>
+    <link href='assets/packages/list/main.css' rel='stylesheet'/>
+    <link rel="stylesheet" href="assets/css/theme/default/laydate.css">
+    <style>
+        .drag-box {
+            background: #bad5ff;
+            width: 0px;
+            height: 0px;
+            position: absolute;
+            opacity: 0.7;
+            cursor: move;
+        }
+
+        .select {
+            background-image: url("assets/img/checked.png");
+            background-repeat: no-repeat;
+            opacity: 0.7;
+            background-color: #E6E6E6;
+        }
+    </style>
+
+</head>
+
+<body data-type="index">
+
+<header class="am-topbar am-topbar-inverse admin-header">
+    <!-- logo -->
+    <div class="am-fl tpl-header-logo">
+        <span id="LogoText" name="LogoText"></span>
+    </div>
+    <!-- 顶部右侧内容 -->
+    <div class="tpl-header-fluid">
+        <div class="am-fl tpl-header-switch-button am-icon-navicon">
+        </div>
+        <button class="am-topbar-btn am-topbar-toggle am-btn am-btn-sm am-btn-success am-show-sm-only"
+                data-am-collapse="{target: '#topbar-collapse'}"><span class="am-sr-only">导航切换</span> <span
+                class="am-icon-bars"></span></button>
+        <div class="am-fr am-collapse am-topbar-collapse" id="topbar-collapse">
+            <ul class="am-nav am-nav-pills am-topbar-nav tpl-header-list">
+                <!-- 欢迎语 -->
+                <li class="am-text-sm">
+                    <a href="UsersManage.html"><span class="am-icon-user"></span> <span id="UserName"></span> </a>
+                </li>
+                <li class="am-dropdown" data-am-dropdown="" data-am-dropdown-toggle="" id="lastMsgLog">
+                    <a class="am-dropdown-toggle tpl-header-list-link" onClick="g_oVideoSetting.displayLastMsg()"
+                       href="javascript:;">
+                        <span class="am-icon-bell"></span> <span id="laMessage" name="laMessage"></span> <span
+                            class="am-badge tpl-badge-danger am-round" id="alarmInfoNum"></span>
+                    </a>
+                    <ul class="am-dropdown-content tpl-dropdown-content">
+                        <li class="tpl-dropdown-content-external">
+                            <h3><label name="laNewMessage"></label></h3><a href="log.html" name="laAll"></a>
+                        </li>
+                        <li id="logList">
+                        </li>
+
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:loginOut();" class="tpl-header-list-link">
+                        <span class="am-icon-sign-out tpl-header-list-ico-out-size"></span> <span name="laExit"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>
+
+<div class="tpl-page-container tpl-page-header-fixed">
+    <!-- 侧边导航栏 -->
+    <div class="left-sidebar">
+        <div class="tpl-left-nav-title">
+            <a class="more" href="ParaSetting.html&time"><i class="am-icon-clock-o"></i></a>
+            <span id="data"></span>&nbsp;&nbsp;<span id="time"></span>
+        </div>
+        <div class="tpl-left-nav-list">
+            <ul class="tpl-left-nav-menu">
+                <li class="tpl-left-nav-item">
+                    <a href="index.html" class="nav-link tpl-left-nav-link-list">
+                        <i class="am-icon-play-circle-o am-icon-fw"></i>
+                        <span name="laHome"></span>
+                    </a>
+                </li>
+                <li class="tpl-left-nav-item">
+                    <a href="playback.html" class="nav-link tpl-left-nav-link-list">
+                        <i class="am-icon-file-video-o am-icon-fw"></i>
+                        <span name="laPlayback"></span>
+                    </a>
+                </li>
+                <li class="tpl-left-nav-item">
+                    <a href="log.html" class="nav-link tpl-left-nav-link-list">
+                        <i class="am-icon-calendar am-icon-fw"></i>
+                        <span name="laLog"></span>
+                    </a>
+                </li>
+                <li class="tpl-left-nav-item">
+                    <a href="javascript:;" class="nav-link tpl-left-nav-link-list">
+                        <i class="am-icon-toggle-on am-icon-fw"></i>
+                        <span name="laSmart"></span>
+                        <i class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right"></i>
+                    </a>
+                    <ul class="tpl-left-nav-sub-menu" style="display: none;">
+                        <li>
+                            <a href="device.html">
+                                <i class="am-icon-angle-right"></i>
+                                <span name="laDevList"></span>
+                            </a>
+                            <a href="area.html">
+                                <i class="am-icon-angle-right"></i>
+                                <span name="laAreaList"></span>
+                            </a>
+                            <a href="scene.html">
+                                <i class="am-icon-angle-right"></i>
+                                <span name="laScene"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="tpl-left-nav-item">
+                    <a href="javascript:;" class="nav-link tpl-left-nav-link-list active">
+                        <i class="am-icon-cogs am-icon-fw"></i>
+                        <span name="laConfig"></span>
+                        <i class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right tpl-left-nav-more-ico-rotate"></i>
+                    </a>
+                    <ul class="tpl-left-nav-sub-menu" style="display: block;">
+                        <li>
+                            <a href="ParaSetting.html">
+                                <i class="am-icon-angle-right"></i>
+                                <span name="laDevice"></span>
+                                <i class="am-icon-star tpl-left-nav-content-ico am-fr am-margin-right"></i>
+                            </a>
+                            <a href="NetworkSetting.html">
+                                <i class="am-icon-angle-right"></i>
+                                <span name="laNetwork"></span>
+                                <i class="am-icon-star tpl-left-nav-content-ico am-fr am-margin-right"></i>
+                            </a>
+                            <a href="VideoSetting.html">
+                                <i class="am-icon-angle-right"></i>
+                                <span name="laVideo"></span>
+                            </a>
+                            <a href="frameSetting.html" class="active">
+                                <i class="am-icon-angle-right"></i>
+                                <span name="laFrameImage"></span>
+                            </a>
+                            <a href="AlarmSetting.html">
+                                <i class="am-icon-angle-right"></i>
+                                <span name="laAlarm"></span>
+                            </a>
+                            <a href="UsersManage.html">
+                                <i class="am-icon-angle-right"></i>
+                                <span name="laUser"></span>
+                            </a>
+                            <a href="System.html">
+                                <i class="am-icon-angle-right"></i>
+                                <span name="laSystem"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="tpl-content-wrapper">
+        <div class="tpl-portlet-components">
+            <div class="portlet-title">
+                <div class="caption">
+                    <span class="am-icon-list-alt"></span><span name="laFrameImage"></span>
+                </div>
+            </div>
+            <div class="tpl-block">
+                <div class="am-u-sm-4">
+                    <div>
+                        <canvas id="myCanvas1" style="width: 500px;height: 400px;background-color: #000;"></canvas>
+                    </div>
+                </div>
+                <div class="am-u-sm-8">
+                    <div class="am-tabs" data-am-tabs="{noSwipe: 1}">
+                        <ul class="am-tabs-nav am-nav am-nav-tabs">
+                            <li class="am-active"><a href="#tab1" id="laDisplay" name="laDisplay">显示设置</a></li>
+                            <li><a href="#tab2" id="laOsd" name="laOsdSet">OSD设置</a></li>
+                            <li><a href="#tab3" id="laMove" name="laDetection">移动侦测</a></li>
+                        </ul>
+                        <div class="am-tabs-bd">
+                            <div class="am-tab-panel am-fade am-in am-active" id="tab1">
+                                <div style="margin-top: 20px;" class="tpl-block">
+                                    <div class="am-u-sm-12">
+                                        <form class="am-form am-form-horizontal ">
+                                            <div class="am-form-group">
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laTimeSlot">时间段</label>
+                                                <div class="am-u-sm-5">
+                                                    <select data-am-selected="{btnWidth: '50%',btnSize: 'default'}"
+                                                            onchange="g_frameSetting.changeTimeSlot(this)"
+                                                            id="ddlTimeSlot">
+                                                        <option value="0" name="laTimeSlot1"></option>
+                                                        <option value="1" name="laTimeSlot2"></option>
+                                                        <option value="2" name="laTimeSlot3"></option>
+                                                        <option value="3" name="laTimeSlot4"></option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group">
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laEnable">使能</label>
+                                                <div class="am-u-sm-4">
+                                                    <select data-am-selected="{btnWidth: '50%',btnSize: 'default'}"
+                                                            id="ddlEnable">
+                                                        <option value="1" name="laEnable">使能</option>
+                                                        <option value="0" name="laDisable">去使能</option>
+                                                    </select>
+                                                </div>
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laChannel">通道选择</label>
+                                                <div class="am-u-sm-4">
+                                                    <select data-am-selected="{btnWidth: '50%',btnSize: 'default'}"
+                                                            id="ddlChannel">
+                                                        <option value="0" id="one">0</option>
+                                                        <option value="1" id="two">1</option>
+                                                        <option value="2" id="three">2</option>
+                                                        <option value="3" id="frou">3</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group">
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laStartTime">开始时间</label>
+                                                <div class="am-u-sm-4">
+                                                    <input type="text" id="startTime"/>
+                                                </div>
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laEndTime">结束时间</label>
+                                                <div class="am-u-sm-4">
+                                                    <input type="text" id="endTime"/>
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group">
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="labrightness">亮度</label>
+                                                <div class="am-u-sm-4">
+                                                    <span id="brightness"></span>
+                                                </div>
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laContrastRatio">对比度</label>
+                                                <div class="am-u-sm-4">
+                                                    <span id="contrastRatio"></span>
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group">
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laSaturation">饱和度</label>
+                                                <div class="am-u-sm-4">
+                                                    <span id="saturation"></span>
+                                                </div>
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laChroma">色度</label>
+                                                <div class="am-u-sm-4">
+                                                    <span id="chroma"></span>
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group">
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laAcuity">锐度</label>
+                                                <div class="am-u-sm-4">
+                                                    <span id="acuity"></span>
+                                                </div>
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laGain">增益</label>
+                                                <div class="am-u-sm-4">
+                                                    <span id="gain"></span>
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group">
+                                                <div class="am-u-sm-12 am-u-sm-push-2 am-btn-group-sm">
+                                                    <button type="button" class="am-btn am-radius am-btn-primary"
+                                                            onclick="g_frameSetting.setColor()"><span
+                                                            name="btnSave"></span></button>
+                                                    <button type="button" class="am-btn am-radius am-btn-primary"
+                                                            onclick="g_frameSetting.resetColor()"><span
+                                                            name="btnReset"></span></button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-tab-panel am-fade " id="tab2">
+                                <div style="margin-top: 20px;" class="tpl-block">
+                                    <div class="am-u-sm-12">
+                                        <form class="am-form am-form-horizontal ">
+                                            <div class="am-form-group">
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laDisplayName">显示名称</label>
+                                                <div class="am-u-sm-5">
+                                                    <input type="checkbox" value="0" id="disPlayName"/>
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group">
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laDisplayTime">显示时间</label>
+                                                <div class="am-u-sm-5">
+                                                    <input type="checkbox" value="1" id="disPlayTime"/>
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group">
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laChannelName">通道名称</label>
+                                                <div class="am-u-sm-5">
+                                                    <input id="ChannelName" type="text"/>
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group">
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laFontColor">字体颜色</label>
+                                                <div class="am-u-sm-5">
+                                                    <select data-am-selected="{btnWidth: '50%',btnSize: 'default'}"
+                                                            id="ddlTimeColor">
+                                                        <option value="0">white</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group">
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laOption">移动选项</label>
+                                                <div class="am-u-sm-5">
+                                                    <select data-am-selected="{btnWidth: '50%',btnSize: 'default'}"
+                                                            id="ddlChoice">
+                                                        <option value="0" name="laOptionName"></option>
+                                                        <option value="1" name="laOptionTime"></option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group">
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laPosition">位置</label>
+                                                <div class="am-u-sm-5">
+                                                    <div class="ptz-ctrl-l">
+                                                        <span class="direction"></span>
+                                                        <span class="direction"><i class="icon-ptz-up"
+                                                                                   onmousedown="g_frameSetting.ptzUp()"
+                                                                                   onclick="g_frameSetting.ptzUpEnd()"></i></span>
+                                                        <span class="direction"></span>
+                                                        <span class="direction"><i class="icon-ptz-left"
+                                                                                   onmousedown="g_frameSetting.ptzLeft()"
+                                                                                   onclick="g_frameSetting.ptzLeftEnd()"></i></span>
+                                                        <span class="direction"><i class="icon-ptz-auto"
+                                                                                   onclick="g_frameSetting.ptzAuto()"></i></span>
+                                                        <span class="direction"><i class="icon-ptz-right"
+                                                                                   onmousedown="g_frameSetting.ptzRight()"
+                                                                                   onclick="g_frameSetting.ptzRightEnd()"></i></span>
+                                                        <span class="direction"></span>
+                                                        <span class="direction"><i class="icon-ptz-down"
+                                                                                   onmousedown="g_frameSetting.ptzDown()"
+                                                                                   onmouseup="g_frameSetting.ptzDownEnd()"></i></span>
+                                                        <span class="direction"></i></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group">
+                                                <div class="am-u-sm-12 am-u-sm-push-2 am-btn-group-sm">
+                                                    <button type="button" class="am-btn am-radius am-btn-primary"
+                                                            onclick="g_frameSetting.getOsd()"><span
+                                                            name="btnRead"></span></button>
+                                                    <button type="button" class="am-btn am-radius am-btn-primary"
+                                                            onclick="g_frameSetting.setOsd()"><span
+                                                            name="btnSave"></span></button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-tab-panel am-fade " id="tab3">
+                                <div style="margin-top: 20px;" class="tpl-block">
+                                    <div class="am-u-sm-12">
+                                        <form class="am-form am-form-horizontal ">
+                                            <div class="am-form-group">
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laDetection">启动移动侦测</label>
+                                                <div class="am-u-sm-5">
+                                                    <input value="2" type="checkbox" id="laDetection"/>
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group">
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laSensitivity">移动侦测灵敏度</label>
+                                                <div class="am-u-sm-5">
+                                                    <span id="sensitivity"></span>
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group">
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laEnableindication">使能指示</label>
+                                                <div class="am-u-sm-5">
+                                                    <select data-am-selected="{btnWidth: '50%',btnSize: 'default'}"
+                                                            id="ddlIndication">
+                                                        <option value="0" name="laTimeSchedule"></option>
+                                                        <option value="1" name="laRelation"></option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group">
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laProcessMode">表处理方式</label>
+                                                <div class="am-u-sm-5">
+                                                    <select data-am-selected="{btnWidth: '50%',btnSize: 'default'}"
+                                                            id="ddlProcessMode">
+                                                        <option value="0" name="laSoundAlarm"></option>
+                                                        <option value="1" name="laBuzz"></option>
+                                                        <option value="2" name="laCapture"></option>
+                                                        <option value="3" name="laUploadCenter"></option>
+                                                        <option value="4" name="laSendEmail"></option>
+                                                        <option value="5" name="laCallUser"></option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group">
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laDetectioninterval">检测间隔(秒)</label>
+                                                <div class="am-u-sm-2">
+                                                    <input id="Detectioninterval" type="text">
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group">
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laWeek">星期</label>
+                                                <div class="am-u-sm-5">
+                                                    <select data-am-selected="{btnWidth: '50%',btnSize: 'default'}"
+                                                            onchange="g_frameSetting.changeWeek(this)" id="ddlWeek">
+                                                        <option value="0" name="laSunday"></option>
+                                                        <option value="1" name="laMonday"></option>
+                                                        <option value="2" name="laTuesday"></option>
+                                                        <option value="3" name="laWednesday"></option>
+                                                        <option value="4" name="laThursday"></option>
+                                                        <option value="5" name="laFriday"></option>
+                                                        <option value="6" name="laSaturday"></option>
+                                                    </select>
+                                                    <button type="button" class="am-btn am-radius am-btn-default"
+                                                            onclick="g_frameSetting.saveTime()">
+                                                        <span class="am-icon-save"></span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group weekTimeGroup">
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laStartWeekTime"></label>
+                                                <div class="am-u-sm-3">
+                                                    <input id="startWeekTime0" value="00:00" type="text">
+                                                </div>
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laEndWeekTime"></label>
+                                                <div class="am-u-sm-3">
+                                                    <input id="endWeekTime0" value="00:00" type="text">
+                                                </div>
+                                                <div class="am-u-sm-2">
+                                                    <select data-am-selected="{btnWidth: '100%',btnSize: 'default'}"
+                                                            id="ddlEnable0">
+                                                        <option value="1" name="laEnable"></option>
+                                                        <option value="0" name="laDisable"></option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group weekTimeGroup">
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laStartWeekTime"></label>
+                                                <div class="am-u-sm-3">
+                                                    <input id="startWeekTime1" value="00:00" type="text">
+                                                </div>
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laEndWeekTime"></label>
+                                                <div class="am-u-sm-3">
+                                                    <input id="endWeekTime1" value="00:00" type="text">
+                                                </div>
+                                                <div class="am-u-sm-2">
+                                                    <select data-am-selected="{btnWidth: '100%',btnSize: 'default'}"
+                                                            id="ddlEnable1">
+                                                        <option value="1" name="laEnable"></option>
+                                                        <option value="0" name="laDisable"></option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group weekTimeGroup">
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laStartWeekTime"></label>
+                                                <div class="am-u-sm-3">
+                                                    <input id="startWeekTime2" value="00:00" type="text">
+                                                </div>
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laEndWeekTime"></label>
+                                                <div class="am-u-sm-3">
+                                                    <input id="endWeekTime2" value="00:00" type="text">
+                                                </div>
+                                                <div class="am-u-sm-2">
+                                                    <select data-am-selected="{btnWidth: '100%',btnSize: 'default'}"
+                                                            id="ddlEnable2">
+                                                        <option value="1" name="laEnable"></option>
+                                                        <option value="0" name="laDisable"></option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group weekTimeGroup">
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laStartWeekTime"></label>
+                                                <div class="am-u-sm-3">
+                                                    <input id="startWeekTime3" value="00:00" type="text">
+                                                </div>
+                                                <label class="am-u-sm-2 am-form-label"
+                                                       name="laEndWeekTime"></label>
+                                                <div class="am-u-sm-3">
+                                                    <input id="endWeekTime3" value="00:00" type="text">
+                                                </div>
+                                                <div class="am-u-sm-2">
+                                                    <select data-am-selected="{btnWidth: '100%',btnSize: 'default'}"
+                                                            id="ddlEnable3">
+                                                        <option value="1" name="laEnable"></option>
+                                                        <option value="0" name="laDisable"></option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group">
+                                                <div class="am-u-sm-8 am-u-sm-push-2 am-btn-group-sm">
+                                                    <button type="button" class="am-btn am-radius am-btn-primary"
+                                                            onclick="g_frameSetting.getDetection()"><span
+                                                            name="btnRead"></span></button>
+                                                    <button type="button" class="am-btn am-radius am-btn-primary"
+                                                            onclick="g_frameSetting.setDetection()"><span
+                                                            name="btnSave"></span></button>
+                                                    <button type="button" class="am-btn am-radius am-btn-primary"
+                                                            onclick="g_frameSetting.clearDetection()"><span
+                                                            name="btnClear"></span></button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Javascript -->
+<script type="text/javascript" src="../jsVideo/jquery.min.js"></script>
+<script type="text/javascript" src="assets/jsVideo/appControllerCache.js"></script>
+<script type="text/javascript" src="assets/jsVideo/appController.js"></script>
+<script type="text/javascript" src="assets/jsVideo/common.js"></script>
+<script type="text/javascript" src="assets/jsVideo/webgl.js"></script>
+<script type='text/javascript' src="assets/jsAudio/audioPlayer.js"></script>
+<script type="text/javascript" src="assets/js/LAB.min.js"></script>
+<script>
+    $LAB
+        .script("assets/js/global_config.js").wait(function () {
+        $LAB
+            .script("assets/js/jquery.min.js").wait()
+            .script("assets/js/amazeui.min.js").wait()
+            .script("assets/js/amazeui.dialog.js").wait()
+            .script("assets/js/amazeui.page.js").wait()
+            .script("assets/js/laydate.js").wait()
+            .script("assets/js/jquery.cookie.js").wait()
+            .script("assets/js/public.js").wait()
+            .script("assets/js/Translator.js").wait()
+            .script("assets/js/common.js").wait()
+            .script("assets/js/checkform.js").wait()
+            .script("assets/js/icheck.js?v=1.0.2").wait()
+            .script("assets/js/frameSetting.js").wait()
+            .script("assets/rangeSlider/js/ion.rangeSlider.min.js").wait(function () {
+            g_frameSetting.initPage();
+        });
+    });
+</script>
+</body>
+</html>

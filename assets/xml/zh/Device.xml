@@ -1,110 +1,65 @@
 <?xml version="1.0"?>
 <Device>
 	<Page>
-		<laSysLogList>设备管理</laSysLogList>
+		<laDevManage>设备管理</laDevManage>
 		<laDevAdd>添加设备</laDevAdd>
 		<laDevAddManual>手动添加设备</laDevAddManual>
-		<laDevAddNew>添加新设备</laDevAddNew>
-		<laDevEdit>编辑设备</laDevEdit>
-		<laDevEditNew>编辑新设备</laDevEditNew>
-		<laDevAddStudy>学习对码添加设备</laDevAddStudy>
-		<laAreaSetting>区域设置</laAreaSetting>
-		<btnStartSearch>开始学习</btnStartSearch>
-		<btnStopSearch>停止学习</btnStopSearch>
-		<laDevSearch>设备搜索中...</laDevSearch>
-		<laSearchResult>搜索结果：</laSearchResult>
-		<Chn1>通道1</Chn1>
-		<Chn2>通道2</Chn2>
-		<Chn3>通道3</Chn3>
-		<Chn4>通道4</Chn4>
+		<laDevSingleStudy>设备单个触发返回</laDevSingleStudy>
 		<laIndex>序号</laIndex>
 		<laDevName>设备名称</laDevName>
-		<laDevType>设备类型</laDevType>
 		<laDevID>设备ID</laDevID>
-		<laWls>无线设备ID</laWls>
-		<laWired>有线地址</laWired>
 		<laCtrl>操作</laCtrl>
 		<btnAdd>添加</btnAdd>
 		<btnEdit>编辑</btnEdit>
 		<btnDel>删除</btnDel>
-		<btnOpt>控制</btnOpt>
-		<laDevOpt>智能设备控制</laDevOpt>
-		<laSave>保存</laSave>
-		<laCancel>取消</laCancel>
-		<laDevBasicSet>设备基本设置</laDevBasicSet>
-		<laDevAlarmSet>设备报警设置</laDevAlarmSet>
-		<laLinkVideo>关联摄像头</laLinkVideo>
-		<laDevLinkage>智能设备联动</laDevLinkage>
 		<laCommMode>通讯方式</laCommMode>
-		<laAreaSel>区域选择</laAreaSel>
-		<laAreaSel1>所属区域</laAreaSel1>
-		<laAreaSel2>控制区域</laAreaSel2>
-		<laDelayTime>延时自动关闭(s)</laDelayTime>
 		<laEnable>使能</laEnable>
-		<laAlarmType>报警类型</laAlarmType>
-		<laAlarmSound>报警音</laAlarmSound>
-		<laCall>电话通知</laCall>
-		<laAlarmTel>报警</laAlarmTel>
-		<laFaultTel>故障</laFaultTel>
-		<laSMS>短信通知</laSMS>
-		<laVideoChn>视频通道</laVideoChn>
-		<laLinkageDev>联动设备</laLinkageDev>
-		<laSubDev>子设备序号</laSubDev>
-		<laAction>动作</laAction>
-		<laOpen>打开</laOpen>
-		<laClose>关闭</laClose>
-		<wiredAddrErr>有线地址错误</wiredAddrErr>
-		<DevNameErr>请输入设备名称</DevNameErr>
-		<DevIdErr>请输入无线设备ID或有线设备地址</DevIdErr>
-	</Page>
-	<Js>
-		<FIRE_SENSOR>烟雾探测器</FIRE_SENSOR>
-		<WARTER_SENSOR>水浸探测器</WARTER_SENSOR>
-		<GAS_SENSOR>燃气探测器</GAS_SENSOR>
-		<EMERGENCY_BUTTOM>紧急按钮</EMERGENCY_BUTTOM>
-		<MOV_SENSOR>人体红外</MOV_SENSOR>
-		<REMOTE_CTL>遥控器</REMOTE_CTL>
-		<WLS_WARMING>警号</WLS_WARMING>
-		<DOOR_SENSOR>门磁</DOOR_SENSOR>
+		<laDisable>去使能</laDisable>
+		<laAreaSel1>所属区域</laAreaSel1>
+		<laDevType>设备类型</laDevType>
+		<laWls>无线设备ID</laWls>
+
+		<Wls>无线</Wls>
+		<Wired>有线</Wired>
+
 		<RAY_SENSOR>对射</RAY_SENSOR>
+		<MOV_SENSOR>人体红外</MOV_SENSOR>
+		<GAS_SENSOR>燃气探测器</GAS_SENSOR>
+		<REMOTE_CTL>遥控器</REMOTE_CTL>
+		<EMERGENCY_BUTTOM>紧急按钮</EMERGENCY_BUTTOM>
+		<FIRE_SENSOR>烟雾探测器</FIRE_SENSOR>
+		<DOOR_SENSOR>门磁</DOOR_SENSOR>
+		<WARTER_SENSOR>水浸探测器</WARTER_SENSOR>
 		<CO_SENSOR>CO 探测器</CO_SENSOR>
-		<UNKNOWN>未知设备</UNKNOWN>
+		<WLS_WARMING>警号</WLS_WARMING>
+		<KEY_BOARD>键盘</KEY_BOARD>
+		<IAS_DEV>入侵设备</IAS_DEV>
 		<SWITCH>开关</SWITCH>
 		<LOCK>锁</LOCK>
 		<LIGHT>灯</LIGHT>
 		<COLOR_LED>彩灯</COLOR_LED>
 		<TEMP>色温灯</TEMP>
 		<CURTAIN>窗帘</CURTAIN>
-		<IAS_DEV>入侵设备</IAS_DEV>
 		<IR_DEVICE>红外转发器</IR_DEVICE>
 		<PLUG>智能插座</PLUG>
-		<KEY_BOARD>键盘</KEY_BOARD>
-		<Wls>无线</Wls>
-		<Sbus>单总线</Sbus>
-		<Wired>有线</Wired>
-		<Stop>停用</Stop>
-		<Delay>延时</Delay>
-		<Perimeter>周界</Perimeter>
-		<Burglar>盗警</Burglar>
-		<Emergency>紧急</Emergency>
-		<a24H>24小时</a24H>
-		<Fire>火警</Fire>
-		<Tone>持续音</Tone>
-		<Mute>静音</Mute>
+
+
+
+		<laSave>保存</laSave>
+		<laCancel>取消</laCancel>
+	</Page>
+	<Js>
+		<DevNameErr>请输入设备名称</DevNameErr>
+		<DevIdErr>请输入无线设备ID或有线设备地址</DevIdErr>
 		<EditOk>保存成功 ！</EditOk>
 		<EditFailed>保存失败 ！</EditFailed>
 		<AddOk>添加成功！</AddOk>
 		<AddFailed>添加失败！</AddFailed>
-		<AreaNameExist>区域名已被使用！</AreaNameExist>
-		<AreaFull>最多支持8个区域，区域已满！</AreaFull>
 		<DevExist>设备已添加！</DevExist>
 		<DevFull>设备已满！</DevFull>
 		<DevTypeErr>未知设备类型！</DevTypeErr>
+		<searchFail>搜索失败</searchFail>
 		<DelOk>删除成功！</DelOk>
 		<DelFailed>删除失败！</DelFailed>
-		<dialogTitle>系统提示</dialogTitle>
-		<dialogContent1>真的要删除这个设备吗？</dialogContent1>
-		<btnConfirm>确定</btnConfirm>
-		<btnCancel>取消</btnCancel>
 	</Js>
 </Device>

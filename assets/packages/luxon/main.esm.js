@@ -23,10 +23,10 @@ and limitations under the License.
 ***************************************************************************** */
 /* global Reflect, Promise */
 
-var extendStatics = function(d, b) {
+let extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        function (d, b) { for (let p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
     return extendStatics(d, b);
 };
 
@@ -36,11 +36,11 @@ function __extends(d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
 
-var __assign = function() {
+let __assign = function() {
     __assign = Object.assign || function __assign(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
+        for (let s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+            for (let p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
         }
         return t;
     };
@@ -62,7 +62,7 @@ function toDuration(duration, calendar) {
     }
     return Duration.fromObject(__assign({}, duration, { locale: calendar.dateEnv.locale.codes[0] }));
 }
-var LuxonNamedTimeZone = /** @class */ (function (_super) {
+let LuxonNamedTimeZone = /** @class */ (function (_super) {
     __extends(LuxonNamedTimeZone, _super);
     function LuxonNamedTimeZone() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -78,15 +78,15 @@ var LuxonNamedTimeZone = /** @class */ (function (_super) {
     return LuxonNamedTimeZone;
 }(NamedTimeZoneImpl));
 function formatWithCmdStr(cmdStr, arg) {
-    var cmd = parseCmdStr(cmdStr);
+    let cmd = parseCmdStr(cmdStr);
     if (arg.end) {
-        var start = arrayToLuxon(arg.start.array, arg.timeZone, arg.localeCodes[0]);
-        var end = arrayToLuxon(arg.end.array, arg.timeZone, arg.localeCodes[0]);
+        let start = arrayToLuxon(arg.start.array, arg.timeZone, arg.localeCodes[0]);
+        let end = arrayToLuxon(arg.end.array, arg.timeZone, arg.localeCodes[0]);
         return formatRange(cmd, start.toFormat.bind(start), end.toFormat.bind(end), arg.separator);
     }
     return arrayToLuxon(arg.date.array, arg.timeZone, arg.localeCodes[0]).toFormat(cmd.whole);
 }
-var main = createPlugin({
+let main = createPlugin({
     cmdFormatter: formatWithCmdStr,
     namedTimeZonedImpl: LuxonNamedTimeZone
 });
@@ -115,9 +115,9 @@ function arrayToLuxon(arr, timeZone, locale) {
     });
 }
 function parseCmdStr(cmdStr) {
-    var parts = cmdStr.match(/^(.*?)\{(.*)\}(.*)$/); // TODO: lookbehinds for escape characters
+    let parts = cmdStr.match(/^(.*?)\{(.*)\}(.*)$/); // TODO: lookbehinds for escape characters
     if (parts) {
-        var middle = parseCmdStr(parts[2]);
+        let middle = parseCmdStr(parts[2]);
         return {
             head: parts[1],
             middle: middle,
@@ -136,20 +136,20 @@ function parseCmdStr(cmdStr) {
 }
 function formatRange(cmd, formatStart, formatEnd, separator) {
     if (cmd.middle) {
-        var startHead = formatStart(cmd.head);
-        var startMiddle = formatRange(cmd.middle, formatStart, formatEnd, separator);
-        var startTail = formatStart(cmd.tail);
-        var endHead = formatEnd(cmd.head);
-        var endMiddle = formatRange(cmd.middle, formatStart, formatEnd, separator);
-        var endTail = formatEnd(cmd.tail);
+        let startHead = formatStart(cmd.head);
+        let startMiddle = formatRange(cmd.middle, formatStart, formatEnd, separator);
+        let startTail = formatStart(cmd.tail);
+        let endHead = formatEnd(cmd.head);
+        let endMiddle = formatRange(cmd.middle, formatStart, formatEnd, separator);
+        let endTail = formatEnd(cmd.tail);
         if (startHead === endHead && startTail === endTail) {
             return startHead +
                 (startMiddle === endMiddle ? startMiddle : startMiddle + separator + endMiddle) +
                 startTail;
         }
     }
-    var startWhole = formatStart(cmd.whole);
-    var endWhole = formatEnd(cmd.whole);
+    let startWhole = formatStart(cmd.whole);
+    let endWhole = formatEnd(cmd.whole);
     if (startWhole === endWhole) {
         return startWhole;
     }

@@ -1,24 +1,12 @@
 function IndexPage() {
     this._lxdIndexPage = null;  //IndexPage.xml
     this.m_bChannelPlay = [];  //通道是否在预览
-    this.m_bChannelRecord = [];  //通道是否在录像
     this.m_bSound = [];  //通道声音是否打开
     this.m_iChannelStream = [];//通道的码流，0主码流，1子码流
-    this.player = [];
     this.m_iCurChn = 0;  //// 从 1 开始
-    this.m_iCurWndNum = 4;
-    this.m_bAllPlay = false;
-    ///this.m_bAllRecord = false;
-    for (var i = 0; i < 16; i++) {
-        this.m_bSound[i] = 0;
-        this.m_bChannelPlay[i] = 0;
-        ///this.m_bChannelRecord[i] = 0;
-        this.m_iChannelStream[i] = 1;
-
-        this.player[i] = null;
-    }
-    this.m_wasmLoaded = 0;
+    this.m_bAllPlay = false; ///是否全部播放
     this.channelNumber = 0;
+    this.appCache = new appControllerCache();
 }
 
 IndexPage.prototype = {
@@ -34,38 +22,10 @@ IndexPage.prototype = {
         setInterval("g_oIndexPage.syncMsg()", 2000);
     },
     initVideo: function (channelNumber) {
-        this.wAvDecoder = new Worker("assets/jsVideo/AvDecoder.js");
-        this.wAvDecoder.onmessage = function (evt) {
-            var objData = evt.data;
-            var chn = parseInt(objData.chn, 10);
-
-            if ((null != g_oIndexPage.player[chn]) && (undefined != g_oIndexPage.player[chn])) {
-                switch (objData.t) {
-                    case kInitDecoderRsp:
-                        g_oIndexPage.player[chn].onInitDecoder(objData);
-                        break;
-
-                    case kVideoFrame:
-                        g_oIndexPage.player[chn].onVideoFrame(objData);
-                        break;
-
-                    case kAudioFrame:
-                        g_oIndexPage.player[chn].onAudioFrame(objData);
-                        break;
-
-                    case kDecoderStatusReq:
-                        g_oIndexPage.m_wasmLoaded = 1;
-                        break;
-                }
-            }
-        };
-
+        let that = this;
         for (let iChn = 1; iChn <= channelNumber; iChn++) {
-            this.player[iChn - 1] = new Player();
-            if (this.player[iChn - 1]) {
-                let canvas = document.getElementById('myCanvas' + iChn);
-                this.player[iChn - 1].initPlayer(canvas, this.wAvDecoder);
-            }
+            let canvas = document.getElementById('myCanvas' + iChn);
+            that.appCache.create(canvas);
         }
     },
     //获取设备信息
@@ -141,7 +101,7 @@ IndexPage.prototype = {
         json.Def = "JSON_VIDEO_LIST";
         let jsonReqStr = JSON.stringify(json);
         $.ajax({
-            type: "POST",
+            type: "get",
             url: g_oCommon.m_lHttp + g_oCommon.m_szHostName + ":" + g_oCommon.m_lHttpPort + "/jsonStruct_get&" + Base64.encode(jsonReqStr) + "&",
             dataType: "json",
             success: function (result) {
@@ -181,13 +141,21 @@ IndexPage.prototype = {
         }
         $("#chnFrame").html(strHtml);
     },
-	openWindows(event,channelNumber){
-    	let left = 0;
-    	let top = 0;
-		let object = $("#myCanvas" + channelNumber);
-		object.css('position','absolute').css('left',left).css('top',top).css('width','600').css('height','600').css('z-index','0');
-		object.fadeIn("3000");//淡入显示#outerdiv及.goal_img
-	},
+    openWindows(event, channelNumber) {
+        let left = 0;
+        let top = 0;
+        let object = $(event);
+        if (object.hasClass("maxCavens")) {
+            object.removeClass("maxCavens");
+            this.m_iChannelStream[channelNumber - 1] = 1;
+        } else {
+            object.addClass("maxCavens");
+            object.fadeIn("1000");
+            this.StopRealPlayAll();
+            this.m_iChannelStream[channelNumber - 1] = 0;
+            this.StartRealPlay(channelNumber);
+        }
+    },
     selectChannel: function (channelNumber) {
         $("#myCanvas" + channelNumber).css('border-color', 'blue');
         $("#myCanvas" + channelNumber).siblings().each(function () {
@@ -211,7 +179,7 @@ IndexPage.prototype = {
             }
             innerHTML += "<li style='float: left;width: 50%;'>";
             innerHTML += "    <img src='assets/img/sub_stream.png' id='Stream" + chnNo + "Img' onclick='g_oIndexPage.switchStream(" + chnNo + ")'/>";
-            innerHTML += "    <img src='assets/img/Camera_1.png' id='Camera" + chnNo + "Img' onclick='g_oIndexPage.StartRealPlay(" + chnNo + ")'/>";
+            innerHTML += "    <img src='assets/img/Camera_1.png' id='Camera" + chnNo + "Img' onclick='g_oIndexPage.RealPlaySingle(" + chnNo + ")'/>";
             innerHTML += "<span style='cursor:pointer;color:#000000;-moz-user-select:none;' id='Selected" + chnNo + "color'  onClick='g_oIndexPage.SetFontColor(" + chnNo + ")' onDblClick='g_oIndexPage.StartRealPlay(" + chnNo + ")' onselectstart='return false;' title='" + szChannelName + "'>&nbsp;" + szChannelName + "</span>";
             innerHTML += "</li>";
         }
@@ -285,43 +253,6 @@ IndexPage.prototype = {
             }
         });
     },
-    //更新图标显示状态
-    updateArmStatus: function (mode) {
-        if (mode == 1) {
-            if ($("#btDisarm").hasClass("icon-alarm-disable")) {
-                $("#btDisarm").removeClass("icon-alarm-disable");
-                $("#btDisarm").addClass("icon-alarm-disable-sel");
-            }
-        } else {
-            if ($("#btDisarm").hasClass("icon-alarm-disable-sel")) {
-                $("#btDisarm").removeClass("icon-alarm-disable-sel");
-                $("#btDisarm").addClass("icon-alarm-disable");
-            }
-        }
-
-        if (mode == 2) {
-            if ($("#btHome").hasClass("icon-alarm-in")) {
-                $("#btHome").removeClass("icon-alarm-in");
-                $("#btHome").addClass("icon-alarm-in-sel");
-            }
-        } else {
-            if ($("#btHome").hasClass("icon-alarm-in-sel")) {
-                $("#btHome").removeClass("icon-alarm-in-sel");
-                $("#btHome").addClass("icon-alarm-in");
-            }
-        }
-        if (mode == 3) {
-            if ($("#btAway").hasClass("icon-alarm-out")) {
-                $("#btAway").removeClass("icon-alarm-out");
-                $("#btAway").addClass("icon-alarm-out-sel");
-            }
-        } else {
-            if ($("#btAway").hasClass("icon-alarm-out-sel")) {
-                $("#btAway").removeClass("icon-alarm-out-sel");
-                $("#btAway").addClass("icon-alarm-out");
-            }
-        }
-    },
     ptzControl: function (action, para0, para1) {
         var that = this;
         if (that.m_iCurChn > (g_oCommon.m_iAnalogChannelNum + g_oCommon.m_iDigitalChannelNum) || that.m_iCurChn <= 0) {
@@ -332,7 +263,7 @@ IndexPage.prototype = {
             return;
         }
         var jsonReq = {};
-        jsonReq.Cmd = 7117;
+        jsonReq.Cmd = 7118;
         jsonReq.Id = "web";
         jsonReq.User = 123;
         jsonReq.Def = "JSON_CMD_SET_PTZ";
@@ -419,110 +350,93 @@ IndexPage.prototype = {
         this.ptzControl(38, 0, 0);
     },
     switchStream: function (chn) {
-        var szId = "#Stream" + chn + "Img";
-        this.m_iChannelStream[chn - 1] = (this.m_iChannelStream[chn - 1] === 1 ? 0 : 1);
-        if (this.m_bChannelPlay[chn - 1]) {
-            ////this.StopRealPlay(chn);
-            ///this.StartRealPlayForce(chn);
+        let that = this;
+        let channel = that.appCache.appControllerArr[chn - 1];
+        if (![null, "", undefined].includes(channel)) {
+            if (null != channel.options) {
+                channel.options.s = channel.options.s == 1 ? 0 : 1;
+                if (channel.options.s == 0)
+                    $("#Stream" + chn + "Img").attr("src", "assets/img/main_stream.png").attr("title", parent.translator.translateNode(this._lxdIndexPage, "mainStream"));
+                else
+                    $("#Stream" + chn + "Img").attr("src", "assets/img/sub_stream.png").attr("title", parent.translator.translateNode(this._lxdIndexPage, "subStream"));
+            } else
+                $("#Stream" + chn + "Img").attr("src", "assets/img/sub_stream.png").attr("title", parent.translator.translateNode(this._lxdIndexPage, "subStream"));
         }
-        if (this.m_iChannelStream[chn - 1] === 0) {
-            $(szId).attr("src", "assets/img/main_stream.png").attr("title", parent.translator.translateNode(this._lxdIndexPage, "mainStream"));
+    },
+    RealPlaySingle: function (chn) {
+        let that = this;
+        let channel = that.appCache.appControllerArr[chn - 1];
+        if (null != channel)
+            channel.isRunning ? that.StopRealPlayAll(chn) : that.StartRealPlay(chn);
+    },
+    StartRealPlay: function (chn) {
+        let that = this;
+        that.appCache.appControllerArr.forEach((item, index, array) => {
+            if (![null, undefined, ""].includes(chn)) {
+                if ((index + 1) != chn) {
+                    return true;
+                }
+            }
+            if (!item.isRunning) {
+                setTimeout(function () {
+                    let url = 'ws://' + g_oCommon.m_szHostName + ':8082/';
+                    let options = null;
+                    if ([null, undefined, ""].includes(item.options)) {
+                        options = {
+                            u: url,
+                            c: 0,
+                            s: 1,
+                            p: null,
+                            d: null
+                        }
+                    }
+                    item.start(options);
+                    $("#Camera" + (index + 1) + "Img").attr("src", "assets/img/Camera_2.png");
+                }, 100);
+                item.isRunning = true;
+            }
+        });
+    },
+    //全部开始播放
+    RealPlayAll: function () {
+        let that = this;
+        if (that.m_bAllPlay) {
+            that.StopRealPlayAll();
+            that.m_bAllPlay = false;
+            $("#btnPlay").children(0).removeClass("icon-stop");
+            $("#btnPlay").children(0).addClass("icon-play");
         } else {
-            $(szId).attr("src", "assets/img/sub_stream.png").attr("title", parent.translator.translateNode(this._lxdIndexPage, "subStream"));
+            that.StartRealPlay();
+            that.m_bAllPlay = true;
+            $("#btnPlay").children(0).removeClass("icon-play");
+            $("#btnPlay").children(0).addClass("icon-stop");
         }
     },
-    StartRealPlay: function (iChn) {
-        var that = this;
-        if (0 == that.m_wasmLoaded) {
-            alert("wasm loading");
-            return;
-        }
-        console.log("StartRealPlay -------- +++ iChannelNum = %s\n", iChn);
-        if (iChn > (g_oCommon.m_iAnalogChannelNum + g_oCommon.m_iDigitalChannelNum)) {
-            return;
-        }
-
-        var ObjImg = document.getElementById("Camera" + (iChn) + "Img");
-        console.log("StartRealPlay ----that.m_bChannelPlay[iChn-1] = %s \n", that.m_bChannelPlay[iChn - 1]);
-        if (that.m_bChannelPlay[iChn - 1] == 0) {
-            var szURL = "";
-            var streamType = 0;
-            if (iChn <= (g_oCommon.m_iAnalogChannelNum + g_oCommon.m_iDigitalChannelNum)) {
-                szURL = g_oCommon.m_szHostName;
-
-                if (0 == that.m_iChannelStream[iChn - 1]) {  //主码流
-                    streamType = 0;  //[能力可以得到支持那种封装]这里最后以为暂时使用RTP流
-                } else if (1 == that.m_iChannelStream[iChn - 1]) {  //子码流
-                    streamType = 1;
+    //全部停止预览
+    StopRealPlayAll: function (chn) {
+        let that = this;
+        that.appCache.appControllerArr.forEach((item, index, array) => {
+            if (![null, undefined, ""].includes(chn)) {
+                if ((index + 1) != chn) {
+                    return true;
                 }
             }
-
-            var playRet;
-            if (this.player[iChn - 1]) {
-                var url = 'ws://' + g_oCommon.m_szHostName + ':8082/';
-                this.player[iChn - 1].playInner(url, iChn - 1, this.m_iChannelStream[iChn - 1]);
+            if (item.isRunning) {
+                setTimeout(function () {
+                    let url = 'ws://' + g_oCommon.m_szHostName + ':8082/';
+                    let options = {
+                        u: url,
+                        c: 0,
+                        s: 1,
+                        p: null,
+                        d: null
+                    }
+                    item.stop();
+                    $("#Camera" + (index + 1) + "Img").attr("src", "assets/img/Camera_1.png");
+                }, 100)
+                item.isRunning = false;
             }
-            playRet = 0;
-
-            if (0 == playRet) {
-                ObjImg.src = "assets/img/Camera_2.png";
-                ObjImg.title = parent.translator.translateNode(that._lxdIndexPage, 'stoppreview');
-                that.m_bChannelPlay[iChn - 1] = 1;
-                that.m_iCurChn = iChn;
-
-                if (!that.m_bAllPlay) {
-                    that.m_bAllPlay = true;
-                    $("#btPriew").html("<i class=\"icon-stop\"></i>");
-                    $("#btPriew").attr("title", parent.translator.translateNode(that._lxdIndexPage, 'stoppreview'));
-                }
-            } else {
-                that.m_bChannelPlay[iChn - 1] = 0;
-                that.m_bChannelRecord[iChn - 1] = 0;
-                alert(parent.translator.translateNode(that._lxdIndexPage, 'previewfailed'));
-            }
-        } else
-            that.StopRealPlay(iChn);
-    },
-    StopRealPlay: function (iChn) {
-        var that = this;
-        var playRet;
-        ///if(that.m_bChannelRecord[iChn-1]==1)	{
-        ///	that.StopRecord(iChn);
-        ///}
-        if (null != this.player[iChn - 1]) {
-            this.player[iChn - 1].stop();
-        }
-        console.log("StopRealPlay -------- +++ iChannelNum = %s\n", iChn);
-        playRet = 0;///g_oCommon.m_PreviewOCX.HWP_Stop(iChn-1);
-
-        if (0 != playRet) {
-            alert(parent.translator.translateNode(that._lxdIndexPage, 'previewfailed'));
-            return;
-        }
-        document.getElementById("Camera" + (iChn) + "Img").src = "assets/img/Camera_1.png";
-        document.getElementById("Camera" + (iChn) + "Img").title = parent.translator.translateNode(that._lxdIndexPage, 'jsPreview');
-        that.m_bChannelPlay[iChn - 1] = 0;
-        that.m_bChannelRecord[iChn - 1] = 0;
-
-        if (that.m_bSound[iChn - 1]) {
-            $("#btnSound").html("<i class=\"icon-sound-off\"></i>");
-            $("#btnSound").attr("title", parent.translator.translateNode(that._lxdIndexPage, 'jsOpensound'));
-        }
-
-        that.m_bSound[iChn - 1] = 0;
-
-        if (iChn == that.m_iCurChn) {  //如果关闭的是当前窗口的预览，去掉视频参数显示
-            that.m_iCurChn = -1;
-        }
-        for (let i = 0; i < (g_oCommon.m_iAnalogChannelNum + g_oCommon.m_iDigitalChannelNum); i++) {
-            if (that.m_bChannelPlay[i] == 0) {
-                continue;
-            }
-            return;
-        }
-        that.m_bAllPlay = false;
-        $("#btnPlay").html("<i class=\"icon-play\"></i>");
-        $("#btnPlay").attr("src", "assets/img/RealPlayAll.png");
+        });
     },
     SetFontColor: function (iChn) {
         for (let j = 0; j < (g_oCommon.m_iAnalogChannelNum + g_oCommon.m_iDigitalChannelNum); j++) {
@@ -533,102 +447,7 @@ IndexPage.prototype = {
             }
         }
     },
-    RealPlayAll: function () {
-        let that = this;
-        if (0 == that.m_wasmLoaded) {
-            alert("wasm loading");
-            return;
-        }
-        if (that.m_bAllPlay) {
-            //全部停止预览
-            that.StopRealPlayAll();
-        } else {
-            //全部开始预览
-            for (let i = 0; i < this.channelNumber; i++) {
-                that.StartRealPlay(i + 1);
-                document.getElementById("Camera" + (i + 1) + "Img").src = "assets/img/Camera_2.png";
-                document.getElementById("Camera" + (i + 1) + "Img").title = parent.translator.translateNode(this.m_lxdPreview, 'jsPreview');
-            }
-        }
-        for (let i = 0; i < 256; i++) {
-            that.m_bSound[i] = 0;
-        }
-
-        if (this.m_bAllPlay) {
-            $("#btnPlay").children(0).removeClass("icon-play");
-            $("#btnPlay").children(0).addClass("icon-stop");
-
-        } else {
-            $("#btnPlay").children(0).removeClass("icon-stop");
-            $("#btnPlay").children(0).addClass("icon-play");
-        }
-    },
-    //全部停止预览
-    StopRealPlayAll: function () {
-        var that = this;
-        for (let i = 0; i < this.channelNumber; i++) {
-            //if(that.m_bChannelPlay[j] == 1) {
-            //var iChn = j + 1;
-            ///if(that.m_bChannelRecord[j]==1) {  //如果正在录像，先停止
-            ///	var szRecord=parent.translator.translateNode(that.m_lxdPreview, 'jsRecord');	//录像
-            ///	var iRes = g_oCommon.m_PreviewOCX.HWP_StopRecord(j);
-            ///	if(0 == iRes) {
-            ///		document.getElementById("Record"+(iChn)+"Img").src="assets/img/record.png";
-            ///		document.getElementById("Record"+(iChn)+"Img").title=szRecord;
-            ///		window.parent.g_oMain.showTipsDiv("",parent.translator.translateNode(that.m_lxdPreview, ///'jsRecordSucc'));
-            //	}
-            //}
-            ///if(0 != g_oCommon.m_PreviewOCX.HWP_Stop(iChn-1)) {
-            ///	continue;
-            ///}
-            if (null != this.player[i])
-                this.player[i].stop();
-            that.m_bChannelPlay[i] = 0;
-            that.m_bChannelRecord[i] = 0;
-            that.m_bSound[i] = 0;
-            document.getElementById("Camera" + (i + 1) + "Img").src = "assets/img/Camera_1.png";
-            document.getElementById("Camera" + (i + 1) + "Img").title = parent.translator.translateNode(this.m_lxdPreview, 'jsPreview');
-        }
-        //是否全部录像
-        that.m_bAllPlay = false;
-        $("#btPriew").attr("title", parent.translator.translateNode(that.m_lxdPreview, 'jsPreview'));
-        $("#btPriew").html("<i class=\"icon-play\"></i>");
-    },
-    StartRealPlayForce: function (Chn) {
-        var that = this;
-        if (Chn > (g_oCommon.m_iAnalogChannelNum + g_oCommon.m_iDigitalChannelNum)) {
-            return;
-        }
-
-        var ObjImg = document.getElementById("Camera" + (Chn) + "Img");
-        var szURL = "";
-        var streamType = 0;
-
-        var playRet;
-        ////
-        if (0 == playRet) {
-            ObjImg.src = "assets/img/Camera_2.png";
-            ObjImg.title = parent.translator.translateNode(that._lxdIndexPage, 'stoppreview');
-            that.m_bChannelPlay[Chn - 1] = 1;
-            ///that.m_bChannelRecord[Chn-1]=0;
-
-            that.m_iCurChn = Chn;
-
-            if (!that.m_bAllPlay) {
-                that.m_bAllPlay = true;
-                $("#btPriew").html("<i class=\"icon-stop\"></i>");
-                $("#btPriew").attr("title", parent.translator.translateNode(that._lxdIndexPage, 'stoppreview'));
-            }
-        } else {
-            that.m_bChannelPlay[Chn - 1] = 0;
-            ///that.m_bChannelRecord[Chn-1]=0;
-            alert(parent.translator.translateNode(that._lxdIndexPage, 'previewfailed'));
-        }
-    },
     CapturePicture: function () {
-
-    },
-    RecordAll: function () {
 
     },
     btOpenVoice: function () {
@@ -675,14 +494,13 @@ IndexPage.prototype = {
     syncMsg: function () {
         $.ajax({
             type: "get",
-            url: g_oCommon.m_lHttp + g_oCommon.m_szHostName + ":" + g_oCommon.m_lHttpPort + "/system/syncMsgInfo",
+            url: g_oCommon.m_lHttp + g_oCommon.m_szHostName + ":" + g_oCommon.m_lHttpPort + "/system/getStatusInfo",
             async: !0,
             timeout: 15e3,
             beforeSend: function (xhr) {
             },
             success: function (data) {
                 var json = $.parseJSON(data);
-
                 if (json.Ask == 0) {
                     var eventNum = json.EventNum;
 

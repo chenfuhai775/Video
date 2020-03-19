@@ -1,18 +1,15 @@
 function Playback() {
     this._lxdPlayback = null;  //Playback.xml
-    //[{channelNumber:0-通道,checked:是否选中[0-否,1-是],isPlay:是否播放中[0-否,1-是],stream:码流 0-主,1-子,execute-true,false}]
-    this.channels = new Array();
     //默认播放日期(yyyy-MM-dd)
     this.defaultPlayDate = new Date().Format("yyyy-MM-dd");
     //当前播放时间(yyyy-MM-dd hh:mm:ss)
     this.defaultPlayTime = new Date().Format("00:00:00");
     this.player = [];
     this.audioPlayer = null;
-    this.m_wasmLoaded = 0;
     this.m_MaxChannelNumber = 4;
     this.videoDates = [];
     this.timeClock = null;
-    this.hasPlay = false;
+    this.appCache = new appControllerCache();
 }
 
 Playback.prototype = {
@@ -27,6 +24,7 @@ Playback.prototype = {
         this.initFullCalendar();
         this.initChannels();
         this.reSetTickTime();
+        this.initAudio();
         getMenuList();//加载菜单列表等文本
         this._getDeviceInfo();
         ///this._getLogList(5,'lTypeAlarm');//获取报警记录
@@ -38,11 +36,9 @@ Playback.prototype = {
         g_oPlayback.syncMsg();
         setInterval("g_oPlayback.syncMsg()", 2000);
         setTimeout(g_oPlayback.initVideo(), 1);
-        this.initAudio();
     },
 
     initProcess: function () {
-
         $("#sliderBar").ionRangeSlider({
             min: 0,
             max: 86400,
@@ -62,10 +58,6 @@ Playback.prototype = {
             },
             onFinish: function (data) { //拖动结束回调
                 g_oPlayback.defaultPlayTime = g_oPlayback.formatSeconds(data.from);
-                g_oPlayback.channels.forEach((item, index, array) => {
-                    item.execute = false;
-                    item.isPlay = true;
-                });
                 g_oPlayback.startRealPlay();
             }
         });
@@ -92,7 +84,7 @@ Playback.prototype = {
         json.Def = "JSON_VIDEO_LIST";
         let jsonReqStr = JSON.stringify(json);
         $.ajax({
-            type: "POST",
+            type: "get",
             url: g_oCommon.m_lHttp + g_oCommon.m_szHostName + ":" + g_oCommon.m_lHttpPort + "/jsonStruct_get&" + Base64.encode(jsonReqStr) + "&",
             dataType: "json",
             success: function (result) {
@@ -196,7 +188,7 @@ Playback.prototype = {
                         json.Month = currDate.getFullYear() + "-" + (currDate.getMonth() + 1);
                         let jsonReqStr = JSON.stringify(json);
                         $.ajax({
-                            type: "POST",
+                            type: "get",
                             url: g_oCommon.m_lHttp + g_oCommon.m_szHostName + ":" + g_oCommon.m_lHttpPort + "/jsonStruct_get&" + Base64.encode(jsonReqStr) + "&",
                             dataType: "json",
                             success: function (result) {
@@ -211,7 +203,7 @@ Playback.prototype = {
                                         event.className = 'myBlock';
                                         event.start = currDate.getFullYear() + "-" + (currDate.getMonth() + 1) + "-" + (day > 9 ? day : "0" + day);         // will be parsed
                                         event.end = currDate.getFullYear() + "-" + (currDate.getMonth() + 1) + "-" + (day > 9 ? day : "0" + day);
-                                        event.borderColor = '#ccc';
+
                                         events.push(event);
                                         g_oPlayback.videoDates.push(event.start);
                                     }
@@ -251,45 +243,10 @@ Playback.prototype = {
     },
 
     initVideo: function () {
-        this.wAvDecoder = new Worker("assets/jsVideo/AvDecoder.js");
-        this.wAvDecoder.onmessage = function (evt) {
-            let objData = evt.data;
-            let chn = parseInt(objData.chn, 10);
-            let index = 0;
-            let channel = g_oPlayback.channels.find(x => {
-                return x.channelNumber === (chn + 1);
-            });
-            if (![null, undefined].includes(channel)) {
-                index = g_oPlayback.channels.indexOf(channel);
-            }
-            if ((null != g_oPlayback.player[chn]) && (undefined != g_oPlayback.player[chn])) {
-                switch (objData.t) {
-                    case kInitDecoderRsp:
-                        g_oPlayback.player[chn].onInitDecoder(objData);
-                        break;
-
-                    case kVideoFrame:
-                        g_oPlayback.player[index].onVideoFrame(objData)
-                        break;
-                    case kAudioFrame:
-                        g_oPlayback.player[index].onAudioFrame(objData);
-                        break;
-                    case kDecoderStatusReq:
-                        g_oPlayback.m_wasmLoaded = 1;
-                        break;
-                }
-            }
-        };
-        g_oPlayback.initCanvas();
-    },
-
-    initCanvas: function () {
+        let that = this;
         for (let iChn = 1; iChn <= 4; iChn++) {
-            this.player[iChn - 1] = new Player();
-            if (this.player[iChn - 1]) {
-                let canvas = document.getElementById('myCanvas' + iChn);
-                this.player[iChn - 1].initPlayer(canvas, this.wAvDecoder);
-            }
+            let canvas = document.getElementById('myCanvas' + iChn);
+            that.appCache.create(canvas);
         }
     },
 
@@ -299,46 +256,34 @@ Playback.prototype = {
 
     searchTimeTick: function (event) {
         if (![null].includes(g_oPlayback.defaultPlayDate)) {
-            let channels = [];
-            if ([null, undefined].includes(event))
-                channels = g_oPlayback.channels.filter(x => {
-                    return x.checked == true;
-                });
-            else {
-                let channelNumber = parseInt(event.val());
-                channels.push({'channelNumber': channelNumber});
-            }
-            channels.sort(function (a, b) {
-                return a.channelNumber - b.channelNumber;
-            });
             let json = {};
             json.Cmd = 7116;
             json.Id = "123123123";
             json.User = 12345678;
             json.Def = "JSON_CMD_GET_PLAYBACK_TIME_AXIS";
             json.Date = g_oPlayback.defaultPlayDate;
-            for (let i = 0; i < channels.length; i++) {
-                json.Ch = channels[i].channelNumber - 1;
-                let jsonReqStr = JSON.stringify(json);
-                $.ajax({
-                    type: "POST",
-                    url: g_oCommon.m_lHttp + g_oCommon.m_szHostName + ":" + g_oCommon.m_lHttpPort + "/jsonStruct_get&" + Base64.encode(jsonReqStr) + "&",
-                    dataType: "json",
-                    success: function (result) {
-                        if (0 == result.Ack) {
-                            event = $("#input-" + channels[i].channelNumber);
-                            g_oPlayback.addTimescale(event, result.L);
+            g_oPlayback.appCache.appControllerArr.forEach((item, index, array) => {
+                if (item.checked) {
+                    json.Ch = item.channelNumber;
+                    let jsonReqStr = JSON.stringify(json);
+                    $.ajax({
+                        type: "get",
+                        url: g_oCommon.m_lHttp + g_oCommon.m_szHostName + ":" + g_oCommon.m_lHttpPort + "/jsonStruct_get&" + Base64.encode(jsonReqStr) + "&",
+                        dataType: "json",
+                        success: function (result) {
+                            if (0 == result.Ack) {
+                                event = $("#input-" + (item.channelNumber + 1));
+                                g_oPlayback.addTimescale(event, result.L);
+                            }
+                        },
+                        error: function () {
+                            console.info("获取获取当天回放时间轴失败");
                         }
-                    },
-                    error: function () {
-                        console.info("获取获取当天回放时间轴失败");
-                    }
-                });
-            }
-
+                    });
+                }
+            });
         }
     },
-
     //设置当前播放时间点
     reSetTickTime: function () {
         let newDateTime = new Date(this.defaultPlayDate + " " + this.defaultPlayTime).Format("yyyy-MM-dd hh:mm:ss");
@@ -378,77 +323,46 @@ Playback.prototype = {
     channelChecked: function (event) {
         let object = $(event.target);
         let channelNumber = parseInt(object.val());
-        let params = {
-            'checked': true,
-            'stream': 1,
-            'isPlay': true,
-            'execute': false
-        }
-        g_oPlayback.updateChannelStatus(channelNumber, params);
-        g_oPlayback.changeChannels();
+        let channelObj = g_oPlayback.appCache.appControllerArr.find(x => x.checked == false);
+        channelObj.checked = true;
+        channelObj.channelNumber = channelNumber - 1;
         this.searchTimeTick(object);
+        this.changeChannels(4);
     },
 
     channelUnChecked: function (event) {
         let object = $(event.target);
         let channelNumber = parseInt(object.val());
-        g_oPlayback.updateChannelStatus(channelNumber, {'checked': false});
-        g_oPlayback.changeChannels();
-        this.removeTimescale(object.val());
-    },
-
-    updateChannelStatus: function (channelNumber, params) {
-        let channel = this.channels.find(x => {
-            return x.channelNumber === channelNumber;
-        });
-        if ([null, undefined].includes(channel)) {
-            params.channelNumber = channelNumber;
-            this.channels.push(params);
-        } else {
-            for (let item in params) {
-                channel[item] = params[item];
-            }
+        let channelObj = g_oPlayback.appCache.appControllerArr.find(x => x.channelNumber == channelNumber - 1);
+        if (null != channelObj) {
+            channelObj.checked = false;
+            channelObj.channelNumber = 0;
         }
+        this.removeTimescale(object.val());
+        this.changeChannels(4);
     },
     //更改主子码流状态
-    switchStream: function (channelNumber) {
-        let channel = this.channels.find(x => {
-            return x.channelNumber === channelNumber;
-        });
-        let oldStream = channel.execute ? (channel.stream === 1 ? 1 : 0) : (channel.stream === 1 ? 0 : 1);
-        let newStream;
-        let params = {'stream': 1, 'execute': false};
-        if (![null, undefined].includes(channel)) {
-            newStream = channel.stream == 1 ? 0 : 1;
-        }
-        if (newStream != oldStream) {
-            params.stream = newStream;
-            params.isPlay = channel.isPlay && channel.execute;
-            g_oPlayback.updateChannelStatus(channelNumber, params);
-            g_oPlayback.startRealPlay(channelNumber);
+    switchStream: function (chn) {
+        let channelObj = g_oPlayback.appCache.appControllerArr.find(x => x.channelNumber == chn - 1);
+        if (null != channelObj) {
+            channelObj.stream = channelObj.stream == 0 ? 1 : 0;
+            if (channelObj.stream == 0)
+                $("#Stream" + chn + "Img").attr("src", "assets/img/main_stream.png").attr("title", parent.translator.translateNode(this._lxdIndexPage, "mainStream"));
+            else
+                $("#Stream" + chn + "Img").attr("src", "assets/img/sub_stream.png").attr("title", parent.translator.translateNode(this._lxdIndexPage, "subStream"));
         }
     },
     //更改播放状态
-    switchPlayStatus: function (channelNumber) {
-        let channel = this.channels.find(x => {
-            return x.channelNumber === channelNumber;
-        });
-        let oldIsPlay = channel.execute ? channel.isPlay : !channel.isPlay;
-        let newIsPlay;
-        let params = {'isPlay': true, 'execute': false};
-        if (![null, undefined].includes(channel)) {
-            newIsPlay = channel.execute ? !channel.isPlay : channel.isPlay;
-        }
-        if (newIsPlay != oldIsPlay) {
-            params.isPlay = newIsPlay;
-            g_oPlayback.updateChannelStatus(channelNumber, params);
-            g_oPlayback.startRealPlay(channelNumber);
-        }
+    switchPlayStatus: function (chn) {
+        let that = this;
+        let channelObj = g_oPlayback.appCache.appControllerArr.find(x => x.channelNumber == chn - 1);
+        if (null != channelObj)
+            channelObj.isRunning ? that.StopRealPlayAll(chn) : that.StartRealPlay(chn);
     },
     //更新channel状态
     changeChannels: function (maxChannelNumber) {
         let m_maxChannelNumber = maxChannelNumber == null ? g_oPlayback.m_MaxChannelNumber : maxChannelNumber;
-        let checkTotal = g_oPlayback.channels.filter(x => x.checked === true).length;
+        let checkTotal = g_oPlayback.appCache.appControllerArr.filter(x => x.checked === true).length;
         if (maxChannelNumber == 10) {
             $("input").each(function () {
                 $(this).iCheck('enable');
@@ -532,7 +446,7 @@ Playback.prototype = {
     syncMsg: function () {
         $.ajax({
             type: "get",
-            url: g_oCommon.m_lHttp + g_oCommon.m_szHostName + ":" + g_oCommon.m_lHttpPort + "/system/syncMsgInfo",
+            url: g_oCommon.m_lHttp + g_oCommon.m_szHostName + ":" + g_oCommon.m_lHttpPort + "/system/getStatusInfo",
             async: !0,
             timeout: 15e3,
             beforeSend: function (xhr) {
@@ -568,111 +482,108 @@ Playback.prototype = {
         // return g_oPlayback.defaultPlayDate + " " + result;
         return result;
     },
-    //打开或关闭视频通道
-    openCheckChannels: function (channels) {
-
-        channels.filter(x => {
-            return x.execute === false
-        }).forEach((item, index, array) => {
-            let parentIndex = this.channels.indexOf(this.channels.find(x => x.channelNumber == item.channelNumber));
-            if (item.checked) {
-                if (item.isPlay) {
-                    let that = this;
-                    if (0 == that.m_wasmLoaded) {
-                        console.log("wasm not load!");
-                        return;
-                    }
-                    if (this.player[parentIndex]) {
-                        this.player[parentIndex].stop();
-                        let url = 'ws://' + g_oCommon.m_szHostName + ':8082/';
-                        let newDateTime = new Date(this.defaultPlayDate + " " + this.defaultPlayTime).Format("yyyy-MM-dd-hh-mm-ss");
-                        //playType 0-直播，1-录像
-                        this.player[parentIndex].playInner(url, item.channelNumber - 1, item.stream, null, 1, newDateTime);
-                    }
-                } else {
-                    if (null != this.player[parentIndex]) {
-                        this.player[parentIndex].stop();
-                    }
-                    console.log("StopRealPlay -------- +++ iChannelNum = %s\n", parentIndex);
-                }
-                this.reDrawIcon(item);
-                item.execute = true;
+    //全部开始播放
+    RealPlayAll: function () {
+        let that = this;
+        if (that.m_bAllPlay) {
+            let runCount = that.appCache.appControllerArr.filter(x => x.isRunning).length;
+            if (runCount > 0) {
+                that.StopRealPlayAll();
+                that.m_bAllPlay = false;
+                $("#btnPlay").children(0).removeClass("icon-stop");
+                $("#btnPlay").children(0).addClass("icon-play");
+                that.changeChannels(10);
             }
-        });
+        } else {
+            let palyCount = that.appCache.appControllerArr.filter(x => x.checked).length;
+            if (palyCount > 0) {
+                that.StartRealPlay();
+                that.m_bAllPlay = true;
+                $("#btnPlay").children(0).removeClass("icon-play");
+                $("#btnPlay").children(0).addClass("icon-stop");
+                that.changeChannels(-1);
+            }
+        }
     },
     //单个开启视频
-    startRealPlay: function (channelNumber) {
-        let tempChannels = [];
-        if (![null, undefined].includes(channelNumber)) {
-            tempChannels = g_oPlayback.channels.filter(x => {
-                return x.channelNumber == channelNumber
-            });
-        } else
-            tempChannels = g_oPlayback.channels;
-
-        if (![null].includes(g_oPlayback.defaultPlayDate)) {
-            //通道数组排序
-            tempChannels.sort(function (a, b) {
-                return a.channelNumber - b.channelNumber;
-            });
-            let slider = $("#sliderBar").data("ionRangeSlider");
-            this.openCheckChannels(tempChannels);
-
-            this.hasPlay = g_oPlayback.channels.filter(x => {
-                return x.isPlay == true && x.execute == true
-            }).length > 0;
-
-            if (!this.hasPlay) {
-                clearInterval(this.timeClock);
-                this.timeClock = null
-            } else {
-                if (null == this.timeClock) {
-                    //时间定时器
-                    this.timeClock = setInterval(function () {
-                        slider.update({
-                            from: slider.old_from + 1
-                        });
-                        g_oPlayback.defaultPlayTime = g_oPlayback.formatSeconds(slider.old_from);
-                        g_oPlayback.reSetTickTime();
-                    }, 1000);
+    StartRealPlay: function (chn) {
+        let that = this;
+        let runCount = that.appCache.appControllerArr.filter(x => x.isRunning).length;
+        that.appCache.appControllerArr.forEach((item, index, array) => {
+            if (![null, undefined, ""].includes(chn)) {
+                if ((index + 1) != chn) {
+                    return true;
                 }
+            }
+            if (!item.isRunning && ![null].includes(g_oPlayback.defaultPlayDate)) {
+            // if (!item.isRunning && item.checked) {
+                let newDateTime = new Date(this.defaultPlayDate + " " + this.defaultPlayTime).Format("yyyy-MM-dd-hh-mm-ss");
+                setTimeout(function () {
+                    let url = 'ws://' + g_oCommon.m_szHostName + ':8082/';
+                    let options = null;
+                    if ([null, undefined, ""].includes(item.options)) {
+                        options = {
+                            u: url,
+                            c: item.channelNumber,
+                            s: item.stream,
+                            // p: null,
+                            // d: null
+                            p: 1, //playType 0-直播，1-录像
+                            d: newDateTime
+                        }
+                    }
+                    item.start(options);
+                    $("#Camera" + (index + 1) + "Img").attr("src", "assets/img/Camera_2.png");
+                    item.isRunning = true;
+                }, 100);
+            }
+        });
+        let slider = $("#sliderBar").data("ionRangeSlider");
+        if (runCount == 0) {
+            if (null == this.timeClock) {
+                //时间定时器
+                this.timeClock = setInterval(function () {
+                    slider.update({
+                        from: slider.old_from + 1
+                    });
+                    g_oPlayback.defaultPlayTime = g_oPlayback.formatSeconds(slider.old_from);
+                    g_oPlayback.reSetTickTime();
+                }, 1000);
             }
         }
     },
-    //全开或者全关视频
-    realPlayAll: function (event) {
-        this.channels.filter((item, index, array) => {
-            item.execute = false;
-            if (!this.hasPlay || $(event).children(0).hasClass("icon-play"))
-                item.isPlay = true;
-            else
-                item.isPlay = false;
+    //全部停止播放
+    StopRealPlayAll: function (chn) {
+        let that = this;
+        that.appCache.appControllerArr.forEach((item, index, array) => {
+            if (![null, undefined, ""].includes(chn)) {
+                if ((index + 1) != chn) {
+                    return true;
+                }
+            }
+            if (item.isRunning) {
+                setTimeout(function () {
+                    let url = 'ws://' + g_oCommon.m_szHostName + ':8082/';
+                    let options = {
+                        u: url,
+                        c: 0,
+                        s: 1,
+                        p: null,
+                        d: null
+                    }
+                    item.stop();
+                    $("#Camera" + (index + 1) + "Img").attr("src", "assets/img/Camera_1.png");
+                }, 100)
+                item.isRunning = false;
+            }
         });
-        this.startRealPlay();
+        let runCount = that.appCache.appControllerArr.filter(x => x.isRunning).length;
+        if (runCount == 0 && null != that.timeClock) {
+            clearInterval(that.timeClock);
+            this.timeClock = null;
+        }
     },
 
-    reDrawIcon: function (item) {
-        if (item.checked && item.isPlay)
-            $("#Camera" + item.channelNumber + "Img").attr("src", "assets/img/Camera_2.png").attr("title", parent.translator.translateNode(this._lxdIndexPage, "jsPreview"));
-        else
-            $("#Camera" + item.channelNumber + "Img").attr("src", "assets/img/Camera_1.png").attr("title", parent.translator.translateNode(this._lxdIndexPage, "stoppreview"));
-
-        if (0 == item.stream)
-            $("#Stream" + item.channelNumber + "Img").attr("src", "assets/img/main_stream.png").attr("title", parent.translator.translateNode(this._lxdIndexPage, "mainStream"));
-        else
-            $("#Stream" + item.channelNumber + "Img").attr("src", "assets/img/sub_stream.png").attr("title", parent.translator.translateNode(this._lxdIndexPage, "subStream"));
-
-        let playSize = g_oPlayback.channels.filter(x => x.checked === true && x.isPlay).length;
-
-        if (playSize > 0) {
-            $("#btnPlay").children(0).removeClass("icon-play");
-            $("#btnPlay").children(0).addClass("icon-stop");
-        } else {
-            $("#btnPlay").children(0).removeClass("icon-stop");
-            $("#btnPlay").children(0).addClass("icon-play");
-        }
-        this.changeChannels(playSize > 0 ? -1 : 10);
-    }
 }
 
 let g_oPlayback = new Playback();

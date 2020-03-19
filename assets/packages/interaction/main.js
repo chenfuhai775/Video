@@ -26,10 +26,10 @@ Docs & License: https://fullcalendar.io/
     ***************************************************************************** */
     /* global Reflect, Promise */
 
-    var extendStatics = function(d, b) {
+    let extendStatics = function(d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (let p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
 
@@ -39,11 +39,11 @@ Docs & License: https://fullcalendar.io/
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     }
 
-    var __assign = function() {
+    let __assign = function() {
         __assign = Object.assign || function __assign(t) {
-            for (var s, i = 1, n = arguments.length; i < n; i++) {
+            for (let s, i = 1, n = arguments.length; i < n; i++) {
                 s = arguments[i];
-                for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+                for (let p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
             }
             return t;
         };
@@ -51,9 +51,9 @@ Docs & License: https://fullcalendar.io/
     };
 
     core.config.touchMouseIgnoreWait = 500;
-    var ignoreMouseDepth = 0;
-    var listenerCnt = 0;
-    var isWindowTouchMoveCancelled = false;
+    let ignoreMouseDepth = 0;
+    let listenerCnt = 0;
+    let isWindowTouchMoveCancelled = false;
     /*
     Uses a "pointer" abstraction, which monitors UI events for both mouse and touch.
     Tracks when the pointer "drags" on a certain element, meaning down+move+up.
@@ -67,9 +67,9 @@ Docs & License: https://fullcalendar.io/
     - pointermove
     - pointerup
     */
-    var PointerDragging = /** @class */ (function () {
+    let PointerDragging = /** @class */ (function () {
         function PointerDragging(containerEl) {
-            var _this = this;
+            let _this = this;
             this.subjectEl = null;
             this.downEl = null;
             // options that can be directly assigned by caller
@@ -87,7 +87,7 @@ Docs & License: https://fullcalendar.io/
                 if (!_this.shouldIgnoreMouse() &&
                     isPrimaryMouseButton(ev) &&
                     _this.tryStart(ev)) {
-                    var pev = _this.createEventFromMouse(ev, true);
+                    let pev = _this.createEventFromMouse(ev, true);
                     _this.emitter.trigger('pointerdown', pev);
                     _this.initScrollWatch(pev);
                     if (!_this.shouldIgnoreMove) {
@@ -97,7 +97,7 @@ Docs & License: https://fullcalendar.io/
                 }
             };
             this.handleMouseMove = function (ev) {
-                var pev = _this.createEventFromMouse(ev);
+                let pev = _this.createEventFromMouse(ev);
                 _this.recordCoords(pev);
                 _this.emitter.trigger('pointermove', pev);
             };
@@ -112,12 +112,12 @@ Docs & License: https://fullcalendar.io/
             this.handleTouchStart = function (ev) {
                 if (_this.tryStart(ev)) {
                     _this.isTouchDragging = true;
-                    var pev = _this.createEventFromTouch(ev, true);
+                    let pev = _this.createEventFromTouch(ev, true);
                     _this.emitter.trigger('pointerdown', pev);
                     _this.initScrollWatch(pev);
                     // unlike mouse, need to attach to target, not document
                     // https://stackoverflow.com/a/45760014
-                    var target = ev.target;
+                    let target = ev.target;
                     if (!_this.shouldIgnoreMove) {
                         target.addEventListener('touchmove', _this.handleTouchMove);
                     }
@@ -131,7 +131,7 @@ Docs & License: https://fullcalendar.io/
                 }
             };
             this.handleTouchMove = function (ev) {
-                var pev = _this.createEventFromTouch(ev);
+                let pev = _this.createEventFromTouch(ev);
                 _this.recordCoords(pev);
                 _this.emitter.trigger('pointermove', pev);
             };

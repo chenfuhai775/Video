@@ -22,26 +22,26 @@ See the Apache Version 2.0 License for specific language governing permissions
 and limitations under the License.
 ***************************************************************************** */
 
-var __assign = function() {
+let __assign = function() {
     __assign = Object.assign || function __assign(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
+        for (let s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+            for (let p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
         }
         return t;
     };
     return __assign.apply(this, arguments);
 };
 
-var EVENT_DEF_PROPS = {
+let EVENT_DEF_PROPS = {
     rrule: null,
     duration: createDuration
 };
-var recurring = {
+let recurring = {
     parse: function (rawEvent, leftoverProps, dateEnv) {
         if (rawEvent.rrule != null) {
-            var props = refineProps(rawEvent, EVENT_DEF_PROPS, {}, leftoverProps);
-            var parsed = parseRRule(props.rrule, dateEnv);
+            let props = refineProps(rawEvent, EVENT_DEF_PROPS, {}, leftoverProps);
+            let parsed = parseRRule(props.rrule, dateEnv);
             if (parsed) {
                 return {
                     typeData: parsed.rrule,
@@ -62,17 +62,17 @@ var recurring = {
         });
     }
 };
-var main = createPlugin({
+let main = createPlugin({
     recurringTypes: [recurring]
 });
 function parseRRule(input, dateEnv) {
-    var allDayGuess = null;
-    var rrule;
+    let allDayGuess = null;
+    let rrule;
     if (typeof input === 'string') {
         rrule = rrulestr(input);
     }
     else if (typeof input === 'object' && input) { // non-null object
-        var refined = __assign({}, input); // copy
+        let refined = __assign({}, input); // copy
         if (typeof refined.dtstart === 'string') {
             var dtstartMeta = dateEnv.createMarkerMeta(refined.dtstart);
             if (dtstartMeta) {

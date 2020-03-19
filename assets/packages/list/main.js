@@ -26,10 +26,10 @@ Docs & License: https://fullcalendar.io/
     ***************************************************************************** */
     /* global Reflect, Promise */
 
-    var extendStatics = function(d, b) {
+    let extendStatics = function(d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (let p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
 
@@ -39,10 +39,10 @@ Docs & License: https://fullcalendar.io/
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     }
 
-    var ListEventRenderer = /** @class */ (function (_super) {
+    let ListEventRenderer = /** @class */ (function (_super) {
         __extends(ListEventRenderer, _super);
         function ListEventRenderer(listView) {
-            var _this = _super.call(this, listView.context) || this;
+            let _this = _super.call(this, listView.context) || this;
             _this.listView = listView;
             return _this;
         }
@@ -58,15 +58,15 @@ Docs & License: https://fullcalendar.io/
         };
         // generates the HTML for a single event row
         ListEventRenderer.prototype.renderSegHtml = function (seg) {
-            var _a = this.context, view = _a.view, theme = _a.theme;
-            var eventRange = seg.eventRange;
-            var eventDef = eventRange.def;
-            var eventInstance = eventRange.instance;
-            var eventUi = eventRange.ui;
-            var url = eventDef.url;
-            var classes = ['fc-list-item'].concat(eventUi.classNames);
-            var bgColor = eventUi.backgroundColor;
-            var timeHtml;
+            let _a = this.context, view = _a.view, theme = _a.theme;
+            let eventRange = seg.eventRange;
+            let eventDef = eventRange.def;
+            let eventInstance = eventRange.instance;
+            let eventUi = eventRange.ui;
+            let url = eventDef.url;
+            let classes = ['fc-list-item'].concat(eventUi.classNames);
+            let bgColor = eventUi.backgroundColor;
+            let timeHtml;
             if (eventDef.allDay) {
                 timeHtml = core.getAllDayHtml(view);
             }
@@ -124,13 +124,13 @@ Docs & License: https://fullcalendar.io/
     /*
     Responsible for the scroller, and forwarding event-related actions into the "grid".
     */
-    var ListView = /** @class */ (function (_super) {
+    let ListView = /** @class */ (function (_super) {
         __extends(ListView, _super);
         function ListView(context, viewSpec, dateProfileGenerator, parentEl) {
-            var _this = _super.call(this, context, viewSpec, dateProfileGenerator, parentEl) || this;
+            let _this = _super.call(this, context, viewSpec, dateProfileGenerator, parentEl) || this;
             _this.computeDateVars = core.memoize(computeDateVars);
             _this.eventStoreToSegs = core.memoize(_this._eventStoreToSegs);
-            var eventRenderer = _this.eventRenderer = new ListEventRenderer(_this);
+            let eventRenderer = _this.eventRenderer = new ListEventRenderer(_this);
             _this.renderContent = core.memoizeRendering(eventRenderer.renderSegs.bind(eventRenderer), eventRenderer.unrender.bind(eventRenderer));
             _this.el.classList.add('fc-list-view');
             var listViewClassNames = (_this.theme.getClass('listView') || '').split(' '); // wish we didn't have to do this

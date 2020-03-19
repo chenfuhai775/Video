@@ -84,7 +84,7 @@ function CheckDeviceName(strInfo, tipsId, iNull) {
 function CheackServerIDIntNum(strInfo, tipsId, szName, iMin, iMax) {
 	var szTipsInfo = "<span class='am-icon-times'></span>&nbsp;";
 	if(strInfo == "") {
-		szTipsInfo += g_oCommon.getNodeValue("InputTips") + g_oCommon.getNodeValue(szName); 
+		szTipsInfo += g_oCommon.getNodeValue("InputTips") + g_oCommon.getNodeValue(szName);
 		$("#" + tipsId).html(szTipsInfo); 
 		return false;
 	}	

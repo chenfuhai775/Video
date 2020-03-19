@@ -7,7 +7,7 @@ Docs & License: https://fullcalendar.io/
 import * as momentNs from 'moment';
 import { createPlugin, Calendar } from '@fullcalendar/core';
 
-var moment = momentNs; // the directly callable function
+let moment = momentNs; // the directly callable function
 function toMoment(date, calendar) {
     if (!(calendar instanceof Calendar)) {
         throw new Error('must supply a Calendar instance');
@@ -18,15 +18,15 @@ function toDuration(fcDuration) {
     return moment.duration(fcDuration); // moment accepts all the props that fc.Duration already has!
 }
 function formatWithCmdStr(cmdStr, arg) {
-    var cmd = parseCmdStr(cmdStr);
+    let cmd = parseCmdStr(cmdStr);
     if (arg.end) {
-        var startMom = convertToMoment(arg.start.array, arg.timeZone, arg.start.timeZoneOffset, arg.localeCodes[0]);
-        var endMom = convertToMoment(arg.end.array, arg.timeZone, arg.end.timeZoneOffset, arg.localeCodes[0]);
+        let startMom = convertToMoment(arg.start.array, arg.timeZone, arg.start.timeZoneOffset, arg.localeCodes[0]);
+        let endMom = convertToMoment(arg.end.array, arg.timeZone, arg.end.timeZoneOffset, arg.localeCodes[0]);
         return formatRange(cmd, createMomentFormatFunc(startMom), createMomentFormatFunc(endMom), arg.separator);
     }
     return convertToMoment(arg.date.array, arg.timeZone, arg.date.timeZoneOffset, arg.localeCodes[0]).format(cmd.whole); // TODO: test for this
 }
-var main = createPlugin({
+let main = createPlugin({
     cmdFormatter: formatWithCmdStr
 });
 function createMomentFormatFunc(mom) {
@@ -35,7 +35,7 @@ function createMomentFormatFunc(mom) {
     };
 }
 function convertToMoment(input, timeZone, timeZoneOffset, locale) {
-    var mom;
+    let mom;
     if (timeZone === 'local') {
         mom = moment(input);
     }
@@ -55,9 +55,9 @@ function convertToMoment(input, timeZone, timeZoneOffset, locale) {
     return mom;
 }
 function parseCmdStr(cmdStr) {
-    var parts = cmdStr.match(/^(.*?)\{(.*)\}(.*)$/); // TODO: lookbehinds for escape characters
+    let parts = cmdStr.match(/^(.*?)\{(.*)\}(.*)$/); // TODO: lookbehinds for escape characters
     if (parts) {
-        var middle = parseCmdStr(parts[2]);
+        let middle = parseCmdStr(parts[2]);
         return {
             head: parts[1],
             middle: middle,
@@ -76,20 +76,20 @@ function parseCmdStr(cmdStr) {
 }
 function formatRange(cmd, formatStart, formatEnd, separator) {
     if (cmd.middle) {
-        var startHead = formatStart(cmd.head);
-        var startMiddle = formatRange(cmd.middle, formatStart, formatEnd, separator);
-        var startTail = formatStart(cmd.tail);
-        var endHead = formatEnd(cmd.head);
-        var endMiddle = formatRange(cmd.middle, formatStart, formatEnd, separator);
-        var endTail = formatEnd(cmd.tail);
+        let startHead = formatStart(cmd.head);
+        let startMiddle = formatRange(cmd.middle, formatStart, formatEnd, separator);
+        let startTail = formatStart(cmd.tail);
+        let endHead = formatEnd(cmd.head);
+        let endMiddle = formatRange(cmd.middle, formatStart, formatEnd, separator);
+        let endTail = formatEnd(cmd.tail);
         if (startHead === endHead && startTail === endTail) {
             return startHead +
                 (startMiddle === endMiddle ? startMiddle : startMiddle + separator + endMiddle) +
                 startTail;
         }
     }
-    var startWhole = formatStart(cmd.whole);
-    var endWhole = formatEnd(cmd.whole);
+    let startWhole = formatStart(cmd.whole);
+    let endWhole = formatEnd(cmd.whole);
     if (startWhole === endWhole) {
         return startWhole;
     }

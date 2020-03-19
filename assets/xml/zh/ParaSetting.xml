@@ -1,79 +1,71 @@
 <?xml version="1.0"?>
 <ParaSetting>
-	<Page>
-		<aBaseInfo>基本信息</aBaseInfo>
-		<aTimeSettings >时间设置</aTimeSettings>
-		<laDeviceType>设备型号</laDeviceType>
-		<laDeviceSn>设备序列号</laDeviceSn>
-		<laFirmwareVersion>主控版本</laFirmwareVersion>
-		<laDeviceID>设备编号</laDeviceID>
-		<laReleaseDate>发布日期</laReleaseDate>
-		<laQrcode>设备二维码</laQrcode>
-		<laDiskNum>SD卡个数</laDiskNum>
-		<laMaxAreaNum>最大房间数</laMaxAreaNum>
-		<laMaxDevNum>最大设备数</laMaxDevNum>
-		<laWiredDevNum>有线设备数</laWiredDevNum>
-		<laChannelNum>通道模式</laChannelNum>
-		<laParamValue>参数值</laParamValue>
-		<laSupportPnp>IPC即插即用</laSupportPnp>
-		<laEnableOverWrite>启用循环写入</laEnableOverWrite>
-		<laPackDuration>录像打包时间</laPackDuration>
-		<laNtpTimeSync>NTP校时</laNtpTimeSync>
-		<laServerAdd>服务器地址</laServerAdd>
-		<laNtpPort>NTP端口</laNtpPort>
-		<laNtpInterval>校时时间间隔</laNtpInterval>
-		<laManualTimeSync>手动校时</laManualTimeSync>
-		<laDeviceTime>设备时间</laDeviceTime>
-		<laTimeZoneConfig>时区设置</laTimeZoneConfig>
-		<laTimeZone >时区</laTimeZone>
-		<laDSTBias >偏移时间</laDSTBias>
-		<timezoneOpt1 >(GMT-12:00) 日界线西</timezoneOpt1>
-		<timezoneOpt2 >(GMT-11:00) 中途岛，萨摩亚群岛</timezoneOpt2>
-		<timezoneOpt3 >(GMT-10:00) 夏威夷</timezoneOpt3>
-		<timezoneOpt4 >(GMT-09:00) 阿拉斯加</timezoneOpt4>
-		<timezoneOpt5 >(GMT-08:00) 太平洋时间(美国和加拿大)</timezoneOpt5>
-		<timezoneOpt6 >(GMT-07:00) 山地时间(美国和加拿大)</timezoneOpt6>
-		<timezoneOpt7 >(GMT-06:00) 中部时间(美国和加拿大)</timezoneOpt7>
-		<timezoneOpt8 >(GMT-05:00) 东部时间(美国和加拿大)</timezoneOpt8>
-		<timezoneOpt9 >(GMT-04:30) 加拉斯加</timezoneOpt9>
-		<timezoneOpt10 >(GMT-04:00) 大西洋时间(加拿大)</timezoneOpt10>
-		<timezoneOpt11 >(GMT-03:30) 纽芬兰</timezoneOpt11>
-		<timezoneOpt12 >(GMT-03:00) 乔治敦、巴西利亚</timezoneOpt12>
-		<timezoneOpt13 >(GMT-02:00) 中大西洋</timezoneOpt13>
-		<timezoneOpt14 >(GMT-01:00) 佛得角群岛、亚速尔群岛</timezoneOpt14>
-		<timezoneOpt15 >(GMT+00:00) 都柏林、爱丁堡、伦敦</timezoneOpt15>
-		<timezoneOpt16 >(GMT+01:00) 阿姆斯特丹、柏林、罗马、巴黎</timezoneOpt16>
-		<timezoneOpt17 >(GMT+02:00) 雅典、耶路撒冷、伊斯坦布尔</timezoneOpt17>
-		<timezoneOpt18 >(GMT+03:00) 巴格达、科威特、莫斯科</timezoneOpt18>
-		<timezoneOpt19 >(GMT+03:30) 德黑兰</timezoneOpt19>
-		<timezoneOpt20 >(GMT+04:00) 高加索标准时间</timezoneOpt20>
-		<timezoneOpt21 >(GMT+04:30) 喀布尔</timezoneOpt21>
-		<timezoneOpt22 >(GMT+05:00) 伊斯兰堡、卡拉奇、塔什干</timezoneOpt22>
-		<timezoneOpt23 >(GMT+05:30) 马德拉斯、孟买、新德里</timezoneOpt23>
-		<timezoneOpt24 >(GMT+05:45) 加德满都</timezoneOpt24>
-		<timezoneOpt25 >(GMT+06:00) 阿拉木图、新西伯利亚、达卡</timezoneOpt25>
-		<timezoneOpt26 >(GMT+06:30) 仰光</timezoneOpt26>
-		<timezoneOpt27 >(GMT+07:00) 曼谷、河内、雅加达</timezoneOpt27>
-		<timezoneOpt28 >(GMT+08:00) 北京、乌鲁木齐、新加坡</timezoneOpt28>
-		<timezoneOpt29 >(GMT+09:00) 首尔、东京、大阪、札幌</timezoneOpt29>
-		<timezoneOpt30 >(GMT+09:30) 阿德莱德、达尔文</timezoneOpt30>
-		<timezoneOpt31 >(GMT+10:00) 墨尔本、悉尼、堪培拉</timezoneOpt31>
-		<timezoneOpt32 >(GMT+11:00) 马加丹、索罗门群岛</timezoneOpt32>
-		<timezoneOpt33 >(GMT+12:00) 奥克兰、惠灵顿</timezoneOpt33>
-		<timezoneOpt34 >(GMT+13:00) 努库阿洛法</timezoneOpt34>
-		<DSTBiasOpt1 >30分钟</DSTBiasOpt1>
-		<DSTBiasOpt2 >60分钟</DSTBiasOpt2>
-		<DSTBiasOpt3 >90分钟</DSTBiasOpt3>
-		<DSTBiasOpt4 >120分钟</DSTBiasOpt4>
-		<laSelectTime >设置时间</laSelectTime>
-		<laTimeSyncWithPC >与计算机时间同步</laTimeSyncWithPC>
-		<trTimeSync>校时</trTimeSync>
+    <Page>
+        <aBaseInfo>基本信息</aBaseInfo>
+        <aTimeSettings>时间设置</aTimeSettings>
+
+        <laAppVersion>应用程序版本</laAppVersion>
+        <laMcpVersion>MCU版本</laMcpVersion>
+        <laFirmwareVersion>固件版本</laFirmwareVersion>
+        <laReleaseDate>发布时间</laReleaseDate>
+        <laChNum>通道数</laChNum>
+        <laDiskNum>硬盘数</laDiskNum>
+        <laMaxAreaNum>最大区域数</laMaxAreaNum>
+        <laMaxDevNum>最大设备数</laMaxDevNum>
+        <laMaxWiredDevNum>最大无线设备数</laMaxWiredDevNum>
+        <laDeviceId>设备ID</laDeviceId>
+        <laDeviceSn>设备序号</laDeviceSn>
+        <laDeviceType>设备类型</laDeviceType>
+
+        <laNtpTimeSync>NTP校时</laNtpTimeSync>
+        <laServerAdd>服务器地址</laServerAdd>
+        <laNtpPort>NTP端口</laNtpPort>
+        <laNtpInterval>校时时间间隔</laNtpInterval>
+        <laTimeZone>时区</laTimeZone>
+
+        <laManualTimeSync>手动校时</laManualTimeSync>
+        <laDeviceTime>设备时间</laDeviceTime>
+        <laSelectTime>设置时间</laSelectTime>
+        <laTimeSyncWithPC>与计算机时间同步</laTimeSyncWithPC>
+
+
+        <timezoneOpt1>(GMT-12:00) 日界线西</timezoneOpt1>
+        <timezoneOpt2>(GMT-11:00) 中途岛，萨摩亚群岛</timezoneOpt2>
+        <timezoneOpt3>(GMT-10:00) 夏威夷</timezoneOpt3>
+        <timezoneOpt4>(GMT-09:00) 阿拉斯加</timezoneOpt4>
+        <timezoneOpt5>(GMT-08:00) 太平洋时间(美国和加拿大)</timezoneOpt5>
+        <timezoneOpt6>(GMT-07:00) 山地时间(美国和加拿大)</timezoneOpt6>
+        <timezoneOpt7>(GMT-06:00) 中部时间(美国和加拿大)</timezoneOpt7>
+        <timezoneOpt8>(GMT-05:00) 东部时间(美国和加拿大)</timezoneOpt8>
+        <timezoneOpt9>(GMT-04:30) 加拉斯加</timezoneOpt9>
+        <timezoneOpt10>(GMT-04:00) 大西洋时间(加拿大)</timezoneOpt10>
+        <timezoneOpt11>(GMT-03:30) 纽芬兰</timezoneOpt11>
+        <timezoneOpt12>(GMT-03:00) 乔治敦、巴西利亚</timezoneOpt12>
+        <timezoneOpt13>(GMT-02:00) 中大西洋</timezoneOpt13>
+        <timezoneOpt14>(GMT-01:00) 佛得角群岛、亚速尔群岛</timezoneOpt14>
+        <timezoneOpt15>(GMT+00:00) 都柏林、爱丁堡、伦敦</timezoneOpt15>
+        <timezoneOpt16>(GMT+01:00) 阿姆斯特丹、柏林、罗马、巴黎</timezoneOpt16>
+        <timezoneOpt17>(GMT+02:00) 雅典、耶路撒冷、伊斯坦布尔</timezoneOpt17>
+        <timezoneOpt18>(GMT+03:00) 巴格达、科威特、莫斯科</timezoneOpt18>
+        <timezoneOpt19>(GMT+03:30) 德黑兰</timezoneOpt19>
+        <timezoneOpt20>(GMT+04:00) 高加索标准时间</timezoneOpt20>
+        <timezoneOpt21>(GMT+04:30) 喀布尔</timezoneOpt21>
+        <timezoneOpt22>(GMT+05:00) 伊斯兰堡、卡拉奇、塔什干</timezoneOpt22>
+        <timezoneOpt23>(GMT+05:30) 马德拉斯、孟买、新德里</timezoneOpt23>
+        <timezoneOpt24>(GMT+05:45) 加德满都</timezoneOpt24>
+        <timezoneOpt25>(GMT+06:00) 阿拉木图、新西伯利亚、达卡</timezoneOpt25>
+        <timezoneOpt26>(GMT+06:30) 仰光</timezoneOpt26>
+        <timezoneOpt27>(GMT+07:00) 曼谷、河内、雅加达</timezoneOpt27>
+        <timezoneOpt28>(GMT+08:00) 北京、乌鲁木齐、新加坡</timezoneOpt28>
+        <timezoneOpt29>(GMT+09:00) 首尔、东京、大阪、札幌</timezoneOpt29>
+        <timezoneOpt30>(GMT+09:30) 阿德莱德、达尔文</timezoneOpt30>
+        <timezoneOpt31>(GMT+10:00) 墨尔本、悉尼、堪培拉</timezoneOpt31>
+        <timezoneOpt32>(GMT+11:00) 马加丹、索罗门群岛</timezoneOpt32>
+        <timezoneOpt33>(GMT+12:00) 奥克兰、惠灵顿</timezoneOpt33>
+        <timezoneOpt34>(GMT+13:00) 努库阿洛法</timezoneOpt34>
 		<btnSave>保存</btnSave>
-		<smallTip1>time.windows.com</smallTip1>
-		<smallTip2>NTP端口范围1-65535</smallTip2>
-		<smallTip3>校时间隔范围1-10080（小时）</smallTip3>
-	</Page>
-	<Js>
+    </Page>
+    <Js>
 		<InputTips>请输入</InputTips>
 		<RangeTips>范围</RangeTips>
 		<WrongTips>错误的</WrongTips>
@@ -81,5 +73,5 @@
 		<NullTips>不能为空</NullTips>
 		<SaveOk>保存成功</SaveOk>
 		<SaveFailed>保存失败</SaveFailed>
-	</Js>
+    </Js>
 </ParaSetting>

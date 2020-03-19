@@ -25,26 +25,26 @@ Docs & License: https://fullcalendar.io/
     and limitations under the License.
     ***************************************************************************** */
 
-    var __assign = function() {
+    let __assign = function() {
         __assign = Object.assign || function __assign(t) {
-            for (var s, i = 1, n = arguments.length; i < n; i++) {
+            for (let s, i = 1, n = arguments.length; i < n; i++) {
                 s = arguments[i];
-                for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+                for (let p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
             }
             return t;
         };
         return __assign.apply(this, arguments);
     };
 
-    var EVENT_DEF_PROPS = {
+    let EVENT_DEF_PROPS = {
         rrule: null,
         duration: core.createDuration
     };
-    var recurring = {
+    let recurring = {
         parse: function (rawEvent, leftoverProps, dateEnv) {
             if (rawEvent.rrule != null) {
-                var props = core.refineProps(rawEvent, EVENT_DEF_PROPS, {}, leftoverProps);
-                var parsed = parseRRule(props.rrule, dateEnv);
+                let props = core.refineProps(rawEvent, EVENT_DEF_PROPS, {}, leftoverProps);
+                let parsed = parseRRule(props.rrule, dateEnv);
                 if (parsed) {
                     return {
                         typeData: parsed.rrule,
@@ -65,19 +65,19 @@ Docs & License: https://fullcalendar.io/
             });
         }
     };
-    var main = core.createPlugin({
+    let main = core.createPlugin({
         recurringTypes: [recurring]
     });
     function parseRRule(input, dateEnv) {
-        var allDayGuess = null;
-        var rrule$1;
+        let allDayGuess = null;
+        let rrule$1;
         if (typeof input === 'string') {
             rrule$1 = rrule.rrulestr(input);
         }
         else if (typeof input === 'object' && input) { // non-null object
-            var refined = __assign({}, input); // copy
+            let refined = __assign({}, input); // copy
             if (typeof refined.dtstart === 'string') {
-                var dtstartMeta = dateEnv.createMarkerMeta(refined.dtstart);
+                let dtstartMeta = dateEnv.createMarkerMeta(refined.dtstart);
                 if (dtstartMeta) {
                     refined.dtstart = dtstartMeta.marker;
                     allDayGuess = dtstartMeta.isTimeUnspecified;

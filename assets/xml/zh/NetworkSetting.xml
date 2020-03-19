@@ -2,7 +2,8 @@
 <NetworkSetting>
 	<Page>
 		<tabIP>TCP/IP</tabIP>
-		<tabWifi>WiFi设置</tabWifi>
+		<tabWifiAp>WiFi_Ap设置</tabWifiAp>
+		<tabWifiStation>WiFi_Station设置</tabWifiStation>
 		<tab4G>4G设置</tab4G>
 		<tabCMS>CMS接入</tabCMS>
 		<tabSIA>SIA接入</tabSIA>
@@ -18,6 +19,7 @@
 		<laPrimaryDNS>首选DNS服务器</laPrimaryDNS>
 		<laDNSServer2IP>备用DNS服务器</laDNSServer2IP>
 		<laWifiConfig>WiFi AP设置</laWifiConfig>
+		<laWifiStaConfig>WiFi Sta设置</laWifiStaConfig>
 		<laWifiApAddr>IP 地址</laWifiApAddr>
 		<laWifiApWpa>加密方式</laWifiApWpa>
 		<laWifiApMac>MAC 地址</laWifiApMac>
@@ -54,6 +56,12 @@
 		<laUserName>发送邮箱账号</laUserName>
 		<laPassword>发送邮箱密码（授权码）</laPassword>
 		<laReceiverName>接收邮箱账号</laReceiverName>
+
+		<laWifiEnable>Wifi使能</laWifiEnable>
+		<laWap>加密方式</laWap>
+		<laWifiStaSsid>Wifi名称</laWifiStaSsid>
+		<laWifePwd>Wifi密码</laWifePwd>
+
 	</Page>
 	<General>
 		<jsMtuParam>MTU参数</jsMtuParam>

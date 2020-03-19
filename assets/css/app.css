@@ -759,7 +759,7 @@ ul.tpl-dropdown-content li>a.tpl-dropdown-content-message:last-child {
 }
 
 .previewVideo  {
-    border:1px solid #eee; width:100%; min-height:750px; background:#000;
+    border:1px solid #eee; width:960px; height:540px; background:#000;
 }
 @media only screen and (max-width: 1000px) {
 	.previewVideo  {

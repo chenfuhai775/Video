@@ -4,7 +4,7 @@
     (global = global || self, (global.FullCalendarLocales = global.FullCalendarLocales || {}, global.FullCalendarLocales['pt-br'] = factory()));
 }(this, function () { 'use strict';
 
-    var ptBr = {
+    let ptBr = {
         code: "pt-br",
         buttonText: {
             prev: "Anterior",

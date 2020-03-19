@@ -162,6 +162,9 @@ UsersManage.prototype = {
 								timeout:1000
 							});
 							$('#addUser').modal('close');
+							
+							//重新加载区域列表
+							that.getUserList();
 						}
 						else{
 							AMUI.dialog.tip({
@@ -256,6 +259,9 @@ UsersManage.prototype = {
 								timeout:1000
 							});
 							$('#editUser').modal('close');
+							
+							//重新加载区域列表
+							that.getUserList();
 						}
 						else
 							AMUI.dialog.tip({
@@ -287,7 +293,7 @@ UsersManage.prototype = {
 			console.log('onConfirm');
 			$.ajax({
 				type: "get",
-				url: g_oCommon.m_lHttp + g_oCommon.m_szHostName + ":" + g_oCommon.m_lHttpPort + "/system/userDel?UserNo="+userNo+"&",
+				url: g_oCommon.m_lHttp + g_oCommon.m_szHostName + ":" + g_oCommon.m_lHttpPort + "/system/userDel?UserNo="+UserNo+"&",
 				async: !0,
 				timeout: 15e3,
 				beforeSend: function (xhr) {
@@ -332,7 +338,7 @@ UsersManage.prototype = {
 	syncMsg: function(){
 		$.ajax({
 				type: "get",
-				url: g_oCommon.m_lHttp + g_oCommon.m_szHostName + ":" + g_oCommon.m_lHttpPort + "/system/syncMsgInfo",
+				url: g_oCommon.m_lHttp + g_oCommon.m_szHostName + ":" + g_oCommon.m_lHttpPort + "/system/getStatusInfo",
 				async: !0,
 				timeout: 15e3,
 				beforeSend: function (xhr) {
